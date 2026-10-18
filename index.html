@@ -62,7 +62,7 @@ h1,h2,h3{margin:0;font-family:var(--disp);font-weight:700;letter-spacing:-.02em;
 .dc:hover .pt:nth-child(1){transform:translateY(-3px) rotate(-6deg)}
 .dc .nm{grid-column:1/-1;font-size:13.5px;line-height:1.35;font-weight:500}
 .dc .nm b{font-weight:700}
-.dc .kc{position:absolute;right:14px;bottom:12px;font-size:12px;font-weight:700;background:rgba(255,255,255,.55);border-radius:99px;padding:4px 10px}
+.dc .kc{grid-column:1/-1;justify-self:end;font-size:12px;font-weight:700;background:rgba(255,255,255,.55);border-radius:99px;padding:4px 10px}
 .dc.sea{color:#06142E}
 .dc.free{background:var(--soft);color:var(--ink);box-shadow:none}
 .act-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
@@ -213,6 +213,24 @@ table.ing td:last-child{text-align:right;color:var(--mut);white-space:nowrap}
 .pt{display:block}.sv{width:100%;height:100%;display:block}
 button.pt{padding:0}
 .noanim .stage .pt{animation:none}
+
+/* вся неделя */
+.wg{display:grid;grid-template-columns:40px repeat(3,minmax(0,1fr));gap:6px;margin-top:12px}
+.gh{font-size:11px;font-weight:700;color:var(--mut);text-align:center;padding:2px 0}
+.gd{border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--paint-ink);min-height:112px}
+.gd b{font-family:var(--disp);font-size:15px}.gd span{font-size:11px;font-weight:700;opacity:.8}
+.gc{position:relative;border-radius:18px;color:var(--paint-ink);min-height:112px;overflow:hidden}
+.gc.free{background:var(--soft);display:grid;place-items:center;color:var(--mut);font-size:12px;font-weight:600}
+.gb{display:block;width:100%;height:100%;text-align:left;padding:8px 6px 8px 8px}
+.gp{position:relative;width:46px;height:46px}
+.gp .pt{width:46px;height:46px;filter:drop-shadow(0 3px 4px rgba(16,38,26,.25))}
+.gs{position:absolute;right:-12px;bottom:-4px;width:24px;height:24px;display:block}.gs.g2{right:-22px;bottom:12px;width:22px;height:22px}
+.gs .sv{width:100%;height:100%}
+.gn{font-size:11px;font-weight:700;line-height:1.2;margin-top:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;hyphens:auto}
+.gk{font-size:10.5px;font-weight:600;opacity:.8;margin-top:2px}
+.gl{position:absolute;right:2px;top:2px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.55)}
+.gl::after{content:"";position:absolute;inset:-7px}
+.gl.on{background:var(--paint-ink);color:#fff}
 /* motion */
 @keyframes rise{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
@@ -443,17 +461,19 @@ function defaultState(){
    {m:pick('Курица тикка','Основное'),s:pick('Булгур с томатами','Гарнир'),l:pick('Свёкла сырая','Салат')},
    {m:pick('Минтай в томатно','Основное'),s:pick('Бурый рис','Гарнир'),l:pick('Ромэн с авокадо','Салат')}],
    bf:[pick('Овсянка overnight с бананом','Завтрак'),pick('Сырники','Завтрак'),pick('Омлетные маффины','Завтрак'),pick('Овсянка overnight с черникой','Завтрак'),pick('Фриттата','Завтрак')],
-   fav:{},chk:{},sub:{},home:{},norms:{m:2000,d:1800}};
+   fav:{},chk:{},sub:{},home:{},norms:{m:1800,d:1500},lock:{},scale:true};
 }
 S=Object.assign({day:null,slot:'Ужин',tab:'week',lib:{t:'Основное',q:'',c:'',fav:false}},load()||defaultState());
-if(!S.norms)S.norms={m:2000,d:1800};
+const fixNorms=n=>(!n||(n.m===2000&&n.d===1800))?{m:1800,d:1500}:n;
+S.norms=fixNorms(S.norms);if(!S.lock)S.lock={};if(S.scale===undefined)S.scale=true;if(!S.wview)S.wview='cards';
+REC.forEach(r=>{if(r.t==='Гарнир'&&r.st&&r.st.length)r.st=r.st.concat('Половину уберите в контейнер: это завтрашний обед.');});
 if(!S.lib)S.lib={t:'Основное',q:'',c:'',fav:false};
 const ing=k=>ING[k]||{n:k,k:0,P:0,F:0,C:0,pr:0,c:'Бакалея',h:0,g:'',w:'',a:''};
 const homeOf=k=>S.home[k]!==undefined?S.home[k]:ing(k).h;
 
 /* ---------- sync (общий план Максима и Даши) ---------- */
 let writing=Promise.resolve(),dbDoc=null,lastSent='',syncT=null;
-const SH=['cook','bf','fav','chk','sub','home','norms'];
+const SH=['cook','bf','fav','chk','sub','home','norms','lock','scale'];
 const shared=()=>{const o={};SH.forEach(k=>o[k]=S[k]);return o;};
 function save(){
   try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
@@ -468,7 +488,7 @@ async function initSync(){
       const data=snap&&snap.exists?snap.data():null;
       if(!data||!data.json){setTimeout(save,0);return;}
       if(data.json===lastSent)return;
-      try{const o=JSON.parse(data.json);SH.forEach(k=>{if(o[k]!==undefined)S[k]=o[k];});lastSent=data.json;
+      try{const o=JSON.parse(data.json);if(o.norms)o.norms=fixNorms(o.norms);SH.forEach(k=>{if(o[k]!==undefined)S[k]=o[k];});lastSent=data.json;
         try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
         const a=document.activeElement;if(!(a&&a.tagName==='INPUT'))render();}catch(e){}
     });
@@ -492,7 +512,12 @@ function mealOf(day,slot){
 function sumMeal(ids){const o={k:0,P:0,F:0,C:0};ids.forEach(i=>{const r=REC[i];o.k+=r.k;o.P+=r.P;o.F+=r.F;o.C+=r.C;});return o;}
 function dayTotals(d){const o={k:0,P:0,F:0,C:0};['Завтрак','Обед','Ужин'].forEach(s=>{const m=sumMeal(mealOf(d,s));o.k+=m.k;o.P+=m.P;o.F+=m.F;o.C+=m.C;});return o;}
 const planRecipes=()=>{const a=[];S.cook.forEach(c=>a.push(c.m,c.s,c.l));S.bf.forEach(b=>a.push(b));return a;};
-function needsOf(ids){const g={};ids.forEach(i=>REC[i].i.forEach(([k,gr])=>{g[k]=(g[k]||0)+gr;}));return g;}
+function avgDay(){let a=0;for(let d=1;d<=4;d++)a+=dayTotals(d).k;return a/4||1;}
+const fac=n=>S.scale===false?1:Math.min(1.5,Math.max(.7,n/avgDay()));
+const fM=()=>fac(S.norms.m),fD=()=>fac(S.norms.d);
+const sf=()=>S.scale===false?1:(fM()+fD())/2;
+const x1=n=>(Math.round(n*100)/100).toLocaleString('ru-RU');
+function needsOf(ids){const f=sf(),g={};ids.forEach(i=>REC[i].i.forEach(([k,gr])=>{g[k]=(g[k]||0)+gr*f;}));return g;}
 function costOf(ids){const g=needsOf(ids);let c=0;Object.keys(g).forEach(k=>{const need=Math.max(0,g[k]-homeOf(k));c+=Math.ceil(need/10)*10*ing(k).pr/1000;});return c;}
 const planCost=()=>costOf(planRecipes());
 function shopList(){const n=needsOf(planRecipes());return Object.keys(n).map(k=>{const h=homeOf(k),need=Math.max(0,n[k]-h),buy=need>0?Math.ceil(need/10)*10:0,p=ing(k);return{k,total:n[k],home:Math.min(h,n[k]),buy,cost:buy*p.pr/1000,cat:p.c,n:p.n};});}
@@ -532,16 +557,42 @@ function viewWeek(){
    '<div class="bx b-c"><div class="l">Ккал в будний день</div><div class="v">'+cnt('avg',avg)+'</div><div class="s">на одну порцию</div></div>'+
    '<div class="bx b-d sea"><div class="l">Белка в день</div><div class="v">'+cnt('prot',pr,'<small>г</small>')+'</div><div class="s">в среднем</div></div></div>';
   w.forEach(x=>{h+='<div class="warn '+(x[0]==='bad'?'bad':'')+'">'+esc(x[1])+'</div>';});
+  h+='<div class="warn" style="background:var(--soft);color:var(--ink)"><b>Размер порции</b><div class="small mut" style="margin-top:4px;line-height:1.45">'+(S.scale===false?'Порции одинаковые.':'Даша ×'+x1(fD())+' (норма '+fmt(S.norms.d)+' ккал), Максим ×'+x1(fM())+' (норма '+fmt(S.norms.m)+' ккал). Покупки посчитаны с учётом этого.')+'</div><button class="btn alt" style="height:38px;margin-top:8px;font-size:13px;padding:0 14px" data-act="scale">'+(S.scale===false?'Подгонять порции под норму':'Сделать порции одинаковыми')+'</button></div>';
+  h+='<div class="seg" style="grid-template-columns:repeat(2,1fr);margin-top:14px"><i style="width:calc((100% - 8px)/2);transform:translateX('+(S.wview==='grid'?100:0)+'%)"></i><button data-act="wview" data-v="cards" class="'+(S.wview!=='grid'?'on':'')+'">Карточки</button><button data-act="wview" data-v="grid" class="'+(S.wview==='grid'?'on':'')+'">Вся неделя</button></div>';
+  if(S.wview==='grid'){h+=viewGrid();}else{
   h+='<div class="days">';
   for(let d=0;d<=5;d++){
     const t=dayTotals(d),c=S.cook[d],b=d>=1?REC[S.bf[d-1]]:null;
     h+='<button class="dc" style="background:'+DAYC[d]+';animation:'+(enter?'rise 520ms var(--ease) '+(d*60)+'ms both':'none')+'" data-act="openday" data-v="'+d+'"><div><div class="dn">'+DS[d]+'</div><div class="dd">'+dtxt(d)+(d===0?' · заготовка':'')+'</div></div>';
     h+='<div class="pl">'+(c?[c.m,c.s,c.l].map(pt).join(''):'')+'</div>';
-    h+='<div class="nm">'+(c?'<b>Ужин:</b> '+esc(REC[c.m].n)+', '+esc(REC[c.s].n.toLowerCase())+', '+esc(REC[c.l].n.toLowerCase()):'<b>Ужин свободный:</b> идёте куда-то или доставка')+(b?'<br><b>Завтрак:</b> '+esc(b.n):'')+'</div>';
+    const nm3=x=>esc(REC[x.m].n)+', '+esc(REC[x.s].n.toLowerCase())+', '+esc(REC[x.l].n.toLowerCase());
+    const L=[];if(b)L.push('<b>Завтрак:</b> '+esc(b.n));if(d>=1)L.push('<b>Обед:</b> '+nm3(S.cook[d-1]));
+    L.push(c?'<b>Ужин:</b> '+nm3(c):'<b>Ужин свободный:</b> идёте куда-то или доставка');
+    h+='<div class="nm">'+L.join('<br>')+'</div>';
     h+='<span class="kc">'+fmt(t.k)+' ккал</span></button>';
   }
-  h+='</div><div class="act-row"><button class="btn red" data-act="regen">'+IC.dice+'Собрать заново</button><button class="btn alt" data-act="reset">Исходная неделя</button><button class="btn alt" data-act="share">Отправить план Даше</button></div>';
-  h+='<div class="warn" style="background:var(--soft);color:var(--mut);margin-top:16px"><b style="color:var(--ink)">Норма на день, ккал</b><div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap"><label>Максим <input type="number" inputmode="numeric" id="nm" data-act="norm" data-v="m" value="'+S.norms.m+'" style="width:96px;margin-left:4px"></label><label>Даша <input type="number" inputmode="numeric" id="nd" data-act="norm" data-v="d" value="'+S.norms.d+'" style="width:96px;margin-left:4px"></label></div><div style="margin-top:8px">Калории в блюдах даны на одну порцию. Разницу в норме покрывайте размером порции.</div></div>';
+  h+='</div>';}
+  h+='<div class="act-row"><button class="btn red" data-act="regen">'+IC.dice+(Object.keys(S.lock).some(k=>S.lock[k])?'Пересобрать остальное':'Собрать заново')+'</button><button class="btn alt" data-act="reset">Исходная неделя</button><button class="btn alt" data-act="share">Отправить план Даше</button></div>';
+  h+='<div class="warn" style="background:var(--soft);color:var(--mut);margin-top:16px"><b style="color:var(--ink)">Норма на день, ккал</b><div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap"><label>Максим <input type="number" inputmode="numeric" id="nm" data-act="norm" data-v="m" value="'+S.norms.m+'" style="width:96px;margin-left:4px"></label><label>Даша <input type="number" inputmode="numeric" id="nd" data-act="norm" data-v="d" value="'+S.norms.d+'" style="width:96px;margin-left:4px"></label></div><div style="margin-top:8px">Калории в блюдах даны на базовую порцию. Размер порции подгоняется под норму, переключатель выше.</div></div>';
+  return h;
+}
+function viewGrid(){
+  const lockI=on=>'<svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><rect x="5" y="11" width="14" height="9" rx="2.5"'+(on?' fill="currentColor"':'')+'/><path d="'+(on?'M8 11V8a4 4 0 0 1 8 0v3':'M8 11V8a4 4 0 0 1 7.5-2')+'"/></svg>';
+  const cell=(ids,label,lk,d,slot)=>{
+    if(!ids.length)return '<div class="gc free"><span>'+(slot==='Ужин'&&d===5?'свободно':'—')+'</span></div>';
+    const m=REC[ids[0]],on=lk&&S.lock[lk];
+    let th='<div class="gp">'+pt(ids[0])+(ids[1]!==undefined?'<span class="gs">'+pt(ids[1])+'</span><span class="gs g2">'+pt(ids[2])+'</span>':'')+'</div>';
+    return '<div class="gc" style="background:'+paint(m)+'"><button class="gb" data-act="gopen" data-d="'+d+'" data-v="'+slot+'" aria-label="'+label+': '+esc(m.n)+'">'+th+'<div class="gn">'+esc(m.n)+'</div><div class="gk">'+Math.round(sumMeal(ids).k)+' ккал</div></button>'+(lk?'<button class="gl '+(on?'on':'')+'" data-act="lock" data-v="'+lk+'" aria-pressed="'+(!!on)+'" aria-label="'+(on?'Открепить':'Закрепить')+'">'+lockI(on)+'</button>':'')+'</div>';
+  };
+  let h='<div class="wg"><div></div><div class="gh">Завтрак</div><div class="gh">Обед</div><div class="gh">Ужин</div>';
+  for(let d=0;d<=5;d++){
+    h+='<div class="gd" style="background:'+DAYC[d]+'"><b>'+DS[d]+'</b><span>'+dateOf(d).getDate()+'</span></div>';
+    h+=cell(mealOf(d,'Завтрак'),'Завтрак',d>=1?'b'+(d-1):'',d,'Завтрак');
+    h+=cell(mealOf(d,'Обед'),'Обед','',d,'Обед');
+    h+=cell(mealOf(d,'Ужин'),'Ужин',d<=4?'c'+d:'',d,'Ужин');
+  }
+  h+='</div><p class="small mut" style="line-height:1.45;margin:10px 2px 0">Обед повторяет вчерашний ужин. Замок закрепляет блюдо: кнопка «Пересобрать остальное» его не тронет. Закрепите, что вам обоим нравится, и пересоберите остальное.</p>';
+  h+='<div class="act-row" style="margin-top:12px"><button class="btn alt" data-act="lockall">Закрепить всё</button><button class="btn alt" data-act="unlockall">Снять замки</button></div>';
   return h;
 }
 function cookDay(d,slot){return slot==='Обед'?d-1:d;}
@@ -564,12 +615,14 @@ function viewDay(){
   } else {
     h+='<div class="free-card"><h2>Свободный ужин</h2><p>Идёте куда-то или заказываете доставку. Готовить не нужно, остатки с четверга съели на обеде.</p><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="53" r="45" fill="rgba(16,38,26,.2)"/><circle cx="50" cy="50" r="45" fill="#fff"/><circle cx="50" cy="50" r="33" fill="#FFF7DC" stroke="#EADFB5"/><path d="M42,30 v14 a4,4 0 0 0 8,0 v-14 M46,44 v28 M62,30 q-8,8 -2,24 h2 v18" stroke="#10261A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
   }
-  const dtc=(who,nm)=>{const df=t.k-nm,c=Math.abs(df)<=nm*.1?'ok':'warn';return '<span class="chip '+c+'">'+who+' '+(df>=0?'+':'−')+fmt(Math.abs(df))+'</span>';};
-  h+='<div class="chips"><span class="chip">Весь день '+fmt(t.k)+' ккал</span>'+dtc('Максим',S.norms.m)+dtc('Даша',S.norms.d)+'<span class="chip">Белка '+Math.round(t.P)+' г</span></div>';
+  const pk=(who,nm,f)=>{const k=t.k*f,df=k-nm,c=Math.abs(df)<=nm*.08?'ok':'warn';return '<span class="chip '+c+'">'+who+' '+fmt(k)+' из '+fmt(nm)+'</span>';};
+  h+='<div class="chips"><span class="chip">Базовая порция '+fmt(t.k)+' ккал</span></div><div class="chips" style="margin-top:6px">'+pk('Максим',S.norms.m,fM())+pk('Даша',S.norms.d,fD())+'<span class="chip">Белка '+Math.round(t.P)+' г</span></div>';
   h+='<div class="rows">';
   if(slot==='Завтрак'&&d>=1)h+=rowHtml(S.bf[d-1],'Завтрак · на двоих','b'+(d-1),0,'готовится вечером '+REC[S.bf[d-1]].ev+' мин');
-  else if(ids.length){const cd=cookDay(d,slot),c=S.cook[cd];
-    h+=rowHtml(c.m,'Основное','m'+cd,0)+rowHtml(c.s,'Гарнир','s'+cd,1)+rowHtml(c.l,'Салат','l'+cd,2);}
+  else if(ids.length){const cd=cookDay(d,slot),c=S.cook[cd],lunch=slot==='Обед';
+    const mn=r=>REC[r].pr>0?'разогреть '+REC[r].ev+' мин':(lunch?'вчерашний, разогреть '+REC[r].ev+' мин':'готовить '+REC[r].ev+' мин');
+    const sd=r=>lunch?'приготовлено вчера вечером':'готовить '+REC[r].ev+' мин, хватит и на завтра';
+    h+=rowHtml(c.m,'Основное','m'+cd,0,mn(c.m))+rowHtml(c.s,'Гарнир','s'+cd,1,sd(c.s))+rowHtml(c.l,'Салат','l'+cd,2,sd(c.l));}
   h+='</div>';
   if(ids.length&&slot!=='Завтрак'){const cd=cookDay(d,slot);
     h+='<p class="small mut" style="margin:12px 4px 0;line-height:1.45">'+(slot==='Ужин'?'Эта порция станет обедом: '+(DN[d+1]||'').toLowerCase()+'.':'Это вчерашний ужин: '+DN[d-1].toLowerCase()+'.')+' Замена блюда меняет оба приёма.'+(slot==='Ужин'?' Вечером у плиты ≈ '+eveningMin(cd)+' мин.':'')+(cd===0?' Воскресенье: заготовка на неделю ≈ '+sundayPrep()+' мин.':'')+'</p>';}
@@ -727,18 +780,19 @@ function setDay(d,slot){const dir=d>=S.day?'f':'b';go(()=>{enter=true;S.day=d;if
 function generate(){
   const mains=ofType('Основное'),sides=ofType('Гарнир'),sals=ofType('Салат'),brs=ofType('Завтрак');
   let best=null,bs=-1e9;const sh=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
-  const norm=(S.norms.m+S.norms.d)/2;
-  for(let t=0;t<250;t++){
+  const norm=(S.norms.m+S.norms.d)/2,L=S.lock||{};
+  for(let t=0;t<300;t++){
     const m=sh(mains).slice(0,5),s=sh(sides).slice(0,5),l=sh(sals).slice(0,5),b=sh(brs).slice(0,5);
-    const cats={};m.forEach(i=>cats[REC[i].c]=(cats[REC[i].c]||0)+1);
+    const cook=[0,1,2,3,4].map(j=>L['c'+j]?S.cook[j]:{m:m[j],s:s[j],l:l[j]}),bf=[0,1,2,3,4].map(j=>L['b'+j]?S.bf[j]:b[j]);
+    const cats={};cook.forEach(c=>cats[REC[c.m].c]=(cats[REC[c.m].c]||0)+1);
     if(Math.max(...Object.values(cats))>2)continue;
-    if(!m.some(i=>REC[i].c==='Рыба'||REC[i].c==='Морепродукты'))continue;
-    const old=S;S=Object.assign({},old,{cook:m.map((x,j)=>({m:x,s:s[j],l:l[j]})),bf:b});
+    if(!cook.some(c=>REC[c.m].c==='Рыба'||REC[c.m].c==='Морепродукты'))continue;
+    const old=S;S=Object.assign({},old,{cook,bf});
     const cost=planCost(),sp=sundayPrep();let ev=0;for(let d=0;d<5;d++)ev+=Math.max(0,eveningMin(d)-30);
-    let bev=0;b.forEach(i=>{bev+=Math.max(0,REC[i].ev-15);});let avg=0;for(let d=1;d<=4;d++)avg+=dayTotals(d).k;avg/=4;
-    const st={cook:S.cook,bf:b};S=old;
+    let bev=0;bf.forEach(i=>{bev+=Math.max(0,REC[i].ev-15);});const avg=avgDay();
+    S=old;
     const sc=-Math.max(0,cost-BUDGET)/20-Math.max(0,sp-180)*5-ev*20-bev*20-Math.abs(avg-norm)/10;
-    if(sc>bs){bs=sc;best=st;}
+    if(sc>bs){bs=sc;best={cook,bf};}
   }
   return best;
 }
@@ -755,6 +809,12 @@ document.addEventListener('click',e=>{
     case 'gotoday':setDay(+v);break;
     case 'slot':{const o=['Завтрак','Обед','Ужин'];const dir=o.indexOf(v)>=o.indexOf(S.slot)?'f':'b';go(()=>{enter=true;S.slot=v;save();render();},dir);break;}
     case 'fav':{const i=+v;if(S.fav[i])delete S.fav[i];else S.fav[i]=1;save();const sc=document.getElementById('sheet')?document.getElementById('sheet').querySelector('.bd').scrollTop:0;render();break;}
+    case 'wview':S.wview=v;save();enter=true;render();break;
+    case 'scale':S.scale=S.scale===false;save();render();break;
+    case 'lock':if(S.lock[v])delete S.lock[v];else S.lock[v]=1;save();render();break;
+    case 'lockall':['b0','b1','b2','b3','b4','c0','c1','c2','c3','c4'].forEach(k=>S.lock[k]=1);save();render();break;
+    case 'unlockall':S.lock={};save();render();break;
+    case 'gopen':{const d=+el.dataset.d;go(()=>{S.day=d;S.tab='day';S.slot=v;enter=true;save();render();window.scrollTo(0,0);},'f');break;}
     case 'swap':swapQ={q:'',c:''};sheet={kind:'swap',role:v};paintLayer();break;
     case 'detail':sheet={kind:'detail',id:+v};paintLayer();break;
     case 'close':closeSheet();break;
@@ -762,7 +822,7 @@ document.addEventListener('click',e=>{
     case 'undo':if(undo){roleInfo(undo.role).set(undo.prev);undo=null;save();}toast=null;render();break;
     case 'place':{const i=sheet.id,r=REC[i],d=+v;if(r.t==='Завтрак')S.bf[d-1]=i;else S.cook[d][r.t==='Основное'?'m':r.t==='Гарнир'?'s':'l']=i;save();sheet=null;showToast('Поставлено на '+DN[d].toLowerCase(),false);render();break;}
     case 'regen':{const g=generate();if(g){go(()=>{S.cook=g.cook;S.bf=g.bf;S.chk={};enter=true;save();showToast('Неделя собрана заново',false);render();},'f');}break;}
-    case 'reset':{const d=defaultState();go(()=>{S.cook=d.cook;S.bf=d.bf;S.chk={};enter=true;save();render();},'b');break;}
+    case 'reset':{const d=defaultState();go(()=>{S.cook=d.cook;S.bf=d.bf;S.chk={};S.lock={};enter=true;save();render();},'b');break;}
     case 'chk':if(S.chk[v])delete S.chk[v];else S.chk[v]=1;save();render();try{navigator.vibrate&&navigator.vibrate(8);}catch(e2){}break;
     case 'shopopen':shopOpen=shopOpen===v?null:v;render();break;
     case 'uncheck':S.chk={};save();render();break;
