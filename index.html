@@ -499,6 +499,7 @@ const shared=()=>{const o={};SH.forEach(k=>o[k]=S[k]);return o;};
 const sharedLink=()=>{const o=shared();delete o.hist;return o;};
 function save(){
   try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  if(S.sy)gKick();
   if(dbDoc){clearTimeout(syncT);syncT=setTimeout(()=>{const j=JSON.stringify(shared());if(j===lastSent)return;lastSent=j;writing=writing.then(()=>dbDoc.set({json:j,at:Date.now()})).catch(()=>{});},350);}
 }
 async function initSync(){
@@ -515,6 +516,58 @@ async function initSync(){
         const a=document.activeElement;if(!(a&&a.tagName==='INPUT'))render();}catch(e){}
     });
   }catch(e){}
+}
+
+/* ---------- общий план через Google Apps Script ---------- */
+const MAPK=['fav','chk','sub','home','lock','rate','ban','price','norms'],WHO={m:'Максим',d:'Даша'};
+let gBusy=false,gPend=false,gT=null;const gst={ok:null,at:0};
+function flat(){const o={};SH.forEach(k=>{const v=S[k];if(MAPK.includes(k)&&v&&typeof v==='object'){Object.keys(v).forEach(e=>{o[k+'|'+e]=JSON.stringify(v[e]);});}else o[k]=JSON.stringify(v===undefined?null:v);});return o;}
+function applyRow(ck,val){const i=ck.indexOf('|');
+  if(i<0){S[ck]=val;if(ck==='norms')S.norms=fixNorms(S.norms);return;}
+  const k=ck.slice(0,i),e=ck.slice(i+1);if(!S[k]||typeof S[k]!=='object')S[k]={};
+  if(val===undefined)delete S[k][e];else S[k][e]=val;}
+async function gcall(body){const u=S.sy.u;
+  if(body){const r=await fetch(u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});return r.json();}
+  const r=await fetch(u+(u.indexOf('?')>=0?'&':'?')+'c='+encodeURIComponent(S.sy.c)+'&since='+(S.sy.since||0)+'&_='+Date.now());return r.json();}
+function gKick(){clearTimeout(gT);gT=setTimeout(gsync,700);}
+async function gsync(){
+  if(!S.sy)return;if(gBusy){gPend=true;return;}
+  gBusy=true;let changed=false,other=null;
+  try{
+    if(!S.fb)S.fb={};if(!S.ts)S.ts={};
+    const first=!S.sy.init,rj=await gcall();if(!rj||!rj.ok)throw new Error(rj&&rj.error||'bad');
+    const cur=flat();let mx=S.sy.since||0;
+    rj.rows.forEach(row=>{const ck=row.k;mx=Math.max(mx,row.st);
+      if((S.ts[ck]||0)>=row.st)return;
+      if(!first&&cur[ck]!==S.fb[ck])return;
+      let val;if(!row.d){try{val=JSON.parse(row.v);}catch(e){return;}}
+      applyRow(ck,val);S.ts[ck]=row.st;if(row.d)delete S.fb[ck];else S.fb[ck]=row.v;
+      changed=true;if(row.u&&row.u!==S.me&&(ck==='cook'||ck==='bf'))other=row.u;});
+    if(first&&S.sy.adopt){const c3=flat();['cook','bf','lock','wk','scale','rep','hist','mp'].forEach(k=>{if(!rj.rows.some(r=>r.k===k))S.fb[k]=c3[k];});}
+    S.sy.since=mx;S.sy.init=true;delete S.sy.adopt;
+    const c2=flat(),set=[];
+    Object.keys(c2).forEach(ck=>{if(c2[ck]!==S.fb[ck]&&c2[ck].length<45000)set.push({k:ck,v:c2[ck]});});
+    Object.keys(S.fb).forEach(ck=>{if(ck.indexOf('|')>0&&!(ck in c2))set.push({k:ck,d:1});});
+    if(set.length){const pr=await gcall({c:S.sy.c,u:S.me||'',set});if(!pr||!pr.ok)throw new Error('push');
+      const by={};pr.st.forEach(x=>{by[x.k]=x.st;});
+      set.forEach(it=>{S.ts[it.k]=by[it.k]||S.ts[it.k];if(it.d)delete S.fb[it.k];else S.fb[it.k]=it.v;});}
+    gst.ok=true;gst.at=Date.now();
+  }catch(e){gst.ok=false;}
+  gBusy=false;
+  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  if(changed){const a=document.activeElement;if(!(a&&a.tagName==='INPUT')){enter=false;render();}if(other){showToast(WHO[other]+' обновил(а) план',false);paintLayer();}}
+  else if(S.tab==='week'&&!sheet&&!ck){const a=document.activeElement;if(!(a&&a.tagName==='INPUT')){const el=document.getElementById('syncst');if(el)el.textContent=syncTxt();}}
+  if(gPend){gPend=false;gKick();}
+}
+const syncTxt=()=>gst.ok===false?'Нет связи, повторю позже':gst.ok?'Синхронизировано в '+new Date(gst.at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'Подключаюсь…';
+setInterval(()=>{if(S.sy&&!document.hidden)gsync();},20000);
+document.addEventListener('visibilitychange',()=>{if(S.sy&&!document.hidden)gsync();});
+function syncCard(){
+  let h='<div class="warn" style="background:var(--soft);color:var(--ink);margin-top:12px"><b>Общий план с '+(S.me==='d'?'Максимом':'Дашей')+'</b>';
+  h+='<div class="small mut" style="margin-top:6px;line-height:1.45">Кто сейчас с телефоном</div><div class="snd">'+['m','d'].map(k=>'<button data-act="me" data-v="'+k+'" class="'+(S.me===k?'on':'')+'">'+WHO[k]+'</button>').join('')+'</div>';
+  if(S.sy){h+='<div class="small mut" style="margin-top:10px;line-height:1.45">План и оценки общие на двух телефонах. <span id="syncst">'+syncTxt()+'</span></div><div class="act-row" style="margin-top:10px"><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="syncnow">Обновить</button><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="invite">Позвать '+(S.me==='d'?'Максима':'Дашу')+'</button><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="syncoff">Отключить</button></div>';}
+  else h+='<div class="small mut" style="margin-top:10px;line-height:1.45">Сейчас план и оценки лежат на каждом телефоне отдельно. Подключите общее хранилище, и у вас с Дашей будет один план.</div><div class="act-row" style="margin-top:10px"><button class="btn red" style="height:42px;font-size:14px;padding:0 16px" data-act="syncopen">Подключить общий план</button></div>';
+  return h+'</div>';
 }
 
 /* ---------- даты ---------- */
@@ -697,6 +750,7 @@ function viewWeek(){
   h+='<div class="act-row" style="margin-top:12px"><button class="btn '+(confirmClose?'red':'alt')+'" style="height:42px;font-size:14px;padding:0 16px" data-act="closeweek">'+(confirmClose?'Точно закрыть? Нажмите ещё раз':'Закрыть неделю и собрать новую')+'</button>'+(hl.length?'<button class="btn alt" style="height:42px;font-size:14px;padding:0 16px" data-act="histopen">'+(histOpen?'Скрыть историю':'История недель')+'</button>':'')+'</div>';
   if(histOpen&&hl.length)h+='<div class="hist">'+hl.slice(0,10).map(x=>'<div><b>'+wkTxt(x.w)+'</b><br>'+x.cook.map(c=>esc(c.m)).join('; ')+'</div>').join('')+'</div>';
   h+='</div>';}
+  h+=syncCard();
   h+='<div class="warn" style="background:var(--soft);color:var(--ink);margin-top:12px"><b>Звук таймера</b><div class="snd">'+Object.keys(SND).map(k=>'<button data-act="snd" data-v="'+k+'" class="'+((S.snd||'hen')===k?'on':'')+'">'+SND[k].n+'</button>').join('')+'<button data-act="snd" data-v="off" class="'+(S.snd==='off'?'on':'')+'">Без звука</button></div><div class="small mut" style="margin-top:8px">Нажмите на название, чтобы послушать.</div></div>';
   h+='<div class="warn" style="background:var(--soft);color:var(--mut);margin-top:12px"><b style="color:var(--ink)">Норма на день, ккал</b><div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap"><label>Максим <input type="number" inputmode="numeric" id="nm" data-act="norm" data-v="m" value="'+S.norms.m+'" style="width:96px;margin-left:4px"></label><label>Даша <input type="number" inputmode="numeric" id="nd" data-act="norm" data-v="d" value="'+S.norms.d+'" style="width:96px;margin-left:4px"></label></div><div style="margin-top:8px">Калории в блюдах даны на базовую порцию. Размер порции подгоняется под норму, переключатель выше.</div></div>';
   return h;
@@ -823,6 +877,12 @@ function roleInfo(role){
 function sheetHtml(){
   if(!sheet)return'';
   const head=(sub,title)=>'<div class="shade" data-act="close"></div><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><div class="grab"></div><div class="hd" id="shd"><div style="min-width:0"><div class="small mut" style="font-weight:600">'+esc(sub)+'</div><h2 style="font-size:19px;margin-top:3px">'+esc(title)+'</h2></div><button class="rb" data-act="close" aria-label="Закрыть">'+IC.close+'</button></div>';
+  if(sheet.kind==='who'){
+    return head('Первый запуск','Кто вы?')+'<div class="bd"><p class="small mut" style="line-height:1.45;margin-top:2px">Телефон запомнит выбор. Ваши порции будут первыми, а в общем плане будет видно, кто его менял.</p><div class="act-row" style="margin-top:14px"><button class="btn red" data-act="whoset" data-v="m">Я Максим</button><button class="btn red" data-act="whoset" data-v="d">Я Даша</button></div></div></div>';
+  }
+  if(sheet.kind==='sync'){
+    return head('Один раз, около 5 минут','Общий план с Дашей')+'<div class="bd"><ol style="margin:0;padding-left:20px;font-size:14px;line-height:1.5"><li style="margin-bottom:6px">Откройте <b>sheets.new</b> на компьютере: создастся пустая Google Таблица. Назовите её «Заготовка».</li><li style="margin-bottom:6px">Меню <b>Расширения → Apps Script</b>. Удалите всё и вставьте код из файла Code.gs, который я прислал. Сохраните.</li><li style="margin-bottom:6px">Справа вверху <b>Начать развёртывание → Новое развёртывание</b>, тип «Веб-приложение». Выполнять от своего имени, доступ «У всех». Нажмите «Развернуть» и разрешите доступ.</li><li style="margin-bottom:6px">Скопируйте <b>URL веб-приложения</b> и вставьте ниже. Код доступа написан в начале файла Code.gs (строка const CODE).</li></ol><label for="gu" style="display:block;margin-top:12px;font-weight:700">URL веб-приложения</label><input type="text" id="gu" placeholder="https://script.google.com/macros/s/…/exec" style="width:100%"><label for="gc" style="display:block;margin-top:10px;font-weight:700">Код доступа</label><input type="text" id="gc" placeholder="10 символов" style="width:100%"><div class="act-row" style="margin-top:14px"><button class="btn red" data-act="syncon" data-v="adopt">Подключить, план возьму у Даши</button><button class="btn alt" data-act="syncon" data-v="mine">Подключить, мой план главный</button></div><p class="small mut" style="line-height:1.45">После подключения нажмите «Позвать Дашу»: она откроет ссылку на своём телефоне, и всё настроится само.</p></div></div>';
+  }
   if(sheet.kind==='master'){
     const mp=masterPlan(),dn2=mpDone();let tot=0,dd=0;mp.stages.forEach(x=>x.items.forEach(z=>{tot++;if(dn2[z.key])dd++;}));
     let h=head('Воскресенье, '+dtxt(0),'Мастер-план заготовки')+'<div class="bd"><div class="kv" style="grid-template-columns:repeat(3,1fr)"><div><b>≈ '+mp.total+'</b>минут</div><div><b>'+mp.n+'</b>'+plu(mp.n,['заготовка','заготовки','заготовок'])+'</div><div><b>'+dd+'/'+tot+'</b>сделано</div></div>';
@@ -859,7 +919,7 @@ function sheetHtml(){
     h+='<p class="small mut" style="line-height:1.45">На одну порцию. Рецепт на '+r.p+' порции'+(isB?' (на двоих)':' (ужин и обед на двоих)')+'. '+(r.bt?'Заготовка в воскресенье ≈ '+r.pr+' мин, затем в морозилку. Вечером из морозилки в духовку: '+r.ov[0]+' °C, '+r.ov[1]+' мин.':(r.pr?'Заготовка '+r.pr+' мин. ':'')+'Вечером '+r.ev+' мин.')+'</p>';
     {const ww=weeksWith(r.n);h+='<div class="rbox"><div class="sec" style="margin:0 0 6px">Оценка</div>'+starsHtml(i)+'<div class="small mut" style="margin-top:8px;line-height:1.4">'+(ww.length?'Готовили на '+ww.length+' '+(ww.length===1?'неделе':'неделях')+', последний раз '+wkTxt(ww[ww.length-1])+'. ':'В плане ещё не было. ')+'Оценка общая для вас с Дашей.</div><button class="nev '+(banned(i)?'on':'')+'" data-act="ban" data-v="'+i+'">'+(banned(i)?'Исключено из плана. Вернуть':'Больше не предлагать')+'</button></div>';}
     if(r.st&&r.st.length)h+='<div class="act-row" style="margin-top:6px"><button class="btn red" data-act="cook" data-v="'+i+'">'+IC.flame+(r.bt?'Вечером по шагам':'Готовить по шагам')+'</button>'+favBtn(i)+'</div>';
-    h+='<div class="sec">Продукты на весь рецепт</div><table class="ing">'+r.i.map(([k,g])=>'<tr><td>'+esc(ing(k).n)+'</td><td>'+g+' г</td></tr>').join('')+'</table>';
+    h+='<div class="sec">Продукты на весь рецепт</div><table class="ing">'+r.i.map(([k,g])=>'<tr><td>'+esc(ing(k).n)+'</td><td>'+q5(g)+' г</td></tr>').join('')+'</table><p class="small mut" style="margin-top:6px">Граммы с учётом ваших порций, как в списке покупок и в шагах.</p>';
     const ol=a=>'<ol style="margin:0;padding-left:20px;font-size:14px;line-height:1.5">'+a.map(x=>'<li style="margin-bottom:6px">'+esc(fq(x,r))+'</li>').join('')+'</ol>';
     if(r.bt){h+='<div class="sec">Воскресенье: заготовка</div>'+ol(r.bs.map(x=>x[1]))+'<p class="small mut">В морозилке хранится до 3 месяцев, по плану блюдо уходит за 5 дней. В воскресный ужин заготовку не морозим, а сразу запекаем.</p>';h+='<div class="sec">Вечером: из морозилки в духовку</div>'+ol(r.st)+'<p class="small mut">Время и температуру подстраивайте под свою духовку.</p>';}
     else if(r.st&&r.st.length)h+='<div class="sec">'+(r.c==='Рыба'||r.c==='Морепродукты'?'Вечером: свежая в день ужина':'Как готовить')+'</div>'+ol(r.st)+'<p class="small mut">Базовая последовательность. Время и температуру подстраивайте под свою плиту.</p>';
@@ -1009,6 +1069,18 @@ document.addEventListener('click',e=>{
     case 'swap':swapQ={q:'',c:''};sheet={kind:'swap',role:v};paintLayer();break;
     case 'detail':sheet={kind:'detail',id:+v};paintLayer();break;
     case 'master':sheet={kind:'master'};paintLayer();break;
+    case 'me':S.me=v;save();enter=false;render();break;
+    case 'whoset':S.me=v;save();sheet=null;paintLayer();render();break;
+    case 'syncopen':sheet={kind:'sync'};paintLayer();break;
+    case 'syncon':{const u=(document.getElementById('gu').value||'').trim(),c=(document.getElementById('gc').value||'').trim();
+      if(!/^https:\/\/script\.google\.com\//.test(u)||!c){showToast('Проверьте адрес и код',false);paintLayer();break;}
+      S.sy={u,c,since:0,init:false,adopt:v==='adopt'};S.fb={};S.ts={};save();sheet=null;paintLayer();showToast('Подключаю общий план…',false);paintLayer();gsync();break;}
+    case 'syncnow':showToast('Обновляю…',false);paintLayer();gsync();break;
+    case 'syncoff':S.sy=null;S.fb={};S.ts={};save();showToast('Общий план отключён',false);enter=false;render();break;
+    case 'invite':{const o={u:S.sy.u,c:S.sy.c,me:S.me==='d'?'m':'d'};const url=location.href.split('#')[0]+'#s='+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+      const done=()=>{showToast('Ссылка скопирована. Отправьте её '+(S.me==='d'?'Максиму':'Даше'),false);paintLayer();};
+      if(navigator.share){navigator.share({title:'Заготовка: общий план',url}).catch(()=>{});}else if(navigator.clipboard){navigator.clipboard.writeText(url).then(done).catch(()=>{showToast('Не удалось скопировать',false);paintLayer();});}
+      break;}
     case 'mpchk':{const dn=mpDone();if(dn[v])delete dn[v];else dn[v]=1;save();paintLayer();try{navigator.vibrate&&navigator.vibrate(8);}catch(e2){}break;}
     case 'close':closeSheet();break;
     case 'pick':{const ri=roleInfo(sheet.role),prev=ri.get();ri.set(+v);undo={role:sheet.role,prev};const nm=REC[+v].n;save();sheet=null;showToast('Заменено на «'+nm+'»',true);render();break;}
@@ -1073,6 +1145,13 @@ function endSw(e){
 }
 document.addEventListener('pointerup',endSw);document.addEventListener('pointercancel',()=>{if(sw&&sw.s){sw.s.style.transition='transform 300ms var(--spring)';sw.s.style.transform='';}sw=null;});
 
+(function importSync(){
+  try{const m=/^#s=(.+)$/.exec(location.hash);if(!m)return;
+    const o=JSON.parse(decodeURIComponent(escape(atob(m[1]))));
+    if(o&&o.u&&o.c){S.sy={u:o.u,c:o.c,since:0,init:false};S.fb={};S.ts={};if(o.me)S.me=o.me;save();history.replaceState(null,'',location.pathname+location.search);
+      setTimeout(()=>{showToast('Общий план подключён',false);paintLayer();gsync();},300);}
+  }catch(e){}
+})();
 (function importHash(){
   try{const m=/^#p=(.+)$/.exec(location.hash);if(!m)return;
     const o=JSON.parse(decodeURIComponent(escape(atob(m[1]))));
@@ -1080,8 +1159,9 @@ document.addEventListener('pointerup',endSw);document.addEventListener('pointerc
       setTimeout(()=>{showToast('План из ссылки загружен',false);paintLayer();},300);}
   }catch(e){}
 })();
-window.__z={sundayPrep,blanksOf,masterPlan,fq,REC,gs:()=>S};
-render();initSync();
+window.__z={sundayPrep,blanksOf,masterPlan,fq,REC,gs:()=>S,gsync};
+if(!S.me)sheet={kind:'who'};
+render();initSync();if(S.sy)gsync();paintLayer();
 })();
 
 </script>
