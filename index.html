@@ -485,7 +485,178 @@ function defaultState(){
 S=Object.assign({day:null,slot:'Ужин',tab:'week',lib:{t:'Основное',q:'',c:'',fav:false}},load()||defaultState());
 const fixNorms=n=>(!n||(n.m===2000&&n.d===1800))?{m:1800,d:1500}:n;
 S.norms=fixNorms(S.norms);if(!S.lock)S.lock={};if(S.scale===undefined)S.scale=true;if(!S.wview)S.wview='cards';
-REC.forEach(r=>{if(r.t==='Гарнир'&&r.st&&r.st.length)r.st=r.st.concat('Половину уберите в контейнер: это завтрашний обед.');});
+// Приблизительная клетчатка на 100 г съедобного продукта.
+// Крупы и чечевица сухие, консервированные бобовые — без жидкости.
+const FIBER={kal:4.1,koh:3.6,fen:3.1,buck:10,rice:1.3,brr:3.6,cus:5,bul:12.5,oat:10.1,qui:7,len:10.7,chk:6.4,kid:6.3,cor:2,olv:3.2,tmc:1.2,tpa:4.1,onion:1.7,gar:2.1,carrot:2.8,cab:2.5,nap:1.2,beet:2.8,zuc:1,spi:2.2,aru:1.6,rom:2.1,bro:2.6,mush:1,rad:1.6,swp:3,pum:.5,cel:1.6,avo:6.7,cuc:.5,tom:1.2,pep:2.1,egp:3,gb:2.7,pea:5.7,asp:2.1,lek:1.8,apple:2.4,ora:2.4,ban:2.6,lime:2.8,lem:2.8,kiw:3,grf:1.6,pear:3.1,pom:4,man:1.6,blu:2.4,prs:3.3,dil:2.1,cil:2.8,gin:2,wal:6.7,alm:12.5,ses:11.8,psd:6,tah:9.3,soy:.8,mst:4};
+const PRODUCE=new Set('kal koh fen tmc onion carrot cab nap beet zuc spi aru rom bro rad pum cel avo cuc tom pep egp gb asp lek apple ora ban kiw grf pear pom man blu'.split(' '));
+const WHOLE_GRAIN=new Set(['buck','brr','bul','oat','qui']);
+const PULSES=new Set(['len','chk','kid']);
+const SIDE_DRY={buck:140,rice:140,brr:140,cus:140,bul:140,qui:140,len:140};
+// Количество в контрольной порции NIH ODS. Масса в граммах.
+// Используем только сопоставимые позиции; прочие значения остаются неизвестными.
+const MICRO_DATA=[
+  {name:'Кальций',unit:'мг',ref:'Calcium',goal:[1000,1000],foods:{cot:[138,226],moz:[333,42.5]}},
+  {name:'Железо',unit:'мг',ref:'Iron',goal:[8,18],foods:{kid:[2,125],chk:[2,82]}},
+  {name:'Магний',unit:'мг',ref:'Magnesium',goal:[420,310],foods:{psd:[156,28.35],alm:[80,28.35],ban:[32,118],mlk:[27,244]}},
+  {name:'Калий',unit:'мг',ref:'Potassium',goal:[3400,2600],foods:{ban:[422,118],spi:[334,60],tom:[292,123],yog:[240,170],apple:[195,182]}},
+  {name:'Йод',unit:'мкг',ref:'Iodine',goal:[150,150],foods:{yog:[87,170]},cooked:{cod:[146,85]}},
+  {name:'Витамин D',unit:'мкг',ref:'VitaminD',goal:[15,15],foods:{},cooked:{trt:[16.2,85]}},
+  {name:'Витамин C',unit:'мг',ref:'VitaminC',goal:[90,75],foods:{pep:[95,74],ora:[70,131],kiw:[64,69],grf:[39,123],tom:[17,123]},cooked:{bro:[51,78],cab:[28,75]}},
+  {name:'Фолаты (B9)',unit:'мкг DFE',ref:'folate',goal:[400,400],foods:{spi:[58,30],rom:[64,47],avo:[59,73]}},
+  {name:'Витамин B12',unit:'мкг',ref:'VitaminB12',goal:[2.4,2.4],foods:{mlk:[1.3,244]},cooked:{sal:[2.6,85],egg:[.5,50],tkb:[.3,85]}}
+];
+const RAW_MICRO_DISH=/^(Овсянка overnight|Йогурт с|Творог с)/;
+const RAW_SALAD_COOKED=new Set(['egg','asp','shr','sqd','pea','gb','pum','egp']);
+const COOKED_WEIGHT_RATIO={cod:.8,trt:.8,sal:.8,tkb:.8,egg:.95,bro:.9,cab:.9};
+function microEstimate(r,entry){
+  let amount=0,known=0;
+  for(const [k,g] of r.i){
+    const rawDish=r.t==='Салат'?!RAW_SALAD_COOKED.has(k)&&!r.st[0].startsWith('Овощи нарежьте крупно'):RAW_MICRO_DISH.test(r.n);
+    const stable=['cot','moz','kid','chk','psd','alm','mlk','yog'].includes(k);
+    const raw=(rawDish||stable)&&entry.foods[k];
+    const cooked=!rawDish&&entry.cooked?.[k];
+    if(raw||cooked){
+      const [value,weight]=raw||cooked;
+      amount+=value/weight*g*(cooked?COOKED_WEIGHT_RATIO[k]:1)/r.p;
+      known++;
+    }
+  }
+  return {amount,known,total:r.i.length};
+}
+// Новые блюда добавляются в конец, чтобы сохранить номера в старых планах.
+const NEW_RECIPES=[
+  ['Форель с брокколи и кунжутом','Основное','Рыба',4,12,[['trt',600],['bro',360],['ses',16],['oo',12]],['Брокколи разберите на небольшие соцветия, перемешайте с половиной масла и выложите на противень.','Запекайте брокколи 10 минут при 200 °C.','Филе выложите рядом, смажьте оставшимся маслом и посыпьте кунжутом. Запекайте ещё 12–16 минут, до 63 °C в толстой части рыбы.']],
+  ['Треска с нутом, томатами и перцем','Основное','Рыба',4,15,[['cod',600],['chk',300],['tmc',350],['pep',240],['oo',16]],['Перец нарежьте кубиками, обжаривайте в масле 5 минут. Нут промойте и дайте стечь.','Добавьте нут и томаты, тушите 8 минут.','Выложите филе в соус и готовьте под крышкой 10–15 минут, до 63 °C в толстой части рыбы.']],
+  ['Гречка с нутом и брокколи','Гарнир','Крупа',4,12,[['buck',120],['chk',200],['bro',280],['oo',12]],['Промойте гречку. Залейте водой по инструкции на пачке и варите под крышкой до мягкости.','Брокколи разберите на небольшие соцветия и отварите 4–5 минут. Нут промойте и обсушите.','Смешайте гречку с брокколи, нутом и оливковым маслом.']],
+  ['Булгур с красной фасолью и перцем','Гарнир','Крупа',4,12,[['bul',120],['kid',240],['pep',240],['oo',12]],['Булгур сварите по инструкции на пачке.','Фасоль промойте и обсушите. Перец нарежьте кубиками, обжарьте в масле 5 минут.','Добавьте фасоль и готовый булгур, перемешайте и прогрейте.']],
+  ['Перец с нутом, шпинатом и йогуртом','Салат','Овощной',4,10,[['pep',250],['chk',240],['spi',100],['yog',160],['lem',15]],['Подготовьте продукты.']],
+  ['Красная фасоль с томатами и тыквенными семечками','Салат','Овощной',4,10,[['kid',250],['tom',300],['psd',28],['prs',12],['oo',12]],['Подготовьте продукты.']],
+  ['Йогурт с киви, овсянкой и тыквенными семечками','Завтрак','Каши',2,8,[['yog',400],['kiw',160],['oat',70],['psd',24]],['Смешайте йогурт с овсянкой и уберите в холодильник на ночь.','Киви очистите и нарежьте кубиками. Добавьте к овсянке и посыпьте семечками.']],
+  ['Творог с апельсином, йогуртом и миндалём','Завтрак','Творог',2,8,[['cot',300],['ora',260],['yog',150],['alm',28]],['Разомните творог и смешайте с йогуртом.','Очистите апельсин и нарежьте мякоть. Миндаль порубите, добавьте вместе с апельсином.']]
+];
+for(const [n,t,c,p,ev,i,st] of NEW_RECIPES){
+  idByName[n]=REC.length;
+  REC.push({n,t,c,p,ev,i,st,pr:0,al:[]});
+}
+// Источники отмечаются по составу. Процент суточной нормы требует
+// полного справочника содержания, включая потери при приготовлении.
+const MICRO_SOURCES=[
+  ['Витамин A','carrot swp pum spi kal rom',30],
+  ['Витамин C','pep bro cab kal kiw ora grf',30],
+  ['Витамин D','sal trt mac pink hal egg',40],
+  ['Витамин B12','sal trt mac pink cod pol shr msl egg mlk yog',40],
+  ['Фолаты (B9)','len chk kid spi asp rom avo',30],
+  ['Кальций','mlk yog fet moz par kal',25],
+  ['Железо','msl len chk kid psd tkg spi',30],
+  ['Магний','psd alm wal buck bul oat qui len',20],
+  ['Калий','avo swp ban len kid spi sal',50],
+  ['Йод','cod pol shr msl',50],
+  ['Цинк','tkg cht tkb psd ses len chk',30],
+  ['Витамин E','alm avo oo',15],
+  ['Витамин K','kal spi bro rom cab',25]
+].map(([name,keys,grams])=>({name,keys:new Set(keys.split(' ')),grams}));
+const SALAD_CUT={
+  cab:'тонко нашинкуйте',nap:'тонко нашинкуйте',carrot:'натрите на крупной тёрке',
+  beet:'натрите на крупной тёрке',cuc:'нарежьте полукружьями',tom:'нарежьте дольками',
+  pep:'нарежьте полосками',onion:'нарежьте тонкими полукольцами',rad:'нарежьте тонкими кружками',
+  cel:'нарежьте тонкими ломтиками',fen:'нарежьте тонкими полосками',koh:'очистите и нарежьте соломкой',
+  apple:'удалите сердцевину и нарежьте соломкой',pear:'удалите сердцевину и нарежьте кубиками',
+  avo:'удалите кожуру и косточку, мякоть нарежьте кубиками',ora:'очистите и нарежьте кусочками',
+  grf:'очистите дольки от плёнок',man:'очистите, отделите мякоть от косточки и нарежьте кубиками',
+  kiw:'очистите и нарежьте кубиками',rom:'порвите руками',kal:'удалите жёсткие стебли и тонко нарежьте',
+  aru:'оставьте целыми или порвите крупные листья',spi:'оставьте целыми или порвите крупные листья',
+  bro:'разберите на мелкие соцветия',fet:'раскрошите',moz:'нарежьте кубиками',
+  par:'натрите или снимите тонкую стружку',olv:'нарежьте кольцами',prs:'мелко порубите',
+  cil:'мелко порубите',dil:'мелко порубите',wal:'крупно порубите',alm:'крупно порубите',
+  pom:'отделите зёрна',blu:'оставьте целой',cot:'разомните вилкой',ses:'оставьте для посыпки',
+  psd:'оставьте для посыпки',chk:'слейте жидкость и промойте',kid:'слейте жидкость и промойте',
+  cor:'слейте жидкость',egg:'сварите вкрутую, очистите и нарежьте дольками',
+  pea:'приготовьте по инструкции на упаковке и остудите',gb:'приготовьте по инструкции на упаковке и остудите',
+  pum:'очистите, нарежьте кубиками около 2 см и запеките до мягкости',
+  zuc:'нарежьте тонкими полукружьями',egp:'нарежьте кубиками и обжарьте на антипригарной сковороде до мягкости',
+  lek:'промойте между слоями и нарежьте тонкими кольцами',
+  asp:'срежьте жёсткие концы, нарежьте кусочками и отварите до мягкости',
+  shr:'отварите до готовности, пока мякоть не станет непрозрачной, и остудите',
+  sqd:'очистите, недолго отварите до непрозрачности, остудите и нарежьте кольцами'
+};
+const SALAD_DRESS={
+  oo:'оливковое масло',lem:'сок лимона',lime:'сок лайма',mst:'горчица',
+  soy:'соевый соус',hon:'мёд',gar:'мелко натёртый чеснок',gin:'мелко натёртый имбирь',
+  yog:'йогурт',tah:'тахини'
+};
+function saladSteps(r){
+  const prep=[],dress=[];
+  const roast=r.st[0].startsWith('Овощи нарежьте крупно');
+  const roastKeys=roast?r.i.map(([k])=>k).filter(k=>['pep','zuc','egp','beet','pum'].includes(k)):[];
+  if(roastKeys.length){
+    const oil=r.i.some(([k])=>k==='oo');
+    prep.push('Овощи для запекания: '+roastKeys.map(k=>ING[k].n+' ({'+k+'})').join(', ')+'. Нарежьте кусочками около 2 см'+(oil?', перемешайте с маслом ({oo})':'')+'. Запекайте при 200 °C до мягкости, проверяя вилкой. Свёкла обычно готовится дольше остальных.');
+  }
+  r.i.forEach(([k])=>{
+    if(roastKeys.includes(k)||(roastKeys.length&&k==='oo'))return;
+    if(SALAD_DRESS[k])dress.push(SALAD_DRESS[k]+' ({'+k+'})');
+    else prep.push(ING[k].n+' ({'+k+'}) — '+(SALAD_CUT[k]||'подготовьте отдельно')+'.');
+  });
+  return ['Вымойте и обсушите свежие овощи, фрукты и зелень.',...prep,
+    ...(dress.length?['Для заправки: '+dress.join(', ')+'. Смешайте.']:[]),
+    'Соберите салат. Две порции на завтра уберите в холодильник. Заправку добавляйте перед подачей.'];
+}
+REC.forEach(r=>{
+  if(r.t==='Гарнир')r.i=r.i.map(([k,g])=>[k,Math.min(g,SIDE_DRY[k]||g)]);
+  for(const k of ['k','P','F','C'])
+    r[k]=r.i.reduce((sum,[id,g])=>sum+ING[id][k]*g/100,0)/r.p;
+  r.fiber=r.i.reduce((sum,[id,g])=>sum+(FIBER[id]||0)*g/100,0)/r.p;
+  r.produce=r.i.reduce((sum,[id,g])=>sum+(PRODUCE.has(id)?g:0),0)/r.p;
+  r.whole=r.i.some(([id,g])=>WHOLE_GRAIN.has(id)&&g/r.p>=15);
+  r.pulses=r.i.some(([id,g])=>PULSES.has(id)&&g/r.p>=(id==='len'?15:30));
+  r.micro=MICRO_DATA.map(entry=>microEstimate(r,entry));
+  if(r.t==='Салат')r.st=saladSteps(r);
+  const has=k=>r.i.some(([id])=>id===k);
+  if(r.t==='Основное'&&has('gar')&&![...r.st,...(r.bs||[]).map(x=>x[1])].some(s=>/чеснок|\{gar\}/i.test(s))){
+    const garlic='Мелко натрите чеснок ({gar}).';
+    if(r.bt==='roll'){
+      const filling=r.bs.find(x=>x[0]==='v');
+      filling[1]+=' '+garlic+' Смешайте его с начинкой.';
+    }else{
+      r.st.splice(1,0,garlic+' Добавьте его к '+(r.c==='Рыба'?'рыбе перед приготовлением.':'овощам ближе к концу приготовления.'));
+    }
+  }
+  if(r.t==='Основное'&&r.c==='Рыба'){
+    const seasoning=[has('oo')?'маслом ({oo})':'',has('lem')?'лимонным соком ({lem})':has('lime')?'соком лайма ({lime})':''].filter(Boolean);
+    r.st=r.st.map(s=>s.replace(/, сбрызните маслом и лимоном \(если есть\)/,seasoning.length?', сбрызните '+seasoning.join(' и '):'')
+      .replace('На обед она подойдёт разогретой на 1–2 минуты.','Две порции уберите в холодильник в течение 2 часов. При разогреве доведите до 74 °C.'));
+  }
+  if(r.t==='Гарнир'){
+    if(has('gar')&&!r.st.some(s=>s.includes('чеснок')))
+      r.st.push('Мелко натрите чеснок ({gar}) и вмешайте в горячий гарнир.');
+    if(has('oo')&&!r.st.some(s=>s.includes('масл'))){
+      const fry=r.st.findIndex(s=>s.includes('обжарьте')||s.includes('Обжарьте'));
+      if(fry>=0)r.st[fry]+=' Используйте для обжаривания масло ({oo}).';
+      else r.st.push('Вмешайте в готовый гарнир оливковое масло ({oo}).');
+    }
+    if(!['prs','dil','cil'].some(has))r.st=r.st.map(s=>s.replace(', добавьте зелень.','.'));
+    r.st.push('Две порции на завтрашний обед переложите в отдельные неглубокие контейнеры.');
+  }
+  if(r.t==='Завтрак'){
+    if(r.n.includes('overnight')){
+      const names=keys=>r.i.filter(([k])=>keys.includes(k)).map(([k])=>ING[k].n+' ({'+k+'})').join(', ');
+      r.st=['Вечером смешайте в ёмкости: '+names(['oat','mlk','yog','hon'])+'. Накройте и уберите в холодильник на ночь.',
+        'Утром добавьте: '+names(['ban','apple','blu','man','kiw','pom','pear','ora','wal','alm','psd'])+'. Очистите фрукты при необходимости, нарежьте мякоть небольшими кусочками, орехи порубите.'];
+    }
+    if(r.n.startsWith('Сырники')){
+      const fruit=r.i.find(([k])=>k==='apple'||k==='ban')?.[0];
+      r.st[0]='Смешайте творог ({cot}), взбитое яйцо ({egg}) и овсяные хлопья ({oat}).'
+        +(fruit==='apple'?' Вмешайте натёртое яблоко ({apple}).':fruit==='ban'?' Вмешайте размятый банан ({ban}).':'')
+        +(r.i.some(([k])=>k==='hon')?' Добавьте мёд ({hon}).':'');
+      r.st[1]=r.st[1].replace('обжарьте на слабом огне','обжарьте на масле ({oo}) на слабом огне');
+    }
+    if(r.n==='Омлетные маффины со шпинатом и фетой')r.st[0]+=' Раскрошите фету ({fet}) и вмешайте в яйца.';
+  }
+  r.st=r.st.map(s=>s.replace('Мясо готово, когда сок прозрачный.','Проверьте термометром: в центре самого толстого куска птицы должно быть не менее 74 °C.')
+    .replace('Половину порции уберите в контейнер: это завтрашний обед.','Две порции на завтрашний обед разложите по неглубоким контейнерам и уберите в холодильник в течение 2 часов.'));
+  if(r.t!=='Завтрак'&&r.i.some(([k])=>k==='rice'||k==='brr'))
+    r.st.push('Порции с рисом быстро охладите в неглубоких контейнерах, желательно в течение часа. Храните в холодильнике до 24 часов, разогревайте один раз до горячего состояния по всему объёму.');
+});
 if(!S.price)S.price={};if(!S.rate)S.rate={};if(!S.ban)S.ban={};if(!S.hist)S.hist=[];if(!S.rep)S.rep=6;
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 if(!S.lib)S.lib={t:'Основное',q:'',c:'',fav:false};
@@ -585,21 +756,100 @@ function mealOf(day,slot){
   if(slot==='Обед')return(day>=1&&day<=5)?[S.cook[day-1].m,S.cook[day-1].s,S.cook[day-1].l]:[];
   return[];
 }
-function sumMeal(ids){const o={k:0,P:0,F:0,C:0};ids.forEach(i=>{const r=REC[i];o.k+=r.k;o.P+=r.P;o.F+=r.F;o.C+=r.C;});return o;}
-function dayTotals(d){const o={k:0,P:0,F:0,C:0};['Завтрак','Обед','Ужин'].forEach(s=>{const m=sumMeal(mealOf(d,s));o.k+=m.k;o.P+=m.P;o.F+=m.F;o.C+=m.C;});return o;}
+const dayRecipes=d=>['Завтрак','Обед','Ужин'].flatMap(slot=>mealOf(d,slot));
+function sumMeal(ids){
+  const totals={k:0,P:0,F:0,C:0,fiber:0,produce:0};
+  for(const i of ids)for(const key in totals)totals[key]+=REC[i][key];
+  return totals;
+}
+const dayTotals=d=>sumMeal(dayRecipes(d));
 const planRecipes=()=>{const a=[];S.cook.forEach(c=>a.push(c.m,c.s,c.l));S.bf.forEach(b=>a.push(b));return a;};
 function avgDay(){let a=0;for(let d=1;d<=4;d++)a+=dayTotals(d).k;return a/4||1;}
 const fac=n=>S.scale===false?1:Math.min(1.5,Math.max(.7,n/avgDay()));
 const fM=()=>fac(S.norms.m),fD=()=>fac(S.norms.d);
 const sf=()=>S.scale===false?1:(fM()+fD())/2;
 const x1=n=>(Math.round(n*100)/100).toLocaleString('ru-RU');
-function needsOf(ids){const f=sf(),g={};ids.forEach(i=>REC[i].i.forEach(([k,gr])=>{g[k]=(g[k]||0)+gr*f;}));return g;}
+const nutritionLine=(r,f=1)=>fmt(r.k*f)+' ккал · Б '+fmt(r.P*f)+' г · Ж '+fmt(r.F*f)+' г · У '+fmt(r.C*f)+' г · клетчатка ≈ '+x1(Math.round(r.fiber*f*10)/10)+' г';
+const FULL_DAYS=[1,2,3,4];
+function foodWeights(ids,f=1){
+  const weights={};
+  for(const i of ids)for(const [key,g] of REC[i].i)weights[key]=(weights[key]||0)+g/REC[i].p*f;
+  return weights;
+}
+function sourceFoods(group,weights){
+  return [...group.keys].filter(k=>(weights[k]||0)>=group.grams).sort((a,b)=>weights[b]-weights[a]);
+}
+function nutritionPenalty(t,target,f){
+  const shortfall=(value,goal)=>Math.max(0,1-value/goal);
+  const proteinShare=4*t.P/t.k,fatShare=9*t.F/t.k,carbShare=4*t.C/t.k;
+  const calorieError=Math.abs(t.k*f-target)/target;
+  return 160*calorieError**2+45*Math.max(0,calorieError-.08)
+    +34*shortfall(t.fiber*f,25)+30*shortfall(t.produce*f,400)
+    +70*(Math.max(0,.10-proteinShare,proteinShare-.35)+Math.max(0,.20-fatShare,fatShare-.35)+Math.max(0,.45-carbShare,carbShare-.75));
+}
+function dayNutritionPenalty(){
+  const profiles=[[S.norms.m,fM()],[S.norms.d,fD()]];
+  return FULL_DAYS.reduce((sum,d)=>{
+    const t=dayTotals(d);
+    return sum+profiles.reduce((p,[target,f])=>p+nutritionPenalty(t,target,f),0)/profiles.length;
+  },0);
+}
+function menuNutritionPenalty(){
+  const weights=foodWeights(FULL_DAYS.flatMap(dayRecipes),Math.min(fM(),fD()));
+  const dishes=planRecipes();
+  const missing=MICRO_SOURCES.filter(g=>!sourceFoods(g,weights).length).length;
+  const wholeDays=FULL_DAYS.filter(d=>dayRecipes(d).some(i=>REC[i].whole)).length;
+  const pulseDishes=dishes.filter(i=>REC[i].pulses).length;
+  const fish=S.cook.filter(c=>['Рыба','Морепродукты'].includes(REC[c.m].c)).length;
+  const ids=FULL_DAYS.flatMap(dayRecipes);
+  const gap=[fM(),fD()].reduce((sum,f,i)=>sum+calculatedMicros(ids,f/4)
+    .reduce((loss,row)=>loss+Math.max(0,1-row.amount/row.entry.goal[i]),0),0);
+  return dayNutritionPenalty()+missing*6+gap*2+(4-wholeDays)*6+Math.max(0,2-pulseDishes)*7+Math.max(0,2-fish)*6;
+}
+function calculatedMicros(ids,f){
+  return MICRO_DATA.map((entry,index)=>{
+    let amount=0,known=0,total=0;
+    for(const i of ids){const m=REC[i].micro[index];amount+=m.amount;known+=m.known;total+=m.total;}
+    return {entry,amount:amount*f,known,total};
+  });
+}
+const signed=n=>(n>=0?'+':'−')+x1(Math.abs(Math.round(n*10)/10));
+function menuSnapshot(){
+  const profiles=[fM(),fD()];
+  const days=FULL_DAYS.map(d=>({d,t:dayTotals(d),profiles}));
+  const ids=FULL_DAYS.flatMap(dayRecipes);
+  return {days,micro:profiles.map(f=>calculatedMicros(ids,f/4)),cost:planCost(),needs:shopList()};
+}
+function swapImpact(before,after){
+  const lines=after.days.flatMap(({d,t,profiles},j)=>profiles.map((f,i)=>{
+    const old=before.days[j],k=t.k*f-old.t.k*old.profiles[i],fiber=t.fiber*f-old.t.fiber*old.profiles[i];
+    return Math.abs(k)>=1||Math.abs(fiber)>=.1?DN[d]+' · '+['Максим','Даша'][i]+': '+signed(k)+' ккал, '+signed(fiber)+' г клетчатки':'';
+  })).filter(Boolean);
+  const prev=new Map(before.needs.map(r=>[r.k,r.buy]));
+  const extra=after.needs.filter(r=>r.buy>(prev.get(r.k)||0)).map(r=>esc(r.n)+' +'+kgf(r.buy-(prev.get(r.k)||0)));
+  const changes=after.micro.flatMap((entries,i)=>entries.map((row,j)=>{
+    const delta=row.amount-before.micro[i][j].amount;
+    return Math.abs(delta)>=.1?{text:['Максим','Даша'][i]+' · '+row.entry.name+' '+signed(delta)+' '+row.entry.unit,weight:Math.abs(delta)/row.entry.goal[i]}:null;
+  })).filter(Boolean).sort((a,b)=>b.weight-a.weight).slice(0,4);
+  return [...lines,...changes.map(x=>x.text+' в сутки по известным продуктам'),extra.length?'Докупить: '+extra.join(', '):'Дополнительных покупок нет'].join('<br>');
+}
+function needsOf(ids){
+  const factor=sf(),g={};
+  for(const i of ids)for(const [k,gr] of REC[i].i)g[k]=(g[k]||0)+Math.round(gr*factor*10);
+  return Object.fromEntries(Object.entries(g).map(([k,v])=>[k,v/10]));
+}
 const priceOf=k=>S.price&&S.price[k]>0?S.price[k]:ing(k).pr;
-function costOf(ids){const g=needsOf(ids);let c=0;Object.keys(g).forEach(k=>{const need=Math.max(0,g[k]-homeOf(k));c+=Math.ceil(need/10)*10*priceOf(k)/1000;});return c;}
+// Средний съедобный вес. Фактический остаток можно ввести по весам.
+const PIECES={egg:[55,'яйцо'],gar:[35,'головка'],lem:[80,'лимон'],lime:[55,'лайм'],avo:[140,'авокадо']};
+function purchaseOf(k,total){
+  const unit=PIECES[k]?.[0]||10;
+  return Math.ceil(Math.max(0,total-homeOf(k)-1e-8)/unit)*unit;
+}
+function costOf(ids){const g=needsOf(ids);return Object.keys(g).reduce((c,k)=>c+purchaseOf(k,g[k])*priceOf(k)/1000,0);}
 const planCost=()=>costOf(planRecipes());
-function shopList(){const n=needsOf(planRecipes());return Object.keys(n).map(k=>{const h=homeOf(k),need=Math.max(0,n[k]-h),buy=need>0?Math.ceil(need/10)*10:0,p=ing(k);return{k,total:n[k],home:Math.min(h,n[k]),buy,cost:buy*priceOf(k)/1000,cat:p.c,n:p.n};});}
-const q5=g=>Math.max(5,Math.round(g*sf()/5)*5);
-function fq(t,r){return t.replace(/\{(\w+)\}/g,(m,k)=>{const z=r.i.find(x=>x[0]===k);if(!z)return'';return k==='egg'?Math.max(1,Math.round(z[1]*sf()/55))+' шт':q5(z[1])+' г';});}
+function shopList(){const n=needsOf(planRecipes());return Object.keys(n).map(k=>{const h=homeOf(k),buy=purchaseOf(k,n[k]),p=ing(k);return{k,total:n[k],home:Math.min(h,n[k]),buy,cost:buy*priceOf(k)/1000,cat:p.c,n:p.n};});}
+const q5=g=>Math.round(g*sf()*10)/10;
+function fq(t,r){return t.replace(/\{(\w+)\}/g,(m,k)=>{const z=r.i.find(x=>x[0]===k);return z?q5(z[1])+' г':'';});}
 const plu=(n,a)=>a[n%10===1&&n%100!==11?0:(n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?1:2];
 const SOLIDK=new Set(['onion','pep','carrot','mush','pum','zuc','egp','lek','chk','kid','cor','pea','len','rice','bul']),HERBK=new Set(['prs','dil','cil']),FILLK=new Set(['moz','fet','par','spi','bro','tom','olv','gb']),SHAREK=new Set(['oo','soy','hon','mst','yog','tpa','tmc','tah','gin','lem','lime','ora','gar','egg','oat','moz','fet','par']),GRAIN=new Set(['rice','bul']);
 const blanksOf=()=>{const a=[];S.cook.forEach((c,d)=>{const r=REC[c.m];if(r&&r.bt)a.push({d,id:c.m,r});});return a;};
@@ -607,8 +857,8 @@ function stageMin(bl,code){let m=0;bl.forEach(b=>{m+=(b.r.ops[code]||0);if(code=
 const sundayPrep=()=>{const bl=blanksOf();let t=0;['v','g','c','m','b'].forEach(c=>{t+=stageMin(bl,c);});return t;};
 function mpDone(){if(!S.mp||S.mp.w!==S.wk)S.mp={w:S.wk,done:{}};return S.mp.done;}
 const kgf=g=>g>=1000?(g/1000).toLocaleString('ru-RU',{maximumFractionDigits:2})+' кг':Math.round(g)+' г';
-const am=(k,g)=>k==='egg'?Math.max(1,Math.round(g*sf()/55)):q5(g);
-const fa=(k,v)=>k==='egg'?v+' шт':kgf(v);
+const am=(k,g)=>q5(g);
+const fa=(k,v)=>x1(v)+' г';
 const dn=b=>b.r.n+', '+DS[b.d];
 function vegMethod(bt,k){
   if(GRAIN.has(k))return 'отварить до полуготовности (8 минут) и остудить';
@@ -667,7 +917,7 @@ function masterPlan(){
   return{stages:st,total,n:bl.length};
 }
 function usageOf(k){
-  const m={};const add=(id,tag)=>{const z=REC[id].i.find(x=>x[0]===k);if(!z)return;(m[id]=m[id]||{id,tags:[],g:0});m[id].tags.push(tag);m[id].g+=z[1]*sf();};
+  const m={};const add=(id,tag)=>{const z=REC[id].i.find(x=>x[0]===k);if(!z)return;(m[id]=m[id]||{id,tags:[],g:0});m[id].tags.push(tag);m[id].g+=q5(z[1]);};
   S.cook.forEach((c,d)=>{const t=d<=4?'ужин '+DS[d]+(d<4?' и обед '+DS[d+1]:' и обед '+DS[5]):'';[c.m,c.s,c.l].forEach(id=>add(id,t));});
   S.bf.forEach((id,j)=>add(id,'завтрак '+DS[j+1]));
   return Object.values(m);
@@ -728,6 +978,10 @@ function viewWeek(){
    '<div class="bx b-d sea"><div class="l">Белка в день</div><div class="v">'+cnt('prot',pr,'<small>г</small>')+'</div><div class="s">в среднем</div></div></div>';
   if(sp>0)h+='<button class="mpc" data-act="master"><span class="mpi2">'+IC.flame+'</span><span><b>Мастер-план воскресенья</b><br><small>'+blanksOf().length+' '+plu(blanksOf().length,['заготовка','заготовки','заготовок'])+', ≈ '+sp+' мин, по шагам и с галочками</small></span>'+IC.right+'</button>';
   w.forEach(x=>{h+='<div class="warn '+(x[0]==='bad'?'bad':'')+'">'+esc(x[1])+'</div>';});
+  const weights=foodWeights(FULL_DAYS.flatMap(dayRecipes),Math.min(fM(),fD()));
+  const gaps=MICRO_SOURCES.filter(g=>!sourceFoods(g,weights).length);
+  h+='<div class="act-row"><button class="btn alt" data-act="nutrition">Баланс меню · витамины и минералы</button></div>';
+  if(gaps.length)h+='<p class="small mut">Мало продуктов-источников: '+esc(gaps.map(g=>g.name).join(', '))+'.</p>';
   h+='<div class="warn" style="background:var(--soft);color:var(--ink)"><b>Размер порции</b><div class="small mut" style="margin-top:4px;line-height:1.45">'+(S.scale===false?'Порции одинаковые.':'Даша ×'+x1(fD())+' (норма '+fmt(S.norms.d)+' ккал), Максим ×'+x1(fM())+' (норма '+fmt(S.norms.m)+' ккал). Покупки посчитаны с учётом этого.')+'</div><button class="btn alt" style="height:38px;margin-top:8px;font-size:13px;padding:0 14px" data-act="scale">'+(S.scale===false?'Подгонять порции под норму':'Сделать порции одинаковыми')+'</button></div>';
   h+='<div class="seg" style="grid-template-columns:repeat(2,1fr);margin-top:14px"><i style="width:calc((100% - 8px)/2);transform:translateX('+(S.wview==='grid'?100:0)+'%)"></i><button data-act="wview" data-v="cards" class="'+(S.wview!=='grid'?'on':'')+'">Карточки</button><button data-act="wview" data-v="grid" class="'+(S.wview==='grid'?'on':'')+'">Вся неделя</button></div>';
   if(S.wview==='grid'){h+=viewGrid();}else{
@@ -794,8 +1048,10 @@ function viewDay(){
   } else {
     h+='<div class="free-card"><h2>Свободный ужин</h2><p>Идёте куда-то или заказываете доставку. Готовить не нужно, остатки с четверга съели на обеде.</p><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="53" r="45" fill="rgba(16,38,26,.2)"/><circle cx="50" cy="50" r="45" fill="#fff"/><circle cx="50" cy="50" r="33" fill="#FFF7DC" stroke="#EADFB5"/><path d="M42,30 v14 a4,4 0 0 0 8,0 v-14 M46,44 v28 M62,30 q-8,8 -2,24 h2 v18" stroke="#10261A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
   }
-  const pk=(who,nm,f)=>{const k=t.k*f,df=k-nm,c=Math.abs(df)<=nm*.08?'ok':'warn';return '<span class="chip '+c+'">'+who+' '+fmt(k)+' из '+fmt(nm)+'</span>';};
-  h+='<div class="chips"><span class="chip">Базовая порция '+fmt(t.k)+' ккал</span></div><div class="chips" style="margin-top:6px">'+pk('Максим',S.norms.m,fM())+pk('Даша',S.norms.d,fD())+'<span class="chip">Белка '+Math.round(t.P)+' г</span></div>';
+  const pk=(who,nm,f)=>{const k=t.k*f,partial=d===0||d===5,c=partial?'':Math.abs(k-nm)<=nm*.08?'ok':'warn';return '<span class="chip '+c+'">'+who+' '+fmt(k)+' ккал'+(partial?' в плане':' из '+fmt(nm))+' · белок '+Math.round(t.P*f)+' г</span>';};
+  h+='<div class="chips">'+pk('Максим',S.norms.m,fM())+pk('Даша',S.norms.d,fD())+'</div>';
+  if(ids.length)h+='<div class="small mut" style="margin-top:8px"><b>В этом приёме</b><br>Максим · '+nutritionLine(sumMeal(ids),fM())+'<br>Даша · '+nutritionLine(sumMeal(ids),fD())+'</div>';
+  h+='<div class="act-row"><button class="btn alt" data-act="nutrition">Баланс меню</button></div>';
   if(d===0&&sundayPrep()>0)h+='<button class="btn red" style="width:100%;margin:14px 0 2px" data-act="master">'+IC.flame+'Мастер-план заготовки · ≈ '+sundayPrep()+' мин</button>';
   h+='<div class="rows">';
   if(slot==='Завтрак'&&d>=1)h+=rowHtml(S.bf[d-1],'Завтрак · на двоих','b'+(d-1),0,'готовится вечером '+REC[S.bf[d-1]].ev+' мин');
@@ -808,7 +1064,7 @@ function viewDay(){
     if(x.ov){stp.push(d===0?'«'+x.n+'»: после сборки не морозьте, сразу на противень или в форму.':'Достаньте из морозилки «'+x.n+'». Размораживать не нужно.');stp.push('Духовка '+x.ov[0]+' °C, готовить '+(d===0?Math.max(15,x.ov[1]-8):x.ov[1])+' мин.');}
     else{stp.push('Если филе или морепродукты замороженные, утром переложите их в холодильник.');stp.push('«'+x.n+'»: у плиты ≈ '+x.ev+' мин.');}
     stp.push('Пока готовится основное: гарнир «'+REC[c2.s].n+'» ('+REC[c2.s].ev+' мин) и салат «'+REC[c2.l].n+'» ('+REC[c2.l].ev+' мин).');
-    if(d<=4)stp.push('Половину порции уберите в контейнер: это обед завтра.');
+    if(d<=4)stp.push('Половину каждого готового блюда разложите на две порции для завтрашнего обеда.');
     h+='<div class="evc"><b>Вечером по порядку</b><ol>'+stp.map(z=>'<li>'+esc(z)+'</li>').join('')+'</ol></div>';}
   if(ids.length&&slot!=='Завтрак'){const cd=cookDay(d,slot);
     h+='<p class="small mut" style="margin:12px 4px 0;line-height:1.45">'+(slot==='Ужин'?'Эта порция станет обедом: '+(DN[d+1]||'').toLowerCase()+'.':'Это вчерашний ужин: '+DN[d-1].toLowerCase()+'.')+' Замена блюда меняет оба приёма.'+(slot==='Ужин'?' Вечером у плиты ≈ '+eveningMin(cd)+' мин.':'')+(cd===0?' Воскресенье: заготовка на неделю ≈ '+sundayPrep()+' мин.':'')+'</p>';}
@@ -823,17 +1079,19 @@ function viewShop(){
   const rows=shopList(),buy=rows.filter(r=>r.buy>0),total=buy.reduce((a,r)=>a+r.cost,0),done=buy.filter(r=>S.chk[r.k]).length;
   let h=bar('Покупки');
   h+='<div class="hero-h"><h1>Покупки</h1><p>'+buy.length+' позиций. То, что есть дома, уже вычтено.</p></div>';
+  h+='<div class="act-row"><button class="btn alt" data-act="pantry">Остатки дома</button></div>';
   h+='<div class="bento"><div class="bx b-a" style="grid-column:span 6;background:var(--lemon)"><div class="l">Всего</div><div class="v">'+cnt('total',total,'<small>₽</small>')+'</div><div class="s">куплено '+done+' из '+buy.length+'</div><div class="prog"><i style="width:'+(buy.length?done/buy.length*100:0)+'%"></i></div></div></div>';
   CATS.forEach(cat=>{
     const items=buy.filter(r=>r.cat===cat).sort((a,b)=>(S.chk[a.k]?1:0)-(S.chk[b.k]?1:0)||a.n.localeCompare(b.n,'ru'));if(!items.length)return;
     h+='<div class="sechd"><i style="background:'+CATC[cat]+'"></i>'+cat+'<span class="mut small" style="font-family:var(--body);font-weight:600">'+items.length+'</span></div><div class="sg">';
     items.forEach(r=>{
       const on=!!S.chk[r.k],open=shopOpen===r.k,p=ing(r.k),ic=PAINT_ART.icon(r.k,34,p.g);
-      const qty=r.k==='egg'?Math.ceil(r.buy/55)+' шт':(r.buy>=1000?(r.buy/1000).toLocaleString('ru-RU',{maximumFractionDigits:2})+' кг':r.buy+' г');
+      const unit=PIECES[r.k];
+      const qty=unit?r.buy/unit+' шт. ('+unit[1]+') · нужно '+x1(r.total-r.home)+' г':kgf(r.buy);
       h+='<div><div class="si '+(on?'done':'')+'"><div class="ico" style="background:'+CATC[cat]+'55">'+(ic||esc(r.n[0]))+'</div><button class="t" data-act="shopopen" data-v="'+r.k+'" aria-expanded="'+open+'"><div class="a">'+esc(S.sub[r.k]?S.sub[r.k]+' (вместо: '+r.n.toLowerCase()+')':r.n)+'</div><div class="b">'+qty+' · '+fmt(r.cost)+' ₽'+(S.price[r.k]>0?' ✎':'')+(r.home>0?' · дома '+r.home+' г':'')+'</div></button><button class="cb '+(on?'on':'')+'" data-act="chk" data-v="'+r.k+'" role="checkbox" aria-checked="'+on+'" aria-label="Куплено: '+esc(r.n)+'"><i>'+IC.check+'</i></button></div>';
       if(open){const al=analogs(r.k);
         const used=usageOf(r.k);
-        h+='<div class="ext"><div style="color:var(--ink)"><b>Где используется на этой неделе</b></div>'+(used.length?used.map(u=>'<button class="use" data-act="detail" data-v="'+u.id+'"><b>'+esc(REC[u.id].n)+'</b><span>'+esc(u.tags.join(', '))+' · '+(r.k==='egg'?Math.max(1,Math.round(u.g/55))+' шт':q5(u.g/sf())+' г')+'</span></button>').join(''):'<div>—</div>')+'<div style="margin-top:6px">'+esc(p.w||'Любая сеть')+'</div>'+(p.a?'<div style="margin-top:6px;color:var(--ink)"><b>Нет в магазине:</b> '+esc(p.a)+'</div>':'');
+        h+='<div class="ext"><div style="color:var(--ink)"><b>Где используется на этой неделе</b></div>'+(used.length?used.map(u=>'<button class="use" data-act="detail" data-v="'+u.id+'"><b>'+esc(REC[u.id].n)+'</b><span>'+esc(u.tags.join(', '))+' · '+x1(u.g)+' г</span></button>').join(''):'<div>—</div>')+'<div style="margin-top:6px">'+esc(p.w||'Любая сеть')+'</div>'+(p.a?'<div style="margin-top:6px;color:var(--ink)"><b>Нет в магазине:</b> '+esc(p.a)+'</div>':'');
         if(al.length)h+='<div class="al">'+al.map(a=>'<div><b>'+esc(a.n)+'</b> · '+Math.round(a.k)+' ккал/100 г ('+(a.k-p.k>=0?'+':'−')+Math.abs(Math.round(a.k-p.k))+') · '+fmt(a.pr)+' ₽/кг</div>').join('')+'</div>';
         h+='<label for="sb'+r.k+'">Купил вместо (вручную)</label><input type="text" id="sb'+r.k+'" data-act="subtxt" data-v="'+r.k+'" value="'+esc(S.sub[r.k]||'')+'" placeholder="Что взяли"><label for="pr'+r.k+'">Цена в вашем магазине, ₽ за кг'+(r.k==='egg'?' (десяток ≈ 550 г)':'')+'</label><input type="number" inputmode="decimal" id="pr'+r.k+'" data-act="price" data-v="'+r.k+'" value="'+(S.price[r.k]>0?S.price[r.k]:'')+'" placeholder="сейчас в базе: '+p.pr+'" style="width:190px"><label for="hg'+r.k+'">Есть дома, г</label><input type="number" inputmode="numeric" id="hg'+r.k+'" data-act="homeg" data-v="'+r.k+'" value="'+homeOf(r.k)+'" style="width:130px"></div>';}
       h+='</div>';
@@ -877,6 +1135,37 @@ function roleInfo(role){
 function sheetHtml(){
   if(!sheet)return'';
   const head=(sub,title)=>'<div class="shade" data-act="close"></div><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><div class="grab"></div><div class="hd" id="shd"><div style="min-width:0"><div class="small mut" style="font-weight:600">'+esc(sub)+'</div><h2 style="font-size:19px;margin-top:3px">'+esc(title)+'</h2></div><button class="rb" data-act="close" aria-label="Закрыть">'+IC.close+'</button></div>';
+  if(sheet.kind==='nutrition'){
+    const daily=([name,target,f])=>'<div class="sec">'+name+' · цель '+fmt(target)+' ккал</div>'+FULL_DAYS.map(d=>{
+      const t=dayTotals(d),low=[];
+      if(Math.abs(t.k*f-target)>target*.08)low.push('калории вне ±8%');
+      if(t.fiber*f<25)low.push('клетчатка ниже 25 г');
+      if(t.produce*f<400)low.push('овощи и фрукты ниже 400 г');
+      return '<div class="rbox"><b>'+DN[d]+'</b><br>'+nutritionLine(t,f)+'<br>Овощи и фрукты '+fmt(t.produce*f)+' г'+(low.length?'<div class="warn">'+low.join(' · ')+'</div>':'')+'</div>';
+    }).join('');
+    const w=foodWeights(FULL_DAYS.flatMap(dayRecipes),Math.min(fM(),fD()));
+    const ids=FULL_DAYS.flatMap(dayRecipes);
+    const microRows=[fM(),fD()].map((f,j)=>'<div class="sec">'+['Максим','Даша'][j]+' · среднее за день</div>'+calculatedMicros(ids,f/4).map(({entry,amount,known,total})=>{
+      const percent=100*amount/entry.goal[j];
+      return '<div class="rbox"><b>'+entry.name+'</b> · '+(known?x1(amount)+' '+entry.unit+' · '+fmt(percent)+'% ориентира по известным продуктам':'недостаточно данных')
+        +'<br><span class="small mut">'+known+' из '+total+' позиций ингредиентов с данными · <a href="https://ods.od.nih.gov/factsheets/'+entry.ref+'-HealthProfessional/" target="_blank" rel="noopener">Источник и ориентир</a></span></div>';
+    }).join('')).join('');
+    return head('Понедельник–четверг','Баланс меню')+'<div class="bd">'+[['Максим',S.norms.m,fM()],['Даша',S.norms.d,fD()]].map(daily).join('')
+      +'<div class="sec">Расчёт витаминов и минералов</div><p class="small mut">Оценка по справочным продуктам NIH. Для приготовленных продуктов использован ориентировочный выход. Проценты относятся к учтённой части меню.</p>'+microRows
+      +'<div class="sec">Витамины и минералы</div><p class="small mut">Показаны продукты-источники для меньшей порции за четыре полных дня. Для оценки суточного покрытия нужны данные о содержании каждого нутриента.</p>'
+      +MICRO_SOURCES.map(g=>{
+        const found=sourceFoods(g,w);
+        const names=keys=>keys.slice(0,3).map(k=>esc(ING[k].n)).join(', ');
+        return '<div class="'+(found.length?'rbox':'warn')+'"><b>'+g.name+'</b> · '+(found.length?names(found):'мало продуктов-источников. Варианты из каталога: '+names([...g.keys]))+'</div>';
+      }).join('')
+      +'<p class="small mut">Ориентиры для клетчатки и овощей: <a href="https://www.who.int/news-room/fact-sheets/detail/healthy-diet" target="_blank" rel="noopener">ВОЗ</a>.</p></div></div>';
+  }
+  if(sheet.kind==='pantry'){
+    const ids=Object.keys(ING).sort((a,b)=>Number(homeOf(b)>0)-Number(homeOf(a)>0)||ing(a).n.localeCompare(ing(b).n,'ru'));
+    return head('Покупки','Остатки дома')+'<div class="bd"><p class="small mut">Перед сборкой новой недели внесите фактические остатки в граммах съедобной части. Укажите 0, если продукт закончился. Остатки сохраняются и уменьшают закупку.</p>'
+      +ids.map(k=>'<div class="si"><label for="stock'+k+'">'+esc(ing(k).n)+'</label><input id="stock'+k+'" type="number" min="0" step="0.1" inputmode="decimal" data-act="stock" data-v="'+k+'" value="'+homeOf(k)+'" style="width:95px"></div>').join('')
+      +'<div class="act-row"><button class="btn red" data-act="close">Готово</button></div></div>';
+  }
   if(sheet.kind==='who'){
     return head('Первый запуск','Кто вы?')+'<div class="bd"><p class="small mut" style="line-height:1.45;margin-top:2px">Телефон запомнит выбор. Ваши порции будут первыми, а в общем плане будет видно, кто его менял.</p><div class="act-row" style="margin-top:14px"><button class="btn red" data-act="whoset" data-v="m">Я Максим</button><button class="btn red" data-act="whoset" data-v="d">Я Даша</button></div></div></div>';
   }
@@ -899,8 +1188,26 @@ function sheetHtml(){
   }
   if(sheet.kind==='swap'){
     const ri=roleInfo(sheet.role),cur=ri.get(),c=REC[cur],base=planCost();
-    const mk=(i,n)=>{const r=REC[i],ids=planRecipes();ids[ri.pos]=i;const dc=costOf(ids)-base,dk=r.k-c.k;
-      return '<button class="opt" style="animation-delay:'+(n*45)+'ms" data-act="pick" data-v="'+i+'"><div class="th" style="background:'+paint(r)+'">'+pt(i)+'</div><div style="flex:1;min-width:0"><div class="n">'+esc(r.n)+(S.fav[i]?' ♥':'')+rtTag(i)+'</div><div class="m">'+Math.round(r.k)+' ккал <span class="dl '+(dk>0?'up':'dn2')+'">('+(dk>=0?'+':'−')+Math.abs(Math.round(dk))+')</span> · Б '+Math.round(r.P)+' г · '+r.ev+' мин · <span class="dl '+(dc>0?'up':'dn2')+'">'+(dc>=0?'+':'−')+fmt(Math.abs(dc))+' ₽</span> за неделю</div></div></button>';};
+    const baseline=menuNutritionPenalty(),scores=new Map(),before=menuSnapshot();
+    if(sheet.preview!==undefined){
+      const i=sheet.preview;
+      let after;ri.set(i);
+      try{after=menuSnapshot();}finally{ri.set(cur);}
+      return head(ri.label,'Замена на «'+REC[i].n+'»')+'<div class="bd"><p class="small mut">Изменение по полным дням. Порции пересчитаны для нового плана.</p><div class="rbox">'
+        +swapImpact(before,after)+'<br>Закупка за неделю: '+signed(after.cost-before.cost)+' ₽</div>'
+        +'<div class="act-row"><button class="btn red" data-act="pick" data-v="'+i+'">Подтвердить</button><button class="btn alt" data-act="swapback">К вариантам</button></div></div></div>';
+    }
+    const impact=i=>{
+      if(!scores.has(i)){
+        ri.set(i);
+        try{scores.set(i,menuNutritionPenalty()-baseline);}finally{ri.set(cur);}
+      }
+      return scores.get(i);
+    };
+    const mk=(i,n)=>{const r=REC[i];let after;ri.set(i);
+      try{after=menuSnapshot();}finally{ri.set(cur);}
+      const dc=after.cost-base,dk=r.k-c.k;
+      return '<button class="opt" style="animation-delay:'+(n*45)+'ms" data-act="swappreview" data-v="'+i+'"><div class="th" style="background:'+paint(r)+'">'+pt(i)+'</div><div style="flex:1;min-width:0"><div class="n">'+esc(r.n)+(S.fav[i]?' ♥':'')+rtTag(i)+'</div><div class="m">'+Math.round(r.k)+' ккал <span class="dl '+(dk>0?'up':'dn2')+'">('+(dk>=0?'+':'−')+Math.abs(Math.round(dk))+')</span> · Б '+Math.round(r.P)+' г · '+r.ev+' мин · <span class="dl '+(dc>0?'up':'dn2')+'">'+(dc>=0?'+':'−')+fmt(Math.abs(dc))+' ₽</span> за неделю</div></div></button>';};
     let h=head(ri.label,'Заменить «'+c.n+'»')+'<div class="bd"><div class="sec" style="margin-top:6px">Подходят сразу</div>';
     const alts=(c.al||[]).map(n=>idByName[n]).filter(i=>i!==undefined&&i!==cur&&!banned(i));alts.forEach((i,n)=>{h+=mk(i,n);});
     const favs=Object.keys(S.fav).map(Number).filter(i=>REC[i].t===ri.type&&i!==cur&&alts.indexOf(i)<0&&!banned(i));
@@ -908,7 +1215,7 @@ function sheetHtml(){
     h+='<div class="sec">Все варианты</div><div class="srch">'+IC.search+'<input type="search" id="swapq" data-act="swapq" placeholder="Поиск" value="'+esc(swapQ.q)+'" aria-label="Поиск варианта"></div>';
     const cats=[...new Set(REC.filter(r=>r.t===ri.type).map(r=>r.c))];
     h+='<div class="pills" style="margin-inline:0;padding-inline:0"><button data-act="swapc" data-v="" class="'+(!swapQ.c?'on':'')+'">Все</button>'+cats.map(x=>'<button data-act="swapc" data-v="'+x+'" class="'+(swapQ.c===x?'on':'')+'">'+x+'</button>').join('')+'</div>';
-    const all=REC.map((r,i)=>i).filter(i=>REC[i].t===ri.type&&i!==cur&&!banned(i)&&(!swapQ.c||REC[i].c===swapQ.c)&&(!swapQ.q||REC[i].n.toLowerCase().includes(swapQ.q.toLowerCase()))).sort((a,b)=>Math.abs(REC[a].k-c.k)-Math.abs(REC[b].k-c.k));
+    const all=REC.map((r,i)=>i).filter(i=>REC[i].t===ri.type&&i!==cur&&!banned(i)&&(!swapQ.c||REC[i].c===swapQ.c)&&(!swapQ.q||REC[i].n.toLowerCase().includes(swapQ.q.toLowerCase()))).sort((a,b)=>impact(a)-impact(b)||Math.abs(REC[a].k-c.k)-Math.abs(REC[b].k-c.k));
     all.slice(0,40).forEach((i,n)=>{h+=mk(i,Math.min(n,8));});
     return h+'</div></div>';
   }
@@ -917,9 +1224,23 @@ function sheetHtml(){
     let h=head(r.t+' · '+r.c,r.n)+'<div class="bd"><div class="hero-i" style="background:'+paint(r)+'">'+pt(i)+'</div>';
     h+='<div class="kv"><div><b>'+Math.round(r.k)+'</b>ккал</div><div><b>'+Math.round(r.P)+'</b>белки, г</div><div><b>'+Math.round(r.F)+'</b>жиры, г</div><div><b>'+Math.round(r.C)+'</b>углев., г</div></div>';
     h+='<p class="small mut" style="line-height:1.45">На одну порцию. Рецепт на '+r.p+' порции'+(isB?' (на двоих)':' (ужин и обед на двоих)')+'. '+(r.bt?'Заготовка в воскресенье ≈ '+r.pr+' мин, затем в морозилку. Вечером из морозилки в духовку: '+r.ov[0]+' °C, '+r.ov[1]+' мин.':(r.pr?'Заготовка '+r.pr+' мин. ':'')+'Вечером '+r.ev+' мин.')+'</p>';
+    const maxShare=fM()/(fM()+fD())*(isB?100:50),dashaShare=(isB?100:50)-maxShare;
+    h+='<p class="small mut">Взвесьте готовое блюдо без посуды. На один приём: Максиму '+x1(maxShare)+'% ('+fmt(r.k*fM())+' ккал), Даше '+x1(dashaShare)+'% ('+fmt(r.k*fD())+' ккал).'+(isB?'':' Вторую половину разделите так же на обед.')+'</p>';
+    h+='<div class="rbox"><b>Максим</b> · '+nutritionLine(r,fM())+'<br><b>Даша</b> · '+nutritionLine(r,fD())+'</div>';
+    const dry=r.t==='Гарнир'&&r.i.find(([k])=>SIDE_DRY[k]);
+    if(dry)h+='<p class="small mut">Сухая крупа или чечевица на один приём: Максим '+fmt(dry[1]/r.p*fM())+' г · Даша '+fmt(dry[1]/r.p*fD())+' г.</p>';
+    if(r.t==='Гарнир'){
+      const saved=S.yields?.[i]||{};
+      h+='<div class="rbox"><b>Мой замер гарнира</b><p class="small mut">Взвесьте всю приготовленную партию без посуды.</p>'
+        +[['dry','Сухая закладка, г'],['weight','Готовый выход, г'],['minutes','Время до подачи, мин']].map(([key,label])=>'<label for="yield'+key+'">'+label+'</label> <input id="yield'+key+'" type="number" min="0" inputmode="decimal" data-act="yield" data-id="'+i+'" data-v="'+key+'" value="'+(saved[key]||'')+'" style="width:80px"><br>').join('')
+        +(saved.weight?'<p class="small mut">Из записанной партии на один приём: Максим '+fmt(saved.weight*maxShare/100)+' г · Даша '+fmt(saved.weight*dashaShare/100)+' г.</p>':'')+'</div>';
+    }
+    const sources=[fM(),fD()].map(f=>foodWeights([i],f));
+    const micro=MICRO_SOURCES.filter(g=>sources.some(w=>sourceFoods(g,w).length));
+    if(micro.length)h+='<div class="rbox"><b>Продукты-источники</b><br>'+micro.map(g=>g.name+' · '+esc(ING[sources.flatMap(w=>sourceFoods(g,w))[0]].n)).join('<br>')+'</div>';
     {const ww=weeksWith(r.n);h+='<div class="rbox"><div class="sec" style="margin:0 0 6px">Оценка</div>'+starsHtml(i)+'<div class="small mut" style="margin-top:8px;line-height:1.4">'+(ww.length?'Готовили на '+ww.length+' '+(ww.length===1?'неделе':'неделях')+', последний раз '+wkTxt(ww[ww.length-1])+'. ':'В плане ещё не было. ')+'Оценка общая для вас с Дашей.</div><button class="nev '+(banned(i)?'on':'')+'" data-act="ban" data-v="'+i+'">'+(banned(i)?'Исключено из плана. Вернуть':'Больше не предлагать')+'</button></div>';}
     if(r.st&&r.st.length)h+='<div class="act-row" style="margin-top:6px"><button class="btn red" data-act="cook" data-v="'+i+'">'+IC.flame+(r.bt?'Вечером по шагам':'Готовить по шагам')+'</button>'+favBtn(i)+'</div>';
-    h+='<div class="sec">Продукты на весь рецепт</div><table class="ing">'+r.i.map(([k,g])=>'<tr><td>'+esc(ing(k).n)+'</td><td>'+q5(g)+' г</td></tr>').join('')+'</table><p class="small mut" style="margin-top:6px">Граммы с учётом ваших порций, как в списке покупок и в шагах.</p>';
+    h+='<div class="sec">Продукты на весь рецепт</div><table class="ing">'+r.i.map(([k,g])=>'<tr><td>'+esc(ing(k).n)+'</td><td>'+x1(q5(g))+' г</td></tr>').join('')+'</table><p class="small mut" style="margin-top:6px">Крупы и сухую чечевицу взвешивайте до варки. Для яиц берите вес без скорлупы, для бобовых и кукурузы из банки — вес после слива жидкости.</p>';
     const ol=a=>'<ol style="margin:0;padding-left:20px;font-size:14px;line-height:1.5">'+a.map(x=>'<li style="margin-bottom:6px">'+esc(fq(x,r))+'</li>').join('')+'</ol>';
     if(r.bt){h+='<div class="sec">Воскресенье: заготовка</div>'+ol(r.bs.map(x=>x[1]))+'<p class="small mut">В морозилке хранится до 3 месяцев, по плану блюдо уходит за 5 дней. В воскресный ужин заготовку не морозим, а сразу запекаем.</p>';h+='<div class="sec">Вечером: из морозилки в духовку</div>'+ol(r.st)+'<p class="small mut">Время и температуру подстраивайте под свою духовку.</p>';}
     else if(r.st&&r.st.length)h+='<div class="sec">'+(r.c==='Рыба'||r.c==='Морепродукты'?'Вечером: свежая в день ужина':'Как готовить')+'</div>'+ol(r.st)+'<p class="small mut">Базовая последовательность. Время и температуру подстраивайте под свою плиту.</p>';
@@ -1022,20 +1343,22 @@ function closeWeek(){
 /* ---------- генератор недели ---------- */
 function generate(){
   const mains=poolFor('Основное'),sides=poolFor('Гарнир'),sals=poolFor('Салат'),brs=poolFor('Завтрак');
+  if([mains,sides,sals,brs].some(pool=>pool.length<5))return null;
   let best=null,bs=-1e9;
   const norm=(S.norms.m+S.norms.d)/2,L=S.lock||{};
-  for(let t=0;t<300;t++){
+  for(let t=0;t<750;t++){
     const m=wsh(mains).slice(0,5),s=wsh(sides).slice(0,5),l=wsh(sals).slice(0,5),b=wsh(brs).slice(0,5);
     const cook=[0,1,2,3,4].map(j=>L['c'+j]?S.cook[j]:{m:m[j],s:s[j],l:l[j]}),bf=[0,1,2,3,4].map(j=>L['b'+j]?S.bf[j]:b[j]);
     const cats={};cook.forEach(c=>cats[REC[c.m].c]=(cats[REC[c.m].c]||0)+1);
-    if(Math.max(...Object.values(cats))>2)continue;
-    if(!cook.some(c=>REC[c.m].c==='Рыба'||REC[c.m].c==='Морепродукты'))continue;
+    const repetition=Math.max(0,Math.max(...Object.values(cats))-2);
     const old=S;S=Object.assign({},old,{cook,bf});
-    const cost=planCost(),sp=sundayPrep();let ev=0;for(let d=0;d<5;d++)ev+=Math.max(0,eveningMin(d)-30);
+    const health=menuNutritionPenalty(),cost=planCost(),sp=sundayPrep();
+    const fromStock=shopList().reduce((sum,r)=>sum+(S.home[r.k]>0?r.home*priceOf(r.k)/1000:0),0);
+    let ev=0;for(let d=0;d<5;d++)ev+=Math.max(0,eveningMin(d)-30);
     let bev=0;bf.forEach(i=>{bev+=Math.max(0,REC[i].ev-15);});const avg=avgDay();
     S=old;
     const nov=Math.min(2,cook.filter(c=>!rt(c.m)).length)+Math.min(1,bf.filter(i=>!rt(i)).length);
-    const sc=-Math.max(0,cost-BUDGET)/20-Math.max(0,sp-180)*5-ev*20-bev*20-Math.abs(avg-norm)/10+nov*12;
+    const sc=-health*4-repetition*32-Math.max(0,cost-BUDGET)/20-Math.max(0,sp-180)*5-ev*12-bev*12-Math.abs(avg-norm)/25+nov*5+Math.min(15,fromStock/30);
     if(sc>bs){bs=sc;best={cook,bf};}
   }
   return best;
@@ -1067,6 +1390,8 @@ document.addEventListener('click',e=>{
     case 'unlockall':S.lock={};save();render();break;
     case 'gopen':{const d=+el.dataset.d;go(()=>{S.day=d;S.tab='day';S.slot=v;enter=true;save();render();window.scrollTo(0,0);},'f');break;}
     case 'swap':swapQ={q:'',c:''};sheet={kind:'swap',role:v};paintLayer();break;
+    case 'swappreview':sheet.preview=+v;paintLayer();break;
+    case 'swapback':delete sheet.preview;paintLayer();break;
     case 'detail':sheet={kind:'detail',id:+v};paintLayer();break;
     case 'master':sheet={kind:'master'};paintLayer();break;
     case 'me':S.me=v;save();enter=false;render();break;
@@ -1086,10 +1411,12 @@ document.addEventListener('click',e=>{
     case 'pick':{const ri=roleInfo(sheet.role),prev=ri.get();ri.set(+v);undo={role:sheet.role,prev};const nm=REC[+v].n;save();sheet=null;showToast('Заменено на «'+nm+'»',true);render();break;}
     case 'undo':if(undo){roleInfo(undo.role).set(undo.prev);undo=null;save();}toast=null;render();break;
     case 'place':{const i=sheet.id,r=REC[i],d=+v;if(r.t==='Завтрак')S.bf[d-1]=i;else S.cook[d][r.t==='Основное'?'m':r.t==='Гарнир'?'s':'l']=i;save();sheet=null;showToast('Поставлено на '+DN[d].toLowerCase(),false);render();break;}
-    case 'regen':{const g=generate();if(g){go(()=>{S.cook=g.cook;S.bf=g.bf;S.chk={};enter=true;save();showToast('Неделя собрана заново',false);render();},'f');}break;}
+    case 'regen':{const g=generate();if(g){go(()=>{S.cook=g.cook;S.bf=g.bf;S.chk={};enter=true;save();showToast('Неделя собрана заново',false);render();},'f');}else{showToast('Для нового меню нужны дополнительные доступные блюда',false);paintLayer();}break;}
     case 'reset':{const d=defaultState();go(()=>{S.cook=d.cook;S.bf=d.bf;S.chk={};S.lock={};enter=true;save();render();},'b');break;}
     case 'chk':if(S.chk[v])delete S.chk[v];else S.chk[v]=1;save();render();try{navigator.vibrate&&navigator.vibrate(8);}catch(e2){}break;
     case 'shopopen':shopOpen=shopOpen===v?null:v;render();break;
+    case 'pantry':sheet={kind:'pantry'};paintLayer();break;
+    case 'nutrition':sheet={kind:'nutrition'};paintLayer();break;
     case 'uncheck':S.chk={};save();render();break;
     case 'libt':S.lib.t=v;S.lib.c='';S.lib.n=60;enter=true;save();render();break;
     case 'libc':S.lib.c=v;enter=true;save();render();break;
@@ -1116,10 +1443,21 @@ document.addEventListener('input',e=>{
   else if(a==='swapq'){swapQ.q=el.value;const p=el.selectionStart;paintLayer();const n=document.getElementById('swapq');if(n){n.focus();n.setSelectionRange(p,p);}}
   else if(a==='subtxt'){const t=el.value.trim();if(t)S.sub[el.dataset.v]=t;else delete S.sub[el.dataset.v];save();}
   else if(a==='price'){const x=+el.value;if(x>0)S.price[el.dataset.v]=x;else delete S.price[el.dataset.v];save();}
-  else if(a==='homeg'){S.home[el.dataset.v]=Math.max(0,+el.value||0);save();}
+  else if(a==='homeg'||a==='stock'){const value=+el.value;if(Number.isFinite(value)&&value>=0){S.home[el.dataset.v]=value;save();}}
   else if(a==='norm'){S.norms[el.dataset.v]=Math.max(800,+el.value||1800);save();}
 });
-document.addEventListener('change',e=>{const a=e.target.dataset&&e.target.dataset.act;if(a==='homeg'||a==='subtxt'||a==='norm'||a==='price'){enter=false;render();}});
+document.addEventListener('change',e=>{
+  const el=e.target,a=el.dataset?.act;
+  if(a==='yield'){
+    const value=+el.value;
+    if(!Number.isFinite(value)||value<0)return;
+    S.yields??={};
+    S.yields[el.dataset.id]??={};
+    S.yields[el.dataset.id][el.dataset.v]=value;
+    save();paintLayer();
+  }
+  if(a==='stock'||a==='homeg'||a==='subtxt'||a==='norm'||a==='price'){enter=false;render();}
+});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(ck){ck=null;paintLayer();}else if(sheet)closeSheet();}});
 
 /* жесты: свайп по дням, перетягивание шторки вниз */
