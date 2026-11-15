@@ -602,6 +602,31 @@ function saladSteps(r){
     'Соберите салат. Две порции на завтра уберите в холодильник. Заправку добавляйте перед подачей.'];
 }
 REC.forEach(r=>{
+  if(r.bt==='stuff'){
+    r.i.push(['gar',5]);
+    r.bs=r.bs.map(([stage,step])=>[stage,stage==='m'?'Томаты ({tmc}), чеснок ({gar}) и оливковое масло ({oo}) смешайте со 100 мл воды.':
+      step.replace('Лук мелко нарежьте.','Лук ({onion}) мелко нарежьте.').replace('Смешайте фарш с рисом','Смешайте фарш ({tkg}) с рисом')]);
+  }
+  if(r.bt==='roll'){
+    const mix=r.bs.find(x=>x[0]==='b');
+    if(r.i[0][0]==='tkg'){
+      r.bs=r.bs.filter(([stage])=>stage!=='c');
+      mix[1]='Смешайте фарш ({tkg}), яйцо ({egg}) и хлопья ({oat}). Распределите массу по пергаменту слоем около 1 см, выложите начинку, сверните с помощью пергамента и переложите швом вниз.';
+    }else if(r.i.some(([k])=>k==='egg')){
+      mix[1]='Смешайте овощную начинку со взбитым яйцом ({egg}). Выложите начинку на мясо, сверните и скрепите рулет.';
+    }
+    const filling=r.bs.find(x=>x[0]==='v');
+    if(filling)filling[1]=filling[1].replace('шпинат и брокколи обдайте кипятком и отожмите',
+      r.i.filter(([k])=>k==='spi'||k==='bro').map(([k])=>ING[k].n.toLowerCase()).join(' и ')+' обдайте кипятком и отожмите').replace(/,  обдайте кипятком и отожмите/,'');
+  }
+  if(r.bt==='marin'){
+    const missing=r.i.filter(([k])=>['mush','onion','lek','pep','pea'].includes(k)&&!r.bs.some(([,s])=>s.includes('{'+k+'}')));
+    if(missing.length){
+      const assembly=r.bs.find(x=>x[0]==='b');
+      assembly[1]='Перед смешиванием с мясом подготовьте: '+missing.map(([k])=>ING[k].n+' ({'+k+'}) — '+(k==='pea'?'отмерьте':'нарежьте кусочками около 1 см')).join(', ')+'. '+assembly[1].replace('Мясо и маринад','Мясо, овощи или грибы и маринад');
+    }
+  }
+  if(r.n==='Фрикадельки индейки с брокколи и йогуртом')r.bs.find(x=>x[0]==='b')[1]+=' Добавьте йогурт ({yog}) перед формовкой.';
   if(r.t==='Гарнир')r.i=r.i.map(([k,g])=>[k,Math.min(g,SIDE_DRY[k]||g)]);
   for(const k of ['k','P','F','C'])
     r[k]=r.i.reduce((sum,[id,g])=>sum+ING[id][k]*g/100,0)/r.p;
@@ -653,6 +678,7 @@ REC.forEach(r=>{
     if(r.n==='Омлетные маффины со шпинатом и фетой')r.st[0]+=' Раскрошите фету ({fet}) и вмешайте в яйца.';
   }
   r.st=r.st.map(s=>s.replace('Мясо готово, когда сок прозрачный.','Проверьте термометром: в центре самого толстого куска птицы должно быть не менее 74 °C.')
+    .replace('Соус разморозьте: пакет на 5 минут в тёплую воду или 2 минуты в микроволновке.','Переложите соус в холодильник заранее или разморозьте непосредственно перед готовкой в посуде для микроволновки по инструкции прибора.')
     .replace('Половину порции уберите в контейнер: это завтрашний обед.','Две порции на завтрашний обед разложите по неглубоким контейнерам и уберите в холодильник в течение 2 часов.'));
   if(r.t!=='Завтрак'&&r.i.some(([k])=>k==='rice'||k==='brr'))
     r.st.push('Порции с рисом быстро охладите в неглубоких контейнерах, желательно в течение часа. Храните в холодильнике до 24 часов, разогревайте один раз до горячего состояния по всему объёму.');
@@ -853,8 +879,40 @@ function fq(t,r){return t.replace(/\{(\w+)\}/g,(m,k)=>{const z=r.i.find(x=>x[0]=
 const plu=(n,a)=>a[n%10===1&&n%100!==11?0:(n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?1:2];
 const SOLIDK=new Set(['onion','pep','carrot','mush','pum','zuc','egp','lek','chk','kid','cor','pea','len','rice','bul']),HERBK=new Set(['prs','dil','cil']),FILLK=new Set(['moz','fet','par','spi','bro','tom','olv','gb']),SHAREK=new Set(['oo','soy','hon','mst','yog','tpa','tmc','tah','gin','lem','lime','ora','gar','egg','oat','moz','fet','par']),GRAIN=new Set(['rice','bul']);
 const blanksOf=()=>{const a=[];S.cook.forEach((c,d)=>{const r=REC[c.m];if(r&&r.bt)a.push({d,id:c.m,r});});return a;};
-function stageMin(bl,code){let m=0;bl.forEach(b=>{m+=(b.r.ops[code]||0);if(code==='b'&&b.d>0)m+=b.r.ops.p||0;});return m?Math.max(3,Math.round(m*.8)):0;}
-const sundayPrep=()=>{const bl=blanksOf();let t=0;['v','g','c','m','b'].forEach(c=>{t+=stageMin(bl,c);});return t;};
+function stageMin(bl,code){return bl.reduce((sum,b)=>sum+(code==='p'&&b.d===0?0:b.r.ops[code]||0),0);}
+const sundayPrep=()=>{const bl=blanksOf();return ['v','g','c','m','b','p'].reduce((sum,c)=>sum+stageMin(bl,c),0);};
+const freshSetup={
+  roll:'Смажьте собранные рулеты маслом и выложите в форму.',
+  cut:'Разложите свежие котлеты на противне с пергаментом.',
+  marin:'Переложите мясо вместе с маринадом в форму.',
+  shash:'Разложите шпажки на решётке над противнем или на пергаменте.',
+  cuts:'Выложите свежие тефтели в форму, залейте соусом и накройте фольгой.',
+  ragu:'Переложите заготовку в форму и накройте фольгой.',
+  stuff:'Поставьте перцы в жаропрочную форму, залейте соусом и накройте фольгой.',
+  bake:'Выложите заготовку в форму одним слоем.'
+};
+function recipeSteps(r,mode){
+  if(!r.bt)return r.st;
+  if(mode!=='fresh')return r.st.flatMap(s=>{
+    const split=/^Запекайте (\d+) минут, затем снимите фольгу и (?:готовьте ещё|добавьте ещё) (\d+) минут\.$/.exec(s);
+    return split?['Запекайте под фольгой '+split[1]+' мин.','Снимите фольгу и запекайте ещё '+split[2]+' мин.']:[s];
+  });
+  const rest=r.st.filter(s=>/Дайте отдохнуть|Две порции|Порции с рисом/.test(s));
+  const finish=r.st.filter(s=>s.startsWith('За 10 минут'));
+  const check=r.bt==='cut'||r.bt==='shash'?12:r.bt==='stuff'?25:20;
+  const uncover=['cuts','ragu','stuff'].includes(r.bt)?['Снимите фольгу, когда блюдо почти готово.']:[];
+  return [r.st[0],freshSetup[r.bt],
+    'Запекайте '+check+' мин, затем начните проверять готовность.',
+    ...uncover,
+    ...finish.map(s=>s.replace('За 10 минут до конца добавьте:','Когда блюдо почти готово, добавьте:')),
+    'Продолжайте запекать, пока термометр не покажет 74 °C в центре самых крупных кусков или начинки.',...rest];
+}
+function sideReadyMin(r){
+  const saved=S.yields?.[REC.indexOf(r)]?.minutes;
+  if(saved>0)return saved;
+  if(r.i.some(([k])=>k==='brr'))return 45;
+  return Math.max(r.ev,...r.st.map(stepMin));
+}
 function mpDone(){if(!S.mp||S.mp.w!==S.wk)S.mp={w:S.wk,done:{}};return S.mp.done;}
 const kgf=g=>g>=1000?(g/1000).toLocaleString('ru-RU',{maximumFractionDigits:2})+' кг':Math.round(g)+' г';
 const am=(k,g)=>q5(g);
@@ -899,22 +957,24 @@ function masterPlan(){
    const items=ord.map(k=>({key:'v_'+k,t:ing(k).n+': всего '+fa(k,m[k].reduce((a,x)=>a+x[1],0)),subs:m[k].map(x=>fa(k,x[1])+' — '+x[2]+' ('+dn(x[0])+')')}));
    if(items.length)st.push({k:'v',t:'Овощи, зелень, крупы',s:'Режем сразу на все блюда. Крупу поставьте первой: она варится сама.',min:mins('v'),items});}
   // фарш
-  {const items=[],m={},rd={};bl.forEach(b=>{const k=b.r.i[0][0],g=am(k,b.r.i[0][1]);if(b.r.bt==='cut'||b.r.bt==='cuts'){if(k==='tkg')(rd[k]=rd[k]||[]).push([b,g]);else(m[k]=m[k]||[]).push([b,g]);}else if(b.r.bt==='stuff')(rd[k]=rd[k]||[]).push([b,g]);});
+  {const items=[],m={},rd={};bl.forEach(b=>{const k=b.r.i[0][0],g=am(k,b.r.i[0][1]);if(k==='tkg')(rd[k]=rd[k]||[]).push([b,g]);else if(b.r.bt==='cut'||b.r.bt==='cuts')(m[k]=m[k]||[]).push([b,g]);});
    Object.keys(m).forEach(k=>items.push({key:'g_'+k,t:ing(k).n+': всего '+kgf(m[k].reduce((a,x)=>a+x[1],0))+' в фарш',tx:'Пропустите через мясорубку или измельчите в комбайне. Готовый фарш разделите:',subs:m[k].map(x=>kgf(x[1])+' — '+dn(x[0]))}));
-   Object.keys(rd).forEach(k=>{if(rd[k].length>1)items.push({key:'gr_'+k,t:ing(k).n+': всего '+kgf(rd[k].reduce((a,x)=>a+x[1],0)),tx:'Фарш уже готов, только разделите:',subs:rd[k].map(x=>kgf(x[1])+' — '+dn(x[0]))});});
+   Object.keys(rd).forEach(k=>items.push({key:'gr_'+k,t:ing(k).n+': всего '+kgf(rd[k].reduce((a,x)=>a+x[1],0)),tx:'Отмерьте готовый фарш:',subs:rd[k].map(x=>kgf(x[1])+' — '+dn(x[0]))}));
    if(items.length)st.push({k:'g',t:'Фарш',s:'Один раз на все блюда: мясорубку или комбайн достаточно вымыть потом один раз.',min:mins('g'),items});}
   // нарезка мяса
-  {const m={},ord=[];bl.forEach(b=>{const bt=b.r.bt;if(bt==='cut'||bt==='cuts'||bt==='stuff')return;const k=b.r.i[0][0];if(!m[k]){m[k]=[];ord.push(k);}m[k].push([b,am(k,b.r.i[0][1])]);});
+  {const m={},ord=[];bl.forEach(b=>{const bt=b.r.bt,k=b.r.i[0][0];if(k==='tkg'||bt==='cut'||bt==='cuts'||bt==='stuff')return;if(!m[k]){m[k]=[];ord.push(k);}m[k].push([b,am(k,b.r.i[0][1])]);});
    const items=ord.map(k=>({key:'c_'+k,t:ing(k).n+': всего '+kgf(m[k].reduce((a,x)=>a+x[1],0)),subs:m[k].map(x=>kgf(x[1])+' — '+CUTTXT[x[0].r.bt]+(x[0].r.bt==='marin'&&(k==='cht'||k==='tkt')?', срезать лишний жир':'')+' ('+dn(x[0])+')')}));
    if(items.length)st.push({k:'c',t:'Нарезка мяса',s:'Отдельная доска для мяса.',min:mins('c'),items});}
   // маринады и соусы
-  {const items=[];bl.forEach(b=>b.r.bs.forEach(([c,tx],j)=>{if(c==='m')items.push({key:'m'+b.id+'_'+j,dish:b.r.n,d:b.d,tx:fq(tx,b.r)});}));
+  {const items=[];bl.forEach(b=>b.r.bs.forEach(([c,tx],j)=>{if(c==='m')items.push({key:'m'+b.d+'_'+b.id+'_'+j,dish:b.r.n,d:b.d,tx:fq(tx,b.r)});}));
    if(items.length)st.push({k:'m',t:'Маринады и соусы',s:'Каждый смешайте в своей ёмкости. Для соусов нужен блендер.',min:mins('m'),items});}
   // сборка
-  {const items=[];bl.forEach(b=>b.r.bs.forEach(([c,tx],j)=>{if(c==='b')items.push({key:'b'+b.id+'_'+j,dish:b.r.n,d:b.d,tx:fq(tx,b.r)});}));
+  {const items=[];bl.forEach(b=>b.r.bs.forEach(([c,tx],j)=>{if(c==='b')items.push({key:'b'+b.d+'_'+b.id+'_'+j,dish:b.r.n,d:b.d,tx:fq(tx,b.r)});}));
    if(items.length)st.push({k:'b',t:'Сборка заготовок',s:'Формуем, нанизываем, раскладываем по пакетам: один пакет на ужин и обед.',min:mins('b'),items});}
-  const total=st.reduce((a,x)=>a+x.min,0);
-  return{stages:st,total,n:bl.length};
+  const items=bl.flatMap(b=>b.d===0?[{key:'fresh_'+b.id,dish:b.r.n,d:0,tx:'Для воскресного ужина оставьте партию в холодильнике до готовки. Откройте режим «Готовлю сразу».'}]:
+    b.r.bs.flatMap(([c,tx],j)=>c==='p'?[{key:'p'+b.d+'_'+b.id+'_'+j,dish:b.r.n,d:b.d,tx:fq(tx,b.r)}]:[]));
+  if(items.length)st.push({k:'p',t:'Разложить, подписать, заморозить',min:mins('p'),items});
+  return{stages:st,total:sundayPrep(),n:bl.length,wait:items.some(x=>/1–2 часа|на 1 час/.test(x.tx))};
 }
 function usageOf(k){
   const m={};const add=(id,tag)=>{const z=REC[id].i.find(x=>x[0]===k);if(!z)return;(m[id]=m[id]||{id,tags:[],g:0});m[id].tags.push(tag);m[id].g+=q5(z[1]);};
@@ -1061,12 +1121,15 @@ function viewDay(){
     h+=rowHtml(c.m,'Основное','m'+cd,0,mn(c.m))+rowHtml(c.s,'Гарнир','s'+cd,1,sd(c.s))+rowHtml(c.l,'Салат','l'+cd,2,sd(c.l));}
   h+='</div>';
   if(ids.length&&slot==='Ужин'){const c2=S.cook[d],x=REC[c2.m],stp=[];
-    if(x.ov){stp.push(d===0?'«'+x.n+'»: после сборки не морозьте, сразу на противень или в форму.':'Достаньте из морозилки «'+x.n+'». Размораживать не нужно.');stp.push('Духовка '+x.ov[0]+' °C, готовить '+(d===0?Math.max(15,x.ov[1]-8):x.ov[1])+' мин.');}
+    const side=REC[c2.s],sideMin=sideReadyMin(side);
+    if(sideMin>=(x.ov&&d>0?x.ov[1]:x.ev))stp.push('Заранее начните гарнир «'+side.n+'»: ориентир '+sideMin+' мин до готовности.');
+    if(x.ov){stp.push('«'+x.n+'»: откройте '+(d===0?'«Готовлю сразу» после сборки.':'«Готовлю из морозилки».'));stp.push('Разогрейте духовку до '+x.ov[0]+' °C. Проверяйте птицу термометром до 74 °C в центре.');}
     else{stp.push('Если филе или морепродукты замороженные, утром переложите их в холодильник.');stp.push('«'+x.n+'»: у плиты ≈ '+x.ev+' мин.');}
-    stp.push('Пока готовится основное: гарнир «'+REC[c2.s].n+'» ('+REC[c2.s].ev+' мин) и салат «'+REC[c2.l].n+'» ('+REC[c2.l].ev+' мин).');
+    stp.push('Гарнир «'+side.n+'»: активная работа ≈ '+side.ev+' мин. Соберите салат «'+REC[c2.l].n+'». Если для двух блюд нужна одна духовка с разной температурой, запекайте их по очереди.');
     if(d<=4)stp.push('Половину каждого готового блюда разложите на две порции для завтрашнего обеда.');
     h+='<div class="evc"><b>Вечером по порядку</b><ol>'+stp.map(z=>'<li>'+esc(z)+'</li>').join('')+'</ol></div>';}
   if(ids.length&&slot!=='Завтрак'){const cd=cookDay(d,slot);
+    if(slot==='Обед')h+='<div class="evc"><b>Как подать обед</b><p>Достаньте две порции из холодильника. Основное и гарнир, которые подаёте горячими, разогрейте до 74 °C. Салат заправьте перед подачей.'+(ids.some(i=>REC[i].i.some(([k])=>k==='rice'||k==='brr'))?' Рис храните в холодильнике до 24 часов и разогревайте один раз.':'')+'</p></div>';
     h+='<p class="small mut" style="margin:12px 4px 0;line-height:1.45">'+(slot==='Ужин'?'Эта порция станет обедом: '+(DN[d+1]||'').toLowerCase()+'.':'Это вчерашний ужин: '+DN[d-1].toLowerCase()+'.')+' Замена блюда меняет оба приёма.'+(slot==='Ужин'?' Вечером у плиты ≈ '+eveningMin(cd)+' мин.':'')+(cd===0?' Воскресенье: заготовка на неделю ≈ '+sundayPrep()+' мин.':'')+'</p>';}
   h+='</div>';
   return h;
@@ -1176,8 +1239,10 @@ function sheetHtml(){
     const mp=masterPlan(),dn2=mpDone();let tot=0,dd=0;mp.stages.forEach(x=>x.items.forEach(z=>{tot++;if(dn2[z.key])dd++;}));
     let h=head('Воскресенье, '+dtxt(0),'Мастер-план заготовки')+'<div class="bd"><div class="kv" style="grid-template-columns:repeat(3,1fr)"><div><b>≈ '+mp.total+'</b>минут</div><div><b>'+mp.n+'</b>'+plu(mp.n,['заготовка','заготовки','заготовок'])+'</div><div><b>'+dd+'/'+tot+'</b>сделано</div></div>';
     h+='<p class="small mut" style="line-height:1.45;margin-top:10px">Готовим сразу на все блюда: общий фарш, общая нарезка. В каждом шаге написано, сколько всего и сколько куда. Нажимайте на пункт, чтобы отметить. Воскресную заготовку на ужин не морозим, а сразу запекаем.</p>';
+    h+='<p class="small mut">Время выше — активная работа.'+(mp.wait?' На предварительное подмораживание отдельных партий отведите ещё до 2 часов.':'')+' Освободите место в морозилке и подпишите ёмкости по дням.</p>';
+    if(REC[S.cook[0].m].bt)h+='<button class="btn alt" data-act="cook" data-mode="fresh" data-v="'+S.cook[0].m+'">Готовлю воскресный ужин</button>';
     mp.stages.forEach((x,n)=>{h+='<div class="mps"><div class="mph"><i>'+(n+1)+'</i><div><b>'+esc(x.t)+'</b>'+(x.s?'<span>'+esc(x.s)+'</span>':'')+'</div>'+(x.min?'<em>≈ '+x.min+' мин</em>':'')+'</div>';
-      x.items.forEach((z,j)=>{h+='<button class="mpi '+(dn2[z.key]?'on':'')+'" data-act="mpchk" data-v="'+z.key+'"><span class="cbx"></span><span>'+(z.t?'<b>'+esc(z.t)+'</b><br>':(z.dish&&!(j>0&&x.items[j-1].dish===z.dish)?'<b>'+esc(z.dish)+'</b> · '+DS[z.d]+'<br>':''))+(z.tx?esc(z.tx):'')+(z.subs?'<span class="sub">'+z.subs.map(q=>'<span>'+esc(q)+'</span>').join('')+'</span>':'')+'</span></button>';});
+      x.items.forEach((z,j)=>{h+='<button class="mpi '+(dn2[z.key]?'on':'')+'" data-act="mpchk" data-v="'+z.key+'"><span class="cbx"></span><span>'+(z.t?'<b>'+esc(z.t)+'</b><br>':(z.dish&&!(j>0&&x.items[j-1].dish===z.dish&&x.items[j-1].d===z.d)?'<b>'+esc(z.dish)+'</b> · '+DS[z.d]+'<br>':''))+(z.tx?esc(z.tx):'')+(z.subs?'<span class="sub">'+z.subs.map(q=>'<span>'+esc(q)+'</span>').join('')+'</span>':'')+'</span></button>';});
       h+='</div>';});
     return h+'</div></div>';
   }
@@ -1239,10 +1304,17 @@ function sheetHtml(){
     const micro=MICRO_SOURCES.filter(g=>sources.some(w=>sourceFoods(g,w).length));
     if(micro.length)h+='<div class="rbox"><b>Продукты-источники</b><br>'+micro.map(g=>g.name+' · '+esc(ING[sources.flatMap(w=>sourceFoods(g,w))[0]].n)).join('<br>')+'</div>';
     {const ww=weeksWith(r.n);h+='<div class="rbox"><div class="sec" style="margin:0 0 6px">Оценка</div>'+starsHtml(i)+'<div class="small mut" style="margin-top:8px;line-height:1.4">'+(ww.length?'Готовили на '+ww.length+' '+(ww.length===1?'неделе':'неделях')+', последний раз '+wkTxt(ww[ww.length-1])+'. ':'В плане ещё не было. ')+'Оценка общая для вас с Дашей.</div><button class="nev '+(banned(i)?'on':'')+'" data-act="ban" data-v="'+i+'">'+(banned(i)?'Исключено из плана. Вернуть':'Больше не предлагать')+'</button></div>';}
-    if(r.st&&r.st.length)h+='<div class="act-row" style="margin-top:6px"><button class="btn red" data-act="cook" data-v="'+i+'">'+IC.flame+(r.bt?'Вечером по шагам':'Готовить по шагам')+'</button>'+favBtn(i)+'</div>';
+    if(r.st&&r.st.length)h+='<div class="act-row" style="margin-top:6px">'+(r.bt
+      ?'<button class="btn red" data-act="cook" data-mode="fresh" data-v="'+i+'">Готовлю сразу</button><button class="btn alt" data-act="cook" data-mode="frozen" data-v="'+i+'">Готовлю из морозилки</button>'
+      :'<button class="btn red" data-act="cook" data-v="'+i+'">'+IC.flame+'Готовить по шагам</button>')+favBtn(i)+'</div>';
     h+='<div class="sec">Продукты на весь рецепт</div><table class="ing">'+r.i.map(([k,g])=>'<tr><td>'+esc(ing(k).n)+'</td><td>'+x1(q5(g))+' г</td></tr>').join('')+'</table><p class="small mut" style="margin-top:6px">Крупы и сухую чечевицу взвешивайте до варки. Для яиц берите вес без скорлупы, для бобовых и кукурузы из банки — вес после слива жидкости.</p>';
     const ol=a=>'<ol style="margin:0;padding-left:20px;font-size:14px;line-height:1.5">'+a.map(x=>'<li style="margin-bottom:6px">'+esc(fq(x,r))+'</li>').join('')+'</ol>';
-    if(r.bt){h+='<div class="sec">Воскресенье: заготовка</div>'+ol(r.bs.map(x=>x[1]))+'<p class="small mut">В морозилке хранится до 3 месяцев, по плану блюдо уходит за 5 дней. В воскресный ужин заготовку не морозим, а сразу запекаем.</p>';h+='<div class="sec">Вечером: из морозилки в духовку</div>'+ol(r.st)+'<p class="small mut">Время и температуру подстраивайте под свою духовку.</p>';}
+    if(r.bt){
+      h+='<div class="sec">Сборка заготовки</div>'+ol(r.bs.filter(([c])=>c!=='p').map(([,s])=>s));
+      h+='<div class="sec">Если готовите в другой день: фасовка</div>'+ol(r.bs.filter(([c])=>c==='p').map(([,s])=>s));
+      h+='<div class="sec">Готовлю сразу</div>'+ol(recipeSteps(r,'fresh'));
+      h+='<div class="sec">Готовлю из морозилки</div>'+ol(recipeSteps(r,'frozen'));
+    }
     else if(r.st&&r.st.length)h+='<div class="sec">'+(r.c==='Рыба'||r.c==='Морепродукты'?'Вечером: свежая в день ужина':'Как готовить')+'</div>'+ol(r.st)+'<p class="small mut">Базовая последовательность. Время и температуру подстраивайте под свою плиту.</p>';
     h+='<div class="sec">Поставить в план</div><div class="dsel">'+days.map(d=>'<button data-act="place" data-v="'+d+'">'+DS[d]+'</button>').join('')+'</div></div></div>';
     return h;
@@ -1251,7 +1323,7 @@ function sheetHtml(){
 }
 function cookHtml(){
   if(!ck)return'';
-  const r=REC[ck.id],st=r.st,n=st.length,s=ck.step,c=paint(r);
+  const r=REC[ck.id],st=recipeSteps(r,ck.mode),n=st.length,s=ck.step,c=paint(r);
   const m=stepMin(fq(st[s],r));
   let h='<div class="cook" id="cook" style="--paint:'+c+'" role="dialog" aria-modal="true" aria-label="Готовим: '+esc(r.n)+'"><div class="top"><button class="rb paint" data-act="cookx" aria-label="Закрыть">'+IC.close+'</button><div class="dots">'+st.map((x,j)=>'<i class="'+(j<=s?'d':'')+'"></i>').join('')+'</div><span class="small" style="font-weight:700">'+(s+1)+'/'+n+'</span></div>';
   h+='<div class="body"><div style="display:flex;align-items:center;gap:14px"><span class="pt" style="width:92px;height:92px;flex:none;filter:drop-shadow(0 8px 10px rgba(16,38,26,.28));animation:plate 600ms var(--spring) both">'+PAINT_ART.art(ck.id,REC)+'</span><div style="font-weight:700;opacity:.85;font-size:14px;line-height:1.25">'+esc(r.n)+'</div></div><div class="cp '+(ck.back?'back':'')+'" key="'+s+'"><div class="stepn">'+(s+1)+'</div><div class="big" style="margin-top:14px">'+esc(fq(st[s],r))+'</div></div>';
@@ -1260,7 +1332,11 @@ function cookHtml(){
   h+='</div><div class="nav"><button class="btn alt" data-act="cprev" aria-label="Назад"'+(s===0?' disabled style="opacity:.4"':'')+'>'+IC.left+'</button><button class="btn" data-act="cnext">'+(s===n-1?'Готово':'Дальше')+'</button></div></div>';
   return h;
 }
-function stepMin(t){const m=/(\d+)(?:–(\d+))?\s*(?:минут|мин)/.exec(t);if(!m)return 0;return +(m[2]||m[1]);}
+function stepMin(t){
+  if(/(?:или|потом|с каждой стороны|в холодильник|до конца)/i.test(t)||Array.from(t.matchAll(/\d+(?:[–-]\d+)?\s*мин/g)).length!==1)return 0;
+  const m=/(\d+)(?:[–-]\d+)?\s*(?:минут|мин)/.exec(t);
+  return m?+m[1]:0;
+}
 const tfmt=ms=>{ms=Math.max(0,Math.ceil(ms/1000));return Math.floor(ms/60)+':'+String(ms%60).padStart(2,'0');};
 let tmI=null;
 function tick(){
@@ -1428,11 +1504,11 @@ document.addEventListener('click',e=>{
       else if(navigator.clipboard){navigator.clipboard.writeText(url).then(done).catch(()=>{prompt&&0;showToast('Не удалось скопировать',false);paintLayer();});}
       break;}
     case 'theme':{const d=document.documentElement,dark=d.dataset.theme?d.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;d.dataset.theme=dark?'light':'dark';break;}
-    case 'cook':{ck={id:+v,step:0,timer:null};sheet=null;paintLayer();try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{});}catch(e2){}break;}
+    case 'cook':{ck={id:+v,mode:el.dataset.mode,step:0,timer:null};sheet=null;paintLayer();try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{});}catch(e2){}break;}
     case 'cookx':clearInterval(tmI);tmI=null;stopAlarm();ck=null;paintLayer();break;
     case 'alarmoff':stopAlarm();if(ck)ck.alarm=false;paintLayer();break;
     case 'snd':S.snd=v;save();if(v!=='off')preview(v);render();break;
-    case 'cnext':{const n=REC[ck.id].st.length;if(ck.step>=n-1){clearInterval(tmI);tmI=null;const rid=ck.id;ck=null;if(!rt(rid)&&!banned(rid))sheet={kind:'review',ids:[rid],title:'Приятного аппетита',sub:'Как получилось?'};else showToast('Приятного аппетита',false);paintLayer();break;}stopAlarm();ck.alarm=false;ck.step++;ck.back=false;ck.timer=null;paintLayer();break;}
+    case 'cnext':{const n=recipeSteps(REC[ck.id],ck.mode).length;if(ck.step>=n-1){clearInterval(tmI);tmI=null;const rid=ck.id;ck=null;if(!rt(rid)&&!banned(rid))sheet={kind:'review',ids:[rid],title:'Приятного аппетита',sub:'Как получилось?'};else showToast('Приятного аппетита',false);paintLayer();break;}stopAlarm();ck.alarm=false;ck.step++;ck.back=false;ck.timer=null;paintLayer();break;}
     case 'cprev':if(ck.step>0){stopAlarm();ck.alarm=false;ck.step--;ck.back=true;ck.timer=null;paintLayer();}break;
     case 'timer':{if(ck.timer&&ck.timer.step===ck.step){ck.timer=null;clearInterval(tmI);tmI=null;}else{ac();const ms=(+v)*60000;ck.timer={step:ck.step,end:Date.now()+ms,total:ms};clearInterval(tmI);tmI=setInterval(tick,250);}paintLayer();break;}
   }
@@ -1478,7 +1554,11 @@ function endSw(e){
   if(t==='sheet'){if(dy>110){closeSheet();}else if(s){s.style.transition='transform 360ms var(--spring)';s.style.transform='';}return;}
   if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.6){
     if(t==='day'){const d=S.day+(dx<0?1:-1);if(d>=0&&d<=5)setDay(d);}
-    else if(t==='cook'&&ck){if(dx<0){const n=REC[ck.id].st.length;if(ck.step<n-1){ck.step++;ck.back=false;ck.timer=null;paintLayer();}}else if(ck.step>0){ck.step--;ck.back=true;ck.timer=null;paintLayer();}}
+    else if(t==='cook'&&ck){
+      if(dx>0)document.querySelector('#cook [data-act="cprev"]')?.click();
+      else if(ck.step<recipeSteps(REC[ck.id],ck.mode).length-1)
+        document.querySelector('#cook [data-act="cnext"]')?.click();
+    }
   }
 }
 document.addEventListener('pointerup',endSw);document.addEventListener('pointercancel',()=>{if(sw&&sw.s){sw.s.style.transition='transform 300ms var(--spring)';sw.s.style.transform='';}sw=null;});
