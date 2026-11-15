@@ -7,6 +7,18 @@ function setupHousehold() {
   if (!props.getProperty('HOUSEHOLD_CODE')) {
     props.setProperty('HOUSEHOLD_CODE', Utilities.getUuid().replace(/-/g, ''));
   }
+  if (!props.getProperty('BETA_CREATE_CODE')) {
+    props.setProperty('BETA_CREATE_CODE', Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, ''));
+  }
+}
+
+// После публикации запустите showBetaLink. Ссылка с правом создания планов появится в журнале.
+function showBetaLink() {
+  const u = ScriptApp.getService().getUrl();
+  const c = PropertiesService.getScriptProperties().getProperty('BETA_CREATE_CODE');
+  if (!u || !u.endsWith('/exec') || !c) throw new Error('Сначала запустите setupHousehold и разверните веб-приложение.');
+  const invite = Utilities.base64Encode(JSON.stringify({u,c}));
+  Logger.log('https://dryaginmax74reg-lgtm.github.io/zagotovka/#h=' + invite);
 }
 
 function doGet(event) {
@@ -23,21 +35,40 @@ function householdRequest(event, write) {
   try {
     const request = write ? JSON.parse(event.postData.contents) : event.parameter;
     const props = PropertiesService.getScriptProperties();
-    const secret = props.getProperty('HOUSEHOLD_CODE');
-    if (!secret || request.c !== secret) return reply({ok: false, error: 'access'});
+    const action = request.action;
+    const beta = action === 'create' || action === 'pull' || action === 'push';
+    let sheetName = 'HouseholdSync';
+    if (beta) {
+      if (!write || typeof request.c !== 'string' || !/^[a-f0-9]{64}$/.test(request.c))
+        return reply({ok:false,error:'access'});
+      const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, request.c);
+      sheetName = 'Family_' + digest.map(b => ((b + 256) % 256).toString(16).padStart(2,'0')).join('');
+      if (action === 'create') {
+        const betaCode = props.getProperty('BETA_CREATE_CODE');
+        if (!betaCode || request.beta !== betaCode) return reply({ok:false,error:'access'});
+      }
+    } else {
+      const secret = props.getProperty('HOUSEHOLD_CODE');
+      if (!secret || request.c !== secret) return reply({ok: false, error: 'access'});
+    }
     const lock = LockService.getScriptLock();
     lock.waitLock(10000);
     try {
       const book = SpreadsheetApp.openById(props.getProperty('HOUSEHOLD_SHEET'));
-      const sheet = book.getSheetByName('HouseholdSync') || book.insertSheet('HouseholdSync');
-      const count = sheet.getLastRow();
+      let sheet = book.getSheetByName(sheetName);
+      if (beta && action !== 'create' && !sheet) return reply({ok:false,error:'access'});
+      if (action === 'create' && sheet?.getLastRow()) return reply({ok:true});
+      if (action === 'create' && !sheet && book.getSheets().filter(s => s.getName().startsWith('Family_')).length >= 25)
+        return reply({ok:false,error:'capacity'});
+      const count = sheet ? sheet.getLastRow() : 0;
       const rows = count ? sheet.getRange(1, 1, count, 5).getValues() : [];
-      if (!write) {
+      if (!write || action === 'pull') {
         const since = Math.max(0, Number(request.since) || 0);
         return reply({ok: true, rows: rows.filter(row => row[2] > since)
           .map(([k,v,st,d,u]) => ({k,v,st,d:!!d,u}))});
       }
-      if (!Array.isArray(request.set) || request.set.length > 2000)
+      if (!Array.isArray(request.set) || request.set.length > 2000 || (action === 'create' &&
+        !['cook','bf'].every(key => request.set.some(row => row.k === key && !row.d))))
         return reply({ok: false, error: 'invalid batch'});
       const keys = new Map(rows.map(([k], i) => [k, i]));
       const stamp = Math.max(Date.now(), rows.reduce((n,row) => Math.max(n,row[2]),0) + 1);
@@ -54,7 +85,11 @@ function householdRequest(event, write) {
         rows[keys.get(k)] = [k,d?'':v,stamp,d?1:0,author];
         updates.push({k,st:stamp});
       }
-      if (rows.length) sheet.getRange(1, 1, rows.length, 5).setValues(rows);
+      if (rows.length) {
+        sheet = sheet || book.insertSheet(sheetName);
+        if (rows.length > sheet.getMaxRows()) sheet.insertRowsAfter(sheet.getMaxRows(), rows.length - sheet.getMaxRows());
+        sheet.getRange(1, 1, rows.length, 5).setValues(rows);
+      }
       SpreadsheetApp.flush();
       return reply({ok:true,st:updates});
     } finally {

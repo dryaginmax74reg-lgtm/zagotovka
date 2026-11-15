@@ -802,7 +802,7 @@ const homeOf=k=>S.home[k]!==undefined?S.home[k]:ing(k).h;
 
 /* ---------- sync (общий план Максима и Даши) ---------- */
 let writing=Promise.resolve(),dbDoc=null,lastSent='',syncT=null;
-const SH=['cook','bf','fav','chk','sub','home','norms','lock','scale','rate','ban','hist','wk','rep','price','mp','yields','people','excluded'];
+const SH=['cook','bf','fav','chk','sub','home','norms','lock','scale','rate','ban','hist','wk','rep','price','mp','yields','people','excluded','names'];
 const shared=()=>{const o={};SH.forEach(k=>o[k]=S[k]);return o;};
 const sharedLink=()=>{const o=shared();delete o.hist;return o;};
 function save(){
@@ -828,6 +828,7 @@ async function initSync(){
 
 /* ---------- общий план через Google Apps Script ---------- */
 const MAPK=['fav','chk','sub','home','lock','rate','ban','price','norms','yields','excluded'],WHO={m:'Максим',d:'Даша'};
+const roleName=k=>S.names?.[k]||WHO[k]||'Участник';
 const FOOD_FILTERS={
   bird:['Птица','chb cht tkg tkt tkb'],
   beef:['Говядина','beef'],
@@ -838,7 +839,7 @@ const FOOD_FILTERS={
 const allowed=i=>!!REC[i]&&!Object.entries(FOOD_FILTERS).some(([key,[,ingredients]])=>
   S.excluded?.[key]&&REC[i].i.some(([ingredient])=>ingredients.split(' ').includes(ingredient)));
 let gBusy=false,gPend=false,gT=null;const gst={ok:null,at:0,waiting:false};
-function flat(){const o={};SH.forEach(k=>{const v=S[k];if(MAPK.includes(k)){Object.keys(v||{}).forEach(e=>{o[k+'|'+e]=JSON.stringify(v[e]);});}else o[k]=JSON.stringify(v===undefined?null:v);});return o;}
+function flat(state=S){const o={};SH.forEach(k=>{const v=state[k];if(MAPK.includes(k)){Object.keys(v||{}).forEach(e=>{o[k+'|'+e]=JSON.stringify(v[e]);});}else o[k]=JSON.stringify(v===undefined?null:v);});return o;}
 function validSyncRow(key){
   if(typeof key!=='string')return false;
   const [field,item,extra]=key.split('|');
@@ -857,6 +858,7 @@ function applyRow(ck,val){const i=ck.indexOf('|');
   const k=ck.slice(0,i),e=ck.slice(i+1);if(!S[k]||typeof S[k]!=='object')S[k]={};
   if(val===undefined)delete S[k][e];else S[k][e]=val;}
 async function gcall(connection,body){
+  if(connection.room)body=body?{action:'push',...body}:{action:'pull',c:connection.c,since:connection.since||0};
   const url=new URL(connection.u),controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),12000);
   try{
@@ -911,7 +913,7 @@ async function gsync(){
   finally{
   gBusy=false;
   try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
-  if(changed){const a=document.activeElement;if(!(a&&a.tagName==='INPUT')){enter=false;render();}if(other){showToast(WHO[other]+' обновил(а) план',false);paintLayer();}}
+  if(changed){const a=document.activeElement;if(!(a&&a.tagName==='INPUT')){enter=false;render();}if(other){showToast(roleName(other)+' обновил(а) план',false);paintLayer();}}
   refreshSyncStatus();
   if(gPend){gPend=false;gKick();}
   }
@@ -920,10 +922,10 @@ const syncTxt=()=>gBusy?'Сверяю изменения…':gst.waiting?'Жду
 setInterval(()=>{if(S.sy&&!document.hidden)gsync();},20000);
 document.addEventListener('visibilitychange',()=>{if(S.sy&&!document.hidden)gsync();});
 function syncCard(){
-  let h='<div class="warn" style="background:var(--soft);color:var(--ink);margin-top:12px"><b>Общий план с '+(S.me==='d'?'Максимом':'Дашей')+'</b>';
-  h+='<div class="small mut" style="margin-top:6px;line-height:1.45">Кто сейчас с телефоном</div><div class="snd">'+['m','d'].map(k=>'<button data-act="me" data-v="'+k+'" class="'+(S.me===k?'on':'')+'">'+WHO[k]+'</button>').join('')+'</div>';
-  if(S.sy){h+='<div class="small mut" style="margin-top:10px;line-height:1.45">План и оценки общие на двух телефонах. <span id="syncst">'+syncTxt()+'</span></div><div class="act-row" style="margin-top:10px"><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="syncnow">Обновить</button><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="invite">Позвать '+(S.me==='d'?'Максима':'Дашу')+'</button><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="syncoff">Отключить</button></div>';}
-  else h+='<div class="small mut" style="margin-top:10px;line-height:1.45">Сейчас план и оценки лежат на каждом телефоне отдельно. Подключите общее хранилище, и у вас с Дашей будет один план.</div><div class="act-row" style="margin-top:10px"><button class="btn red" style="height:42px;font-size:14px;padding:0 16px" data-act="syncopen">Подключить общий план</button></div>';
+  let h='<div class="warn" style="background:var(--soft);color:var(--ink);margin-top:12px"><b>Общий план</b>';
+  if(S.sy)h+='<div class="small mut">Кто сейчас с телефоном</div><div class="snd">'+['m','d'].map(k=>'<button data-act="me" data-v="'+k+'" class="'+(S.me===k?'on':'')+'">'+esc(roleName(k))+'</button>').join('')+'</div>';
+  if(S.sy){h+='<div class="small mut" style="margin-top:10px;line-height:1.45">План и оценки общие на двух телефонах. <span id="syncst">'+syncTxt()+'</span></div><div class="act-row" style="margin-top:10px"><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="syncnow">Обновить</button><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="invite">Пригласить на второй телефон</button><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="syncoff">Отключить</button></div>';}
+  else h+='<p class="small mut">План хранится на этом устройстве.</p><div class="act-row">'+(S.hub?'<button class="btn red" data-act="startmode" data-v="pair">Создать общий план</button>':'')+'<button class="btn alt" data-act="syncopen">Подключить своё хранилище</button></div>';
   return h+'</div>';
 }
 
@@ -952,7 +954,7 @@ const dayTotals=d=>sumMeal(dayRecipes(d));
 const planRecipes=()=>{const a=[];S.cook.forEach(c=>a.push(c.m,c.s,c.l));S.bf.forEach(b=>a.push(b));return a;};
 function avgDay(){let a=0;for(let d=1;d<=4;d++)a+=dayTotals(d).k;return a/4||1;}
 const peopleCount=()=>Number.isInteger(S.people)?Math.max(1,Math.min(8,S.people)):2;
-const profileName=i=>i===0?'Максим':i===1?'Даша':'Участник '+(i+1);
+const profileName=i=>i<2?esc(roleName(i===0?'m':'d')):'Участник '+(i+1);
 function profiles(){
   const avg=avgDay();
   return Array.from({length:peopleCount()},(_,i)=>{
@@ -1232,16 +1234,16 @@ function viewWeek(){
     h+='<span class="kc">'+fmt(t.k)+' ккал</span></button>';
   }
   h+='</div>';}
-  h+='<div class="act-row"><button class="btn red" data-act="regen">'+IC.dice+(Object.keys(S.lock).some(k=>S.lock[k])?'Пересобрать остальное':'Собрать заново')+'</button><button class="btn alt" data-act="reset">Исходная неделя</button><button class="btn alt" data-act="share">Отправить план Даше</button></div>';
+  h+='<div class="act-row"><button class="btn red" data-act="regen">'+IC.dice+(Object.keys(S.lock).some(k=>S.lock[k])?'Пересобрать остальное':'Собрать заново')+'</button><button class="btn alt" data-act="reset">Исходная неделя</button><button class="btn alt" data-act="share">Поделиться копией плана</button></div>';
   {const nr=Object.keys(S.rate).length,nb=Object.keys(S.ban).length,hl=S.hist.slice().reverse();
-  h+='<div class="warn" style="background:var(--soft);color:var(--ink);margin-top:16px"><b>Память и оценки</b><div class="small mut" style="margin-top:4px;line-height:1.45">Оценено блюд: '+nr+(nb?' · исключено: '+nb:'')+'. В истории недель: '+S.hist.length+'. Оценки общие для вас с Дашей, они хранятся на этом телефоне.</div>';
+  h+='<div class="warn" style="background:var(--soft);color:var(--ink);margin-top:16px"><b>Память и оценки</b><div class="small mut" style="margin-top:4px;line-height:1.45">Оценено блюд: '+nr+(nb?' · исключено: '+nb:'')+'. В истории недель: '+S.hist.length+'. Оценки сохраняются в вашем плане.</div>';
   h+='<div class="small" style="margin-top:10px;font-weight:700">Не повторять основные блюда</div><div class="snd">'+[4,6,8].map(n=>'<button data-act="reps" data-v="'+n+'" class="'+(S.rep===n?'on':'')+'">'+n+' нед.</button>').join('')+'</div>';
   h+='<div class="act-row" style="margin-top:12px"><button class="btn '+(confirmClose?'red':'alt')+'" style="height:42px;font-size:14px;padding:0 16px" data-act="closeweek">'+(confirmClose?'Точно закрыть? Нажмите ещё раз':'Закрыть неделю и собрать новую')+'</button>'+(hl.length?'<button class="btn alt" style="height:42px;font-size:14px;padding:0 16px" data-act="histopen">'+(histOpen?'Скрыть историю':'История недель')+'</button>':'')+'</div>';
   if(histOpen&&hl.length)h+='<div class="hist">'+hl.slice(0,10).map(x=>'<div><b>'+wkTxt(x.w)+'</b><br>'+x.cook.map(c=>esc(c.m)).join('; ')+'</div>').join('')+'</div>';
   h+='</div>';}
   h+='<div class="act-row"><button class="btn alt" data-act="household">Наш кабинет · '+(S.sy?'общий план':'подключить второй телефон')+'</button></div>';
   h+='<div class="warn" style="background:var(--soft);color:var(--ink);margin-top:12px"><b>Звук таймера</b><div class="snd">'+Object.keys(SND).map(k=>'<button data-act="snd" data-v="'+k+'" class="'+((S.snd||'hen')===k?'on':'')+'">'+SND[k].n+'</button>').join('')+'<button data-act="snd" data-v="off" class="'+(S.snd==='off'?'on':'')+'">Без звука</button></div><div class="small mut" style="margin-top:8px">Нажмите на название, чтобы послушать.</div></div>';
-  h+='<div class="warn" style="background:var(--soft);color:var(--mut);margin-top:12px"><b style="color:var(--ink)">Норма на день, ккал</b><div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap"><label>Максим <input type="number" inputmode="numeric" id="nm" data-act="norm" data-v="m" value="'+S.norms.m+'" style="width:96px;margin-left:4px"></label><label>Даша <input type="number" inputmode="numeric" id="nd" data-act="norm" data-v="d" value="'+S.norms.d+'" style="width:96px;margin-left:4px"></label></div><div style="margin-top:8px">Калории в блюдах даны на базовую порцию. Размер порции подгоняется под норму, переключатель выше.</div></div>';
+  h+='<div class="warn" style="background:var(--soft);color:var(--mut);margin-top:12px"><b style="color:var(--ink)">Норма на день, ккал</b><div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap"><label>'+esc(roleName('m'))+' <input type="number" inputmode="numeric" id="nm" data-act="norm" data-v="m" value="'+S.norms.m+'" style="width:96px;margin-left:4px"></label><label>'+esc(roleName('d'))+' <input type="number" inputmode="numeric" id="nd" data-act="norm" data-v="d" value="'+S.norms.d+'" style="width:96px;margin-left:4px"></label></div><div style="margin-top:8px">Калории в блюдах даны на базовую порцию. Размер порции подгоняется под норму, переключатель выше.</div></div>';
   return h;
 }
 function viewGrid(){
@@ -1270,7 +1272,7 @@ function viewDay(){
   const dis=s=>(s==='Завтрак'&&d===0)||(s==='Обед'&&d===0)||(s==='Ужин'&&d===5);
   const si=['Завтрак','Обед','Ужин'].indexOf(slot);
   let h=bar(DN[d]+', '+dtxt(d));
-  h+='<div class="pager"><button class="rb" data-act="dprev" aria-label="Предыдущий день"'+(d===0?' disabled':'')+'>'+IC.left+'</button><div class="mid"><h1>'+DN[d]+'</h1><div class="small mut" style="margin-top:4px">'+dtxt(d)+' · Максим и Даша</div></div><button class="rb" data-act="dnext" aria-label="Следующий день"'+(d===5?' disabled':'')+'>'+IC.right+'</button></div>';
+  h+='<div class="pager"><button class="rb" data-act="dprev" aria-label="Предыдущий день"'+(d===0?' disabled':'')+'>'+IC.left+'</button><div class="mid"><h1>'+DN[d]+'</h1><div class="small mut" style="margin-top:4px">'+dtxt(d)+' · '+profiles().map(p=>p.name).join(', ')+'</div></div><button class="rb" data-act="dnext" aria-label="Следующий день"'+(d===5?' disabled':'')+'>'+IC.right+'</button></div>';
   h+='<div class="strip" role="group" aria-label="Дни">'+DS.map((x,i)=>'<button data-act="gotoday" data-v="'+i+'" class="'+(i===d?'on':'')+'" aria-label="'+DN[i]+'">'+x+'<b>'+dateOf(i).getDate()+'</b></button>').join('')+'</div>';
   h+='<div class="seg" role="tablist"><i style="transform:translateX('+(si*100)+'%)"></i>'+['Завтрак','Обед','Ужин'].map(s=>'<button role="tab" data-act="slot" data-v="'+s+'" class="'+(slot===s?'on':'')+'"'+(dis(s)?' disabled':'')+'>'+s+'</button>').join('')+'</div>';
   const ids=mealOf(d,slot);
@@ -1416,12 +1418,21 @@ function sheetHtml(){
       +'<div class="act-row"><button class="btn red" data-act="close">Готово</button></div></div>';
   }
   if(sheet.kind==='who'){
-    return head('Первый запуск','Кто вы?')+'<div class="bd"><p class="small mut" style="line-height:1.45;margin-top:2px">Телефон запомнит выбор. Ваши порции будут первыми, а в общем плане будет видно, кто его менял.</p><div class="act-row" style="margin-top:14px"><button class="btn red" data-act="whoset" data-v="m">Я Максим</button><button class="btn red" data-act="whoset" data-v="d">Я Даша</button></div></div></div>';
+    return head('Первый запуск','Как будете готовить?')+'<div class="bd"><div class="act-row"><button class="btn red" data-act="startmode" data-v="solo">Готовлю один</button><button class="btn alt" data-act="startmode" data-v="pair">Готовим вместе</button></div></div></div>';
+  }
+  if(sheet.kind==='onboarding'){
+    const pair=sheet.mode==='pair',ready=!pair||!!S.hub;
+    return head('Настройка меню',pair?'Готовим вместе':'Готовлю один')+'<div class="bd">'
+      +(ready?'<label for="start-name">Ваше имя</label><input id="start-name" type="text" maxlength="40" autocomplete="given-name" value="'+esc(sheet.names?.m||'')+'" style="width:100%">'
+        +(pair?'<label for="start-partner">Имя второго человека</label><input id="start-partner" type="text" maxlength="40" value="'+esc(sheet.names?.d||'')+'" style="width:100%">':'')
+        :'<p>Откройте ссылку для тестирования от организатора. Она включает создание общего плана.</p>')
+      +'<div class="act-row">'+(ready?'<button class="btn red" data-act="startsave"'+(sheet.busy?' disabled':'')+'>'+(sheet.busy?'Создаю…':pair?'Создать общий план':'Открыть меню')+'</button>':'')
+      +'<button class="btn alt" data-act="startback">Назад</button></div></div></div>';
   }
   if(sheet.kind==='sync'){
     return head('Подключение телефона','Общий план')+'<div class="bd"><p>На первом телефоне подключите свой адрес хранилища и код доступа. Когда появится время синхронизации, откройте «Наш кабинет» и нажмите «Позвать».</p><p>На втором телефоне откройте ссылку-приглашение и подтвердите подключение в том приложении, где будете пользоваться планом.</p><label for="gu">Адрес веб-приложения Apps Script</label><input type="url" id="gu" placeholder="https://script.google.com/macros/s/…/exec" style="width:100%"><label for="gc">Код доступа</label><input type="password" id="gc" autocomplete="off" style="width:100%"><div class="act-row"><button class="btn red" data-act="syncon" data-v="mine">Подключить хранилище</button><button class="btn alt" data-act="household">Назад</button></div></div></div>';
   }
-  if(sheet.kind==='inviteconfirm')return head('Приглашение','Общий план')+'<div class="bd"><p>Подключить этот телефон как '+WHO[sheet.invite.me]+'? Меню, покупки и остатки на телефоне будут заменены данными из общего плана.</p><div class="act-row"><button class="btn red" data-act="joinhouse">Подключиться</button><button class="btn alt" data-act="close">Отмена</button></div></div></div>';
+  if(sheet.kind==='inviteconfirm')return head('Приглашение','Общий план')+'<div class="bd"><p>Подключить телефон к общему плану? Он заменит меню, покупки и остатки на этом устройстве.</p><div class="act-row"><button class="btn red" data-act="joinhouse">Подключиться</button><button class="btn alt" data-act="close">Отмена</button></div></div></div>';
   if(sheet.kind==='master'){
     const mp=masterPlan(),dn2=mpDone();let tot=0,dd=0;mp.stages.forEach(x=>x.items.forEach(z=>{tot++;if(dn2[z.key])dd++;}));
     let h=head('Воскресенье, '+dtxt(0),'Мастер-план заготовки')+'<div class="bd"><div class="kv" style="grid-template-columns:repeat(3,1fr)"><div><b>≈ '+mp.total+'</b>минут</div><div><b>'+mp.n+'</b>'+plu(mp.n,['заготовка','заготовки','заготовок'])+'</div><div><b>'+dd+'/'+tot+'</b>сделано</div></div>';
@@ -1438,7 +1449,7 @@ function sheetHtml(){
     return h+'</div></div>';
   }
   if(sheet.kind==='review'){
-    let h=head(sheet.sub,sheet.title)+'<div class="bd"><p class="small mut" style="line-height:1.45;margin-top:2px">Оценка общая для вас с Дашей. Звёзды влияют на то, как часто блюдо попадает в план. Чем выше оценка, тем чаще оно встречается, а 1–2 звезды почти исключают его.</p>';
+    let h=head(sheet.sub,sheet.title)+'<div class="bd"><p class="small mut" style="line-height:1.45;margin-top:2px">Оценка сохраняется в вашем плане. Звёзды влияют на то, как часто блюдо попадает в план. Чем выше оценка, тем чаще оно встречается, а 1–2 звезды почти исключают его.</p>';
     sheet.ids.forEach(i=>{const r=REC[i];h+='<div class="rv"><div class="th" style="background:'+paint(r)+'">'+pt(i)+'</div><div style="flex:1;min-width:0"><div class="n">'+esc(r.n)+'</div>'+starsHtml(i)+'<button class="nev '+(banned(i)?'on':'')+'" data-act="ban" data-v="'+i+'">'+(banned(i)?'Исключено. Вернуть':'Больше не предлагать')+'</button></div></div>';});
     return h+'<div class="act-row" style="margin-top:14px"><button class="btn red" data-act="close">Готово</button></div></div></div>';
   }
@@ -1499,7 +1510,7 @@ function sheetHtml(){
     const sources=people.map(p=>foodWeights([i],p.f));
     const micro=MICRO_SOURCES.filter(g=>sources.some(w=>sourceFoods(g,w).length));
     if(micro.length)h+='<div class="rbox"><b>Продукты-источники</b><br>'+micro.map(g=>g.name+' · '+esc(ING[sources.flatMap(w=>sourceFoods(g,w))[0]].n)).join('<br>')+'</div>';
-    {const ww=weeksWith(r.n);h+='<div class="rbox"><div class="sec" style="margin:0 0 6px">Оценка</div>'+starsHtml(i)+'<div class="small mut" style="margin-top:8px;line-height:1.4">'+(ww.length?'Готовили на '+ww.length+' '+(ww.length===1?'неделе':'неделях')+', последний раз '+wkTxt(ww[ww.length-1])+'. ':'В плане ещё не было. ')+'Оценка общая для вас с Дашей.</div><button class="nev '+(banned(i)?'on':'')+'" data-act="ban" data-v="'+i+'">'+(banned(i)?'Исключено из плана. Вернуть':'Больше не предлагать')+'</button></div>';}
+    {const ww=weeksWith(r.n);h+='<div class="rbox"><div class="sec" style="margin:0 0 6px">Оценка</div>'+starsHtml(i)+'<div class="small mut" style="margin-top:8px;line-height:1.4">'+(ww.length?'Готовили на '+ww.length+' '+(ww.length===1?'неделе':'неделях')+', последний раз '+wkTxt(ww[ww.length-1])+'. ':'В плане ещё не было. ')+'Оценка сохраняется в вашем плане.</div><button class="nev '+(banned(i)?'on':'')+'" data-act="ban" data-v="'+i+'">'+(banned(i)?'Исключено из плана. Вернуть':'Больше не предлагать')+'</button></div>';}
     if(r.st&&r.st.length)h+='<div class="act-row" style="margin-top:6px">'+(r.bt
       ?'<button class="btn red" data-act="cook" data-mode="fresh" data-v="'+i+'">Готовлю сразу</button><button class="btn alt" data-act="cook" data-mode="frozen" data-v="'+i+'">Готовлю из морозилки</button>'
       :'<button class="btn red" data-act="cook" data-v="'+i+'">'+IC.flame+'Готовить по шагам</button>')+favBtn(i)+'</div>';
@@ -1674,16 +1685,19 @@ document.addEventListener('click',e=>{
     case 'master':sheet={kind:'master'};paintLayer();break;
     case 'me':S.me=v;save();enter=false;render();break;
     case 'whoset':S.me=v;save();sheet=null;paintLayer();render();break;
+    case 'startmode':sheet={kind:'onboarding',mode:v,names:{...S.names}};paintLayer();break;
+    case 'startback':sheet={kind:S.me?'household':'who'};paintLayer();break;
+    case 'startsave':startMenu();break;
     case 'syncopen':sheet={kind:'sync'};paintLayer();break;
     case 'household':sheet={kind:'household'};paintLayer();break;
-    case 'joinhouse':{const {u,c,me}=sheet.invite;S.me=me;connectHouse(u,c,true);break;}
+    case 'joinhouse':{const {u,c,me,room}=sheet.invite;S.me=me;connectHouse(u,c,true,room);break;}
     case 'syncon':{const u=(document.getElementById('gu').value||'').trim(),c=(document.getElementById('gc').value||'').trim();
       if(!validHouse(u,c)){showToast('Проверьте адрес и код',false);paintLayer();break;}
       connectHouse(u,c,false);break;}
     case 'syncnow':showToast('Обновляю…',false);paintLayer();gsync();break;
     case 'syncoff':S.sy=null;S.fb={};S.ts={};save();showToast('Общий план отключён',false);enter=false;render();break;
-    case 'invite':{if(!S.sy?.init||!gst.ok){showToast('Сначала дождитесь успешной синхронизации',false);paintLayer();break;}const o={u:S.sy.u,c:S.sy.c,me:S.me==='d'?'m':'d'};const url=location.href.split('#')[0]+'#s='+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
-      const done=()=>{showToast('Ссылка скопирована. Отправьте её '+(S.me==='d'?'Максиму':'Даше'),false);paintLayer();};
+    case 'invite':{if(!S.sy?.init||!gst.ok){showToast('Сначала дождитесь успешной синхронизации',false);paintLayer();break;}const o={u:S.sy.u,c:S.sy.c,room:S.sy.room,me:S.me==='d'?'m':'d'};const url=location.href.split('#')[0]+'#s='+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+      const done=()=>{showToast('Ссылка-приглашение скопирована',false);paintLayer();};
       if(navigator.share){navigator.share({title:'Заготовка: общий план',url}).catch(()=>{});}else if(navigator.clipboard){navigator.clipboard.writeText(url).then(done).catch(()=>{showToast('Не удалось скопировать',false);paintLayer();});}
       break;}
     case 'mpchk':{const dn=mpDone();if(dn[v])delete dn[v];else dn[v]=1;save();paintLayer();try{navigator.vibrate&&navigator.vibrate(8);}catch(e2){}break;}
@@ -1774,15 +1788,56 @@ function endSw(e){
 document.addEventListener('pointerup',endSw);document.addEventListener('pointercancel',()=>{if(sw&&sw.s){sw.s.style.transition='transform 300ms var(--spring)';sw.s.style.transform='';}sw=null;});
 
 function validHouse(u,c){return typeof u==='string'&&/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u)&&typeof c==='string'&&c.length>0&&c.length<=256;}
-function connectHouse(u,c,adopt){
-  S.sy={u,c,since:0,init:false,adopt};S.fb={};S.ts={};
+function connectHouse(u,c,adopt,room=false){
+  S.sy={u,c,since:0,init:false,adopt,room};S.fb={};S.ts={};
   gst.ok=null;gst.waiting=false;gst.at=0;
   save();sheet={kind:'household'};paintLayer();gsync();
 }
+async function startMenu(){
+  const form=sheet;
+  if(form?.kind!=='onboarding'||form.busy)return;
+  const pair=form.mode==='pair';
+  const m=document.getElementById('start-name')?.value.trim().slice(0,40);
+  const d=document.getElementById('start-partner')?.value.trim().slice(0,40);
+  if(!m||(pair&&!d)){showToast('Введите '+(pair?'оба имени':'имя'),false);form.names={m,d};paintLayer();return;}
+  const names=pair?{m,d}:{m};
+  if(!pair){
+    Object.assign(S,{me:'m',people:1,names});save();sheet=null;render();return;
+  }
+  if(!S.hub||S.sy)return;
+  form.names=names;form.busy=true;paintLayer();
+  try{
+    const {u,c:beta}=S.hub;
+    form.token??=Array.from(crypto.getRandomValues(new Uint8Array(32)),x=>x.toString(16).padStart(2,'0')).join('');
+    const c=form.token;
+    const snapshot=flat({...S,people:2,names});
+    const set=Object.entries(snapshot).map(([k,v])=>({k,v}));
+    const response=await gcall({u},{action:'create',c,beta,u:'m',set});
+    if(!response?.ok)throw new Error(response?.error||'storage');
+    if(sheet!==form)return;
+    Object.assign(S,{me:'m',people:2,names});
+    connectHouse(u,c,true,true);render();
+  }catch(e){
+    if(sheet===form)showToast(e.message==='capacity'?'Лимит тестовых семей исчерпан':'Не получилось создать план. Проверьте связь и повторите.',false);
+  }finally{
+    form.busy=false;if(sheet===form)paintLayer();
+  }
+}
+(function importBeta(){
+  try{
+    const m=/^#h=(.+)$/.exec(location.hash);
+    if(!m)return;
+    const o=JSON.parse(atob(m[1]));
+    if(validHouse(o.u,o.c)&&/^[a-f0-9]{64}$/.test(o.c)){
+      S.hub={u:o.u,c:o.c};save();
+      history.replaceState(null,'',location.pathname+location.search);
+    }
+  }catch(e){}
+})();
 (function importSync(){
   try{const m=/^#s=(.+)$/.exec(location.hash);if(!m)return;
     const o=JSON.parse(decodeURIComponent(escape(atob(m[1]))));
-    if(o&&validHouse(o.u,o.c)&&['m','d'].includes(o.me)){
+    if(o&&validHouse(o.u,o.c)&&['m','d'].includes(o.me)&&(!o.room||/^[a-f0-9]{64}$/.test(o.c))){
       sheet={kind:'inviteconfirm',invite:o};history.replaceState(null,'',location.pathname+location.search);
     }
   }catch(e){}
