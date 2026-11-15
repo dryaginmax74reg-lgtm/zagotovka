@@ -1957,7 +1957,7 @@ async function startMenu(){
     form.busy=false;if(sheet===form)paintLayer();
   }
 }
-(function importBeta(){
+function importBeta(){
   try{
     const m=/^#h=(.+)$/.exec(location.hash);
     if(!m)return;
@@ -1965,17 +1965,24 @@ async function startMenu(){
     if(validHouse(o.u,o.c)&&/^[a-f0-9]{64}$/.test(o.c)){
       S.hub={u:o.u,c:o.c};save();
       history.replaceState(null,'',location.pathname+location.search);
+      return true;
     }
   }catch(e){}
-})();
-(function importSync(){
+}
+function importSync(){
   try{const m=/^#s=(.+)$/.exec(location.hash);if(!m)return;
     const o=JSON.parse(decodeURIComponent(escape(atob(m[1]))));
     if(o&&validHouse(o.u,o.c)&&['m','d'].includes(o.me)&&(!o.room||/^[a-f0-9]{64}$/.test(o.c))){
       sheet={kind:'inviteconfirm',invite:o};history.replaceState(null,'',location.pathname+location.search);
+      return true;
     }
   }catch(e){}
-})();
+}
+importBeta();
+importSync();
+window.addEventListener('hashchange',()=>{
+  if(importBeta()||importSync())render();
+});
 (function importHash(){
   try{const m=/^#p=(.+)$/.exec(location.hash);if(!m)return;
     const o=JSON.parse(decodeURIComponent(escape(atob(m[1]))));
