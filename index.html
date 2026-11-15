@@ -546,9 +546,108 @@ NEW_RECIPES.push(
   ['Свиная вырезка с яблоком и горчицей','Основное','Свинина',4,18,[['pork',600],['apple',250],['onion',100],['mst',20],['oo',16]],['Яблоко без сердцевины нарежьте дольками, лук полукольцами. Обжарьте на половине масла до мягкости.','Снимите плёнки с вырезки, нарежьте медальонами по 2–3 см. Смажьте горчицей, обжарьте на оставшемся масле с обеих сторон.',MEAT_REST,'Подавайте с яблоками и луком.',MEAT_LEFTOVERS]],
   ['Свиная вырезка с брокколи и морковью','Основное','Свинина',4,18,[['pork',600],['bro',280],['carrot',180],['gar',6],['oo',16]],['Брокколи разберите на соцветия, морковь нарежьте тонкими брусками. Обжарьте с половиной масла, добавьте немного воды, накройте крышкой и доведите до мягкости. В конце добавьте чеснок.','Вырезку очистите от плёнок, нарежьте медальонами и обжарьте на оставшемся масле с обеих сторон.',MEAT_REST,'Подавайте с овощами.',MEAT_LEFTOVERS]]
 );
+
+// Каждый набор продуктов проверяется с четырьмя отдельными технологиями.
+// Состав и шаги используют одни и те же ключи, включая соус и посыпку.
+const MEAT_PAIRINGS={
+  beef:[
+    ['с имбирём, брокколи и кунжутом',[['bro',280],['gin',10],['soy',24],['ses',12]],'Брокколи разберите на соцветия и приготовьте на пару до мягкости.','Имбирь натрите, смешайте с соевым соусом и ложкой воды.','Полейте соусом и посыпьте кунжутом.'],
+    ['с баклажаном и томатами',[['egp',280],['tmc',260],['gar',8],['prs',12]],'Баклажаны нарежьте кубиками 2 см и обжарьте до мягкости.','Добавьте томаты и мелко нарезанный чеснок, тушите до загустения.','Посыпьте рубленой петрушкой.'],
+    ['с фасолью и сладким перцем',[['kid',240],['pep',220],['onion',100],['tpa',25]],'Фасоль слейте. Перец и лук нарежьте кубиками, обжарьте до мягкости.','Добавьте томатную пасту и 100 мл воды, затем фасоль. Прогрейте.','Подавайте мясо поверх овощей и фасоли.'],
+    ['с грибами и йогуртово-горчичным соусом',[['mush',300],['onion',100],['yog',140],['mst',18]],'Нарежьте грибы пластинками, лук полукольцами. Обжарьте до испарения жидкости.','Смешайте йогурт с горчицей.','Подайте соус отдельно, а горячее мясо — с грибами.'],
+    ['с тыквой и пармезаном',[['pum',400],['par',30],['gar',7],['prs',12]],'Тыкву нарежьте кубиками 2 см, смешайте с рубленым чесноком. Запекайте до мягкости при 200 °C.','Натрите пармезан, мелко нарежьте петрушку.','Посыпьте тыкву сыром и зеленью перед подачей.'],
+    ['с кабачком и оливками',[['zuc',300],['olv',70],['tmc',230],['gar',8]],'Кабачок нарежьте полукружьями и обжарьте до румяности.','Добавьте рубленый чеснок, томаты и порезанные оливки. Уварите до густоты.','Подавайте с тёплым овощным соусом.'],
+    ['со шпинатом и лимонным тахини',[['spi',240],['tah',35],['lem',25],['gar',6]],'Шпинат быстро припустите на сковороде и слейте лишнюю жидкость.','Смешайте тахини, лимонный сок и тёртый чеснок. Добавляйте воду по ложке до нужной густоты.','Полейте мясо соусом непосредственно перед подачей.'],
+    ['со стручковой фасолью и миндалём',[['gb',320],['alm',30],['lem',24],['gar',7]],'Фасоль приготовьте по упаковке до мягкости. Миндаль нарубите и подрумяньте на сухой сковороде.','Смешайте фасоль с мелко натёртым чесноком и лимонным соком.','Посыпьте миндалём перед подачей.']
+  ],
+  pork:[
+    ['с яблоком, пореем и йогуртом',[['apple',250],['lek',180],['yog',140],['mst',16]],'Порей промойте между слоями и нарежьте кольцами. Яблоко без сердцевины нарежьте дольками. Обжарьте до мягкости.','Смешайте горчицу и йогурт.','Подайте прохладный соус отдельно от горячего мяса.'],
+    ['с капустой, морковью и кунжутом',[['cab',320],['carrot',160],['soy',24],['ses',12]],'Капусту нашинкуйте, морковь нарежьте соломкой. Обжарьте до мягкости, добавив немного воды.','Вмешайте соевый соус и прогрейте.','Посыпьте кунжутом перед подачей.'],
+    ['с апельсином, имбирём и брокколи',[['ora',200],['gin',9],['bro',280],['soy',20]],'Брокколи разберите и приготовьте на пару. Апельсин очистите, половину нарежьте кусочками.','Из второй половины выжмите сок. Соедините с имбирём и соевым соусом, уварите до лёгкой густоты.','Добавьте кусочки апельсина и полейте готовое мясо соусом.'],
+    ['с тыквой, фетой и семечками',[['pum',420],['fet',65],['psd',22],['prs',12]],'Тыкву нарежьте кубиками 2 см и запекайте при 200 °C до мягкости.','Раскрошите фету, порубите петрушку и слегка подрумяньте семечки на сухой сковороде.','Добавьте фету, семечки и зелень к тёплой тыкве.'],
+    ['с нутом и лимонной заправкой',[['chk',230],['pep',240],['lem',28],['tah',30]],'Перец нарежьте полосками и обжарьте до мягкости. Нут слейте, промойте и прогрейте вместе с перцем.','Смешайте тахини с лимонным соком, подливая воду по ложке.','Полейте нут и перец заправкой при подаче.'],
+    ['с томатами и шпинатом',[['tmc',270],['spi',180],['gar',7],['par',28]],'Чеснок измельчите, шпинат промойте и обсушите.','Прогрейте томаты с чесноком до лёгкой густоты, добавьте шпинат и дождитесь, пока листья осядут.','Посыпьте готовое блюдо тёртым пармезаном.'],
+    ['с баклажаном и йогуртом',[['egp',340],['yog',150],['gar',8],['lem',24]],'Баклажан нарежьте кубиками 2 см и запекайте при 200 °C до мягкости.','Соедините йогурт, лимонный сок и тёртый чеснок.','Подавайте йогуртовый соус отдельно.'],
+    ['с грибами и горошком',[['mush',260],['pea',180],['onion',100],['mst',16]],'Грибы нарежьте пластинками, лук полукольцами. Обжарьте до испарения жидкости.','Горошек приготовьте по упаковке, соедините с грибами и добавьте горчицу.','Подайте мясо с тёплой овощной смесью.']
+  ]
+};
+const MEAT_METHODS=[
+  {name:'Стейки из',pork:'Медальоны из',active:22,total:40,steps:[
+    'Обсушите мясо, нарежьте поперёк волокон кусками толщиной 2–3 см.',
+    'На хорошо разогретой сковороде обжарьте мясо партиями на половине масла примерно по 3 минуты с каждой стороны. Затем убавьте нагрев.',
+    MEAT_REST
+  ]},
+  {name:'Запечённая',pork:'Запечённая',active:15,total:55,steps:[
+    'Разогрейте духовку до 200 °C. Обсушите мясо и разделите на несколько кусков примерно равной толщины.',
+    'Смажьте мясо половиной масла, разложите в форме. Через 18 минут начните проверять температуру.',
+    MEAT_REST
+  ]},
+  {name:'Шашлычки из',pork:'Шашлычки из',active:20,total:45,steps:[
+    'Нарежьте мясо кубиками по 3 см. Смажьте половиной масла и нанизайте на металлические шпажки, оставив зазоры.',
+    'Запекайте на решётке над противнем при 210 °C. Через 10 минут переверните, затем проверяйте температуру в самых крупных кусках.',
+    MEAT_REST
+  ]},
+  {name:'Рубленые котлеты из',pork:'Рубленые котлеты из',active:25,total:45,steps:[
+    'Мясо мелко порубите ножом или измельчите в мясорубке. Смешайте с яйцом ({egg}) и овсяными хлопьями ({oat}). Оставьте на 5 минут.',
+    'Сформируйте котлеты толщиной около 1,5 см. Обжарьте партиями на половине масла, переверните и доведите до 71 °C в центре.',
+    'Разделите готовые котлеты на порции для ужина и завтрашнего обеда.'
+  ],extra:[['egg',55],['oat',30]]}
+];
+const RECIPE_TOTALS={};
+for(const [key,pairings] of Object.entries(MEAT_PAIRINGS)){
+  const pork=key==='pork',category=pork?'Свинина':'Говядина',cut=pork?'свиной вырезки':'говяжьего сирлойна';
+  for(const [pair,ingredients,prep,sauce,serve] of pairings)for(const method of MEAT_METHODS){
+    const whole=method.name==='Запечённая';
+    const title=(whole?(pork?'Запечённая свиная вырезка':'Запечённая говядина'):(pork?method.pork:method.name)+' '+cut)+' '+pair;
+    const shopping=ingredients.map(([id])=>ING[id].n+' ({'+id+'})').join(', ');
+    const prepWithOil=/обжарьте/i.test(prep)?prep.replace(/обжарьте/i,m=>m+' на половине масла'):
+      /запекайте/i.test(prep)?prep.replace(/запекайте/i,m=>'смажьте половиной масла и '+m.toLowerCase()):
+      prep+' Половину масла вмешайте в овощи после готовки.';
+    const steps=['Отмерьте мясо ({'+key+'}) и масло ({oo}). Для овощей и соуса подготовьте: '+shopping+'.',
+      prepWithOil,
+      sauce,...method.steps,serve,MEAT_LEFTOVERS];
+    NEW_RECIPES.push([title,'Основное',category,4,method.active,[[key,600],['oo',16],...ingredients,...(method.extra||[])],steps]);
+    RECIPE_TOTALS[title]=method.total+(/запекайте/i.test(prep)?15:0);
+  }
+}
+const SEAFOOD_PREP={
+  shr:['Креветки','Сырые очищенные креветки обсушите. Обжарьте партиями на оставшемся масле до плотной непрозрачной мякоти.'],
+  sqd:['Кальмар','Очищенный сырой кальмар нарежьте кольцами. Обжарьте на сильном огне на оставшемся масле до непрозрачной мякоти, затем сразу снимите с огня.'],
+  msl:['Мидии','Для этого рецепта возьмите сырое очищенное мясо мидий. Приготовьте по инструкции на упаковке. Перемешайте с оставшимся маслом.'],
+  scl:['Гребешки','Сырые гребешки обсушите. Обжарьте порциями на оставшемся масле с обеих сторон до плотной непрозрачной мякоти.']
+};
+const SEAFOOD_SIDES=[
+  ['с томатами, чесноком и петрушкой',[['tmc',330],['gar',8],['prs',14]],'Рубленый чеснок прогрейте на половине масла, добавьте томаты и тушите 10 минут. Петрушку порубите.','Подавайте с томатным соусом и петрушкой.'],
+  ['с брокколи, имбирём и кунжутом',[['bro',340],['gin',10],['ses',18],['soy',24]],'Брокколи разберите на соцветия и приготовьте на пару. Половину масла смешайте с соевым соусом и тёртым имбирём, полейте брокколи.','Посыпьте блюдо кунжутом.'],
+  ['с печёным перцем и нутом',[['pep',300],['chk',240],['lem',25],['cil',12]],'Перец нарежьте полосками, смажьте половиной масла и запекайте при 210 °C до мягкости. Слейте жидкость с нута и промойте.','Смешайте перец с нутом, рубленой кинзой и лимонным соком. Подайте вместе с морепродуктами.'],
+  ['с кабачком, лаймом и йогуртом',[['zuc',350],['lime',28],['yog',140],['dil',12]],'Кабачок нарежьте полукружьями и обжарьте на половине масла. Соедините йогурт, сок лайма и рубленый укроп.','Подавайте йогуртовый соус отдельно.']
+];
+for(const [key,[name,cook]] of Object.entries(SEAFOOD_PREP)){
+  for(const [suffix,ingredients,prep,serve] of SEAFOOD_SIDES){
+    const title=name+' '+suffix;
+    const amounts=ingredients.map(([id])=>ING[id].n+' ({'+id+'})').join(', ');
+    NEW_RECIPES.push([title,'Основное','Морепродукты',4,20,[[key,600],['oo',16],...ingredients],
+      ['Отмерьте морепродукты ({'+key+'}) и масло ({oo}). Подготовьте: '+amounts+'.',prep,cook,serve,MEAT_LEFTOVERS]]);
+    RECIPE_TOTALS[title]=/запекайте/.test(prep)?45:35;
+  }
+}
+for(const [title,part,ingredients,steps] of [
+  ['Нут в томатах со шпинатом','chk',[['tmc',400],['spi',200],['onion',120],['gar',8]],['Лук мелко нарежьте и обжарьте до мягкости. Добавьте чеснок и томаты, тушите 10 минут.','Добавьте нут и шпинат. Прогрейте, пока листья не осядут.']],
+  ['Красная фасоль с печёным перцем и томатами','kid',[['pep',300],['tmc',300],['gar',8],['cil',15]],['Перец нарежьте полосками и запекайте при 210 °C до мягкости.','Прогрейте фасоль с томатами и рубленым чесноком, добавьте перец. Посыпьте кинзой.']],
+  ['Чечевица с тыквой, лимоном и тахини','len',[['pum',450],['lem',28],['tah',35],['prs',15]],['Тыкву нарежьте кубиками, смажьте частью масла и запекайте при 200 °C до мягкости.','Сварите чечевицу по инструкции на упаковке. Соедините с тыквой, оставшимся маслом и петрушкой. Тахини смешайте с лимонным соком и небольшим количеством воды. Полейте при подаче.']],
+  ['Тёплый нут с баклажаном и пармезаном','chk',[['egp',400],['tmc',250],['par',40],['gar',8]],['Баклажан нарежьте кубиками 2 см и обжарьте до мягкости.','Добавьте томаты, чеснок и нут. Тушите до лёгкой густоты, при подаче посыпьте пармезаном.']],
+  ['Чечевица с шампиньонами, морковью и горчицей','len',[['mush',300],['carrot',160],['onion',100],['mst',18]],['Сварите чечевицу по инструкции на упаковке.','Нарежьте грибы пластинками, лук кубиками и морковь тонкой соломкой. Обжарьте до мягкости. Добавьте чечевицу и горчицу, прогрейте.']],
+  ['Красная фасоль с кабачком, кукурузой и лаймом','kid',[['zuc',330],['cor',160],['lime',30],['cil',15]],['Нарежьте кабачок кубиками и обжарьте до румяности. Слейте жидкость с кукурузы.','Добавьте фасоль и кукурузу, прогрейте, затем влейте сок лайма и посыпьте кинзой.']]
+]){
+  const dry=part==='len';
+  const prep=['Отмерьте '+ING[part].n.toLowerCase()+' ({'+part+'}) и масло ({oo}). Подготовьте: '+ingredients.map(([k])=>ING[k].n+' ({'+k+'})').join(', ')+'. Используйте масло для обжаривания овощей или запекания тыквы.'];
+  if(!dry)prep.push('Слейте жидкость с бобовых и промойте их.');
+  NEW_RECIPES.push([title,'Основное','Бобовые',4,20,[[part,dry?220:510],['oo',18],...ingredients],[...prep,...steps,MEAT_LEFTOVERS]]);
+  RECIPE_TOTALS[title]=45;
+}
 for(const [n,t,c,p,ev,i,st] of NEW_RECIPES){
   idByName[n]=REC.length;
-  REC.push({n,t,c,p,ev,i,st,pr:0,al:[]});
+  REC.push({n,t,c,p,ev,i,st,pr:0,al:[],total:RECIPE_TOTALS[n]});
 }
 // Источники отмечаются по составу. Процент суточной нормы требует
 // полного справочника содержания, включая потери при приготовлении.
@@ -944,6 +1043,7 @@ function purchaseOf(k,total){
 function costOf(ids){const g=needsOf(ids);return Object.keys(g).reduce((c,k)=>c+purchaseOf(k,g[k])*priceOf(k)/1000,0);}
 const planCost=()=>costOf(planRecipes());
 function shopList(){const n=needsOf(planRecipes());return Object.keys(n).map(k=>{const h=homeOf(k),buy=purchaseOf(k,n[k]),p=ing(k);return{k,total:n[k],home:Math.min(h,n[k]),buy,cost:buy*priceOf(k)/1000,cat:p.c,n:p.n};});}
+const purchased=r=>S.chk[r.k]===1||Number(S.chk[r.k])>=r.buy;
 const q5=g=>Math.round(g*sf()*10)/10;
 function fq(t,r){return t.replace(/\{(\w+)\}/g,(m,k)=>{const z=r.i.find(x=>x[0]===k);return z?q5(z[1])+' г':'';}).replace(/Две порции/g,'Обеденные порции').replace(/ужин и обед на двоих/gi,'ужин и обед для '+peopleCount()+' чел.');}
 const plu=(n,a)=>a[n%10===1&&n%100!==11?0:(n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?1:2];
@@ -1044,7 +1144,12 @@ function masterPlan(){
   const items=bl.flatMap(b=>b.d===0?[{key:'fresh_'+b.id,dish:b.r.n,d:0,tx:'Для воскресного ужина оставьте партию в холодильнике до готовки. Откройте режим «Готовлю сразу».'}]:
     b.r.bs.flatMap(([c,tx],j)=>c==='p'?[{key:'p'+b.d+'_'+b.id+'_'+j,dish:b.r.n,d:b.d,tx:fq(tx,b.r)}]:[]));
   if(items.length)st.push({k:'p',t:'Разложить, подписать, заморозить',min:mins('p'),items});
-  return{stages:st,total:sundayPrep(),n:bl.length,wait:items.some(x=>/1–2 часа|на 1 час/.test(x.tx))};
+  const fresh=S.cook.flatMap((day,d)=>{
+    const r=REC[day.m];
+    if(r.bt)return [];
+    return [{d,id:day.m,title:r.n,active:r.ev,total:r.total}];
+  });
+  return{stages:st,total:sundayPrep(),n:bl.length,wait:items.some(x=>/1–2 часа|на 1 час/.test(x.tx)),fresh};
 }
 function usageOf(k){
   const m={};const add=(id,tag)=>{const z=REC[id].i.find(x=>x[0]===k);if(!z)return;(m[id]=m[id]||{id,tags:[],g:0});m[id].tags.push(tag);m[id].g+=q5(z[1]);};
@@ -1106,7 +1211,7 @@ function viewWeek(){
    '<div class="bx b-b"><div class="l">Заготовка</div><div class="v">'+cnt('prep',sp,'<small>мин</small>')+'</div><div class="s">из 180</div></div>'+
    '<div class="bx b-c"><div class="l">Ккал в будний день</div><div class="v">'+cnt('avg',avg)+'</div><div class="s">на одну порцию</div></div>'+
    '<div class="bx b-d sea"><div class="l">Белка в день</div><div class="v">'+cnt('prot',pr,'<small>г</small>')+'</div><div class="s">в среднем</div></div></div>';
-  if(sp>0)h+='<button class="mpc" data-act="master"><span class="mpi2">'+IC.flame+'</span><span><b>Мастер-план воскресенья</b><br><small>'+blanksOf().length+' '+plu(blanksOf().length,['заготовка','заготовки','заготовок'])+', ≈ '+sp+' мин, по шагам и с галочками</small></span>'+IC.right+'</button>';
+  h+='<button class="mpc" data-act="master"><span class="mpi2">'+IC.flame+'</span><span><b>Мастер-план воскресенья</b><br><small>'+blanksOf().length+' '+plu(blanksOf().length,['заготовка','заготовки','заготовок'])+', ≈ '+sp+' мин, по шагам и с галочками</small></span>'+IC.right+'</button>';
   w.forEach(x=>{h+='<div class="warn '+(x[0]==='bad'?'bad':'')+'">'+esc(x[1])+'</div>';});
   const weights=foodWeights(FULL_DAYS.flatMap(dayRecipes),Math.min(...profiles().map(p=>p.f)));
   const gaps=MICRO_SOURCES.filter(g=>!sourceFoods(g,weights).length);
@@ -1182,7 +1287,7 @@ function viewDay(){
   h+='<div class="chips">'+profiles().map(p=>pk(p.name,p.target,p.f)).join('')+'</div>';
   if(ids.length)h+='<div class="small mut" style="margin-top:8px"><b>В этом приёме</b><br>'+profiles().map(p=>p.name+' · '+nutritionLine(sumMeal(ids),p.f)).join('<br>')+'</div>';
   h+='<div class="act-row"><button class="btn alt" data-act="nutrition">Баланс меню</button></div>';
-  if(d===0&&sundayPrep()>0)h+='<button class="btn red" style="width:100%;margin:14px 0 2px" data-act="master">'+IC.flame+'Мастер-план заготовки · ≈ '+sundayPrep()+' мин</button>';
+  if(d===0)h+='<button class="btn red" style="width:100%;margin:14px 0 2px" data-act="master">'+IC.flame+'Мастер-план заготовки · ≈ '+sundayPrep()+' мин</button>';
   h+='<div class="rows">';
   if(slot==='Завтрак'&&d>=1)h+=rowHtml(S.bf[d-1],'Завтрак · порций '+peopleCount(),'b'+(d-1),0,'готовится вечером '+REC[S.bf[d-1]].ev+' мин');
   else if(ids.length){const cd=cookDay(d,slot),c=S.cook[cd],lunch=slot==='Обед';
@@ -1209,16 +1314,16 @@ function rowHtml(i,kind,role,n,note){
   return '<div class="row" style="animation-delay:'+(n*60)+'ms"><div class="th" style="background:'+paint(r)+'">'+pt(i)+'</div><button class="tx" data-act="detail" data-v="'+i+'"><div class="k">'+kind+'</div><div class="n">'+esc(r.n)+'</div><div class="m">'+Math.round(r.k)+' ккал · Б '+Math.round(r.P)+' г · '+(note||('разогреть '+r.ev+' мин'))+(rt(i)?' · ★ '+rt(i):'')+'</div></button><div class="ac">'+favBtn(i)+'<button class="rb swapb" data-act="swap" data-v="'+role+'" aria-label="Заменить: '+esc(r.n)+'">'+IC.swap+'</button></div></div>';
 }
 function viewShop(){
-  const rows=shopList(),buy=rows.filter(r=>r.buy>0),total=buy.reduce((a,r)=>a+r.cost,0),done=buy.filter(r=>S.chk[r.k]).length;
+  const rows=shopList(),buy=rows.filter(r=>r.buy>0),total=buy.reduce((a,r)=>a+r.cost,0),done=buy.filter(purchased).length;
   let h=bar('Покупки');
   h+='<div class="hero-h"><h1>Покупки</h1><p>'+buy.length+' позиций. То, что есть дома, уже вычтено.</p></div>';
   h+='<div class="act-row"><button class="btn alt" data-act="pantry">Остатки дома</button></div>';
   h+='<div class="bento"><div class="bx b-a" style="grid-column:span 6;background:var(--lemon)"><div class="l">Всего</div><div class="v">'+cnt('total',total,'<small>₽</small>')+'</div><div class="s">куплено '+done+' из '+buy.length+'</div><div class="prog"><i style="width:'+(buy.length?done/buy.length*100:0)+'%"></i></div></div></div>';
   CATS.forEach(cat=>{
-    const items=buy.filter(r=>r.cat===cat).sort((a,b)=>(S.chk[a.k]?1:0)-(S.chk[b.k]?1:0)||a.n.localeCompare(b.n,'ru'));if(!items.length)return;
+    const items=buy.filter(r=>r.cat===cat).sort((a,b)=>(purchased(a)?1:0)-(purchased(b)?1:0)||a.n.localeCompare(b.n,'ru'));if(!items.length)return;
     h+='<div class="sechd"><i style="background:'+CATC[cat]+'"></i>'+cat+'<span class="mut small" style="font-family:var(--body);font-weight:600">'+items.length+'</span></div><div class="sg">';
     items.forEach(r=>{
-      const on=!!S.chk[r.k],open=shopOpen===r.k,p=ing(r.k),ic=PAINT_ART.icon(r.k,34,p.g);
+      const on=purchased(r),open=shopOpen===r.k,p=ing(r.k),ic=PAINT_ART.icon(r.k,34,p.g);
       const unit=PIECES[r.k];
       const qty=unit?r.buy/unit+' шт. ('+unit[1]+') · нужно '+x1(r.total-r.home)+' г':kgf(r.buy);
       h+='<div><div class="si '+(on?'done':'')+'"><div class="ico" style="background:'+CATC[cat]+'55">'+(ic||esc(r.n[0]))+'</div><button class="t" data-act="shopopen" data-v="'+r.k+'" aria-expanded="'+open+'"><div class="a">'+esc(S.sub[r.k]?S.sub[r.k]+' (вместо: '+r.n.toLowerCase()+')':r.n)+'</div><div class="b">'+qty+' · '+fmt(r.cost)+' ₽'+(S.price[r.k]>0?' ✎':'')+(r.home>0?' · дома '+r.home+' г':'')+'</div></button><button class="cb '+(on?'on':'')+'" data-act="chk" data-v="'+r.k+'" role="checkbox" aria-checked="'+on+'" aria-label="Куплено: '+esc(r.n)+'"><i>'+IC.check+'</i></button></div>';
@@ -1254,7 +1359,7 @@ function viewBook(){
 }
 function dockHtml(){
   const L={week:'Неделя',day:'День',shop:'Покупки',book:'Рецепты'};
-  const left=shopList().filter(r=>r.buy>0&&!S.chk[r.k]).length;
+  const left=shopList().filter(r=>r.buy>0&&!purchased(r)).length;
   return '<nav class="dock" aria-label="Разделы">'+TABS.map(k=>'<button data-act="tab" data-v="'+k+'" class="'+(S.tab===k?'on':'')+'"'+(S.tab===k?' aria-current="page"':'')+'>'+IC[k]+'<span>'+L[k]+'</span>'+(k==='shop'&&left&&S.tab!=='shop'?'<i class="bd">'+left+'</i>':'')+'</button>').join('')+'</nav>';
 }
 
@@ -1320,12 +1425,16 @@ function sheetHtml(){
   if(sheet.kind==='master'){
     const mp=masterPlan(),dn2=mpDone();let tot=0,dd=0;mp.stages.forEach(x=>x.items.forEach(z=>{tot++;if(dn2[z.key])dd++;}));
     let h=head('Воскресенье, '+dtxt(0),'Мастер-план заготовки')+'<div class="bd"><div class="kv" style="grid-template-columns:repeat(3,1fr)"><div><b>≈ '+mp.total+'</b>минут</div><div><b>'+mp.n+'</b>'+plu(mp.n,['заготовка','заготовки','заготовок'])+'</div><div><b>'+dd+'/'+tot+'</b>сделано</div></div>';
-    h+='<p class="small mut" style="line-height:1.45;margin-top:10px">Готовим сразу на все блюда: общий фарш, общая нарезка. В каждом шаге написано, сколько всего и сколько куда. Нажимайте на пункт, чтобы отметить. Воскресную заготовку на ужин не морозим, а сразу запекаем.</p>';
+    if(mp.n)h+='<p class="small mut" style="line-height:1.45;margin-top:10px">Отмерьте продукты на каждую заготовку и отмечайте выполненные шаги. Воскресную партию оставьте в холодильнике до ужина.</p>';
     h+='<p class="small mut">Время выше — активная работа.'+(mp.wait?' На предварительное подмораживание отдельных партий отведите ещё до 2 часов.':'')+' Освободите место в морозилке и подпишите ёмкости по дням.</p>';
     if(REC[S.cook[0].m].bt)h+='<button class="btn alt" data-act="cook" data-mode="fresh" data-v="'+S.cook[0].m+'">Готовлю воскресный ужин</button>';
     mp.stages.forEach((x,n)=>{h+='<div class="mps"><div class="mph"><i>'+(n+1)+'</i><div><b>'+esc(x.t)+'</b>'+(x.s?'<span>'+esc(x.s)+'</span>':'')+'</div>'+(x.min?'<em>≈ '+x.min+' мин</em>':'')+'</div>';
       x.items.forEach((z,j)=>{h+='<button class="mpi '+(dn2[z.key]?'on':'')+'" data-act="mpchk" data-v="'+z.key+'"><span class="cbx"></span><span>'+(z.t?'<b>'+esc(z.t)+'</b><br>':(z.dish&&!(j>0&&x.items[j-1].dish===z.dish&&x.items[j-1].d===z.d)?'<b>'+esc(z.dish)+'</b> · '+DS[z.d]+'<br>':''))+(z.tx?esc(z.tx):'')+(z.subs?'<span class="sub">'+z.subs.map(q=>'<span>'+esc(q)+'</span>').join('')+'</span>':'')+'</span></button>';});
       h+='</div>';});
+    if(mp.fresh.length){
+      h+='<div class="sec">Готовить в день ужина</div><p class="small mut">Заранее проверьте, что продукты есть. Шаги, граммовки и хранение обеда — в карточке блюда.</p>';
+      h+=mp.fresh.map(r=>'<button class="use" data-act="detail" data-v="'+r.id+'"><b>'+DS[r.d]+' · '+esc(r.title)+'</b><span>У плиты ≈ '+r.active+' мин'+(r.total?' · до подачи ≈ '+r.total+' мин':'')+'</span></button>').join('');
+    }
     return h+'</div></div>';
   }
   if(sheet.kind==='review'){
@@ -1371,6 +1480,7 @@ function sheetHtml(){
     let h=head(r.t+' · '+r.c,r.n)+'<div class="bd"><div class="hero-i" style="background:'+paint(r)+'">'+pt(i)+'</div>';
     h+='<div class="kv"><div><b>'+Math.round(r.k)+'</b>ккал</div><div><b>'+Math.round(r.P)+'</b>белки, г</div><div><b>'+Math.round(r.F)+'</b>жиры, г</div><div><b>'+Math.round(r.C)+'</b>углев., г</div></div>';
     h+='<p class="small mut" style="line-height:1.45">Пищевая ценность выше — на базовую порцию. Закладка: '+(peopleCount()*(isB?1:2))+' порций'+(isB?' на завтрак':' на ужин и обед')+'. '+(r.bt?'Заготовка в воскресенье ≈ '+r.pr+' мин, затем в морозилку. Вечером из морозилки в духовку: '+r.ov[0]+' °C, '+r.ov[1]+' мин.':(r.pr?'Заготовка '+r.pr+' мин. ':'')+'Вечером '+r.ev+' мин.')+'</p>';
+    if(r.total)h+='<p class="small mut">У плиты ≈ '+r.ev+' мин · до подачи ≈ '+r.total+' мин. Большую партию готовьте в несколько заходов.</p>';
     const people=profiles();
     h+='<p class="small mut">Доля готового блюда на один приём: '+people.map(p=>p.name+' '+x1(portionShare(p,r))+'%').join(' · ')+(isB?'.':'. Вторую половину разделите так же на обед.')+'</p>';
     h+='<div class="rbox">'+people.map(p=>'<b>'+p.name+'</b> · '+nutritionLine(r,p.f)).join('<br>')+'</div>';
@@ -1518,7 +1628,7 @@ function generate(){
       m:pick(m,j,S.cook[j].m,L['c'+j]),s:pick(s,j,S.cook[j].s,L['c'+j]),l:pick(l,j,S.cook[j].l,L['c'+j])
     })),bf=[0,1,2,3,4].map(j=>pick(b,j,S.bf[j],L['b'+j]));
     const cats={};cook.forEach(c=>cats[REC[c.m].c]=(cats[REC[c.m].c]||0)+1);
-    const repetition=Math.max(0,Math.max(...Object.values(cats))-2);
+    const repetition=5-Object.keys(cats).length;
     const old=S;S=Object.assign({},old,{cook,bf});
     const health=menuNutritionPenalty(),cost=planCost(),sp=sundayPrep();
     const fromStock=shopList().reduce((sum,r)=>sum+(S.home[r.k]>0?r.home*priceOf(r.k)/1000:0),0);
@@ -1583,7 +1693,7 @@ document.addEventListener('click',e=>{
     case 'place':{const i=sheet.id,r=REC[i],d=+v;if(!allowed(i)){showToast('Блюдо исключено настройками семьи',false);paintLayer();break;}if(r.t==='Завтрак')S.bf[d-1]=i;else S.cook[d][r.t==='Основное'?'m':r.t==='Гарнир'?'s':'l']=i;save();sheet=null;showToast('Поставлено на '+DN[d].toLowerCase(),false);render();break;}
     case 'regen':{const g=generate();if(g){go(()=>{S.cook=g.cook;S.bf=g.bf;S.chk={};enter=true;save();showToast('Неделя собрана заново',false);render();},'f');}else{showToast('Для нового меню нужны дополнительные доступные блюда',false);paintLayer();}break;}
     case 'reset':{const d=defaultState();if([...d.cook.flatMap(c=>[c.m,c.s,c.l]),...d.bf].some(i=>!allowed(i))){showToast('Исходное меню содержит исключённые продукты. Пересоберите неделю.',false);paintLayer();break;}go(()=>{S.cook=d.cook;S.bf=d.bf;S.chk={};S.lock={};enter=true;save();render();},'b');break;}
-    case 'chk':if(S.chk[v])delete S.chk[v];else S.chk[v]=1;save();render();try{navigator.vibrate&&navigator.vibrate(8);}catch(e2){}break;
+    case 'chk':{const row=shopList().find(r=>r.k===v&&r.buy>0);if(!row)break;if(purchased(row))delete S.chk[v];else S.chk[v]=row.buy;save();render();try{navigator.vibrate&&navigator.vibrate(8);}catch(e2){}break;}
     case 'shopopen':shopOpen=shopOpen===v?null:v;render();break;
     case 'pantry':sheet={kind:'pantry'};paintLayer();break;
     case 'nutrition':sheet={kind:'nutrition'};paintLayer();break;
