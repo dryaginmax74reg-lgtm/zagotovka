@@ -889,6 +889,7 @@ async function gsync(){
   const connection=S.sy;gBusy=true;refreshSyncStatus();let changed=false,other=null;
   try{
     if(!S.fb)S.fb={};if(!S.ts)S.ts={};
+    for(const k of Object.keys(S.fb))if(typeof S.fb[k]!=='string')S.fb[k]=JSON.stringify(S.fb[k]);
     const first=!connection.init,rj=await gcall(connection);if(S.sy!==connection)return;
     if(!rj?.ok||!Array.isArray(rj.rows))throw new Error('read');
     const remotePlan=rj.rows.find(row=>row.k==='cook'&&!row.d);
@@ -908,7 +909,7 @@ async function gsync(){
       if((S.ts[ck]||0)>=row.st)return;
       if(!first&&cur[ck]!==S.fb[ck])return;
       let val;if(!row.d){try{val=readSyncValue(row);}catch(e){return;}}
-      applyRow(ck,val);S.ts[ck]=row.st;if(row.d)delete S.fb[ck];else S.fb[ck]=row.v;
+      applyRow(ck,val);S.ts[ck]=row.st;if(row.d)delete S.fb[ck];else S.fb[ck]=JSON.stringify(val);
       changed=true;if(row.u&&row.u!==S.me&&(ck==='cook'||ck==='bf'))other=row.u;});
     if(first&&S.sy.adopt){const c3=flat();['cook','bf','lock','wk','scale','rep','hist','mp'].forEach(k=>{if(!rj.rows.some(r=>r.k===k))S.fb[k]=c3[k];});}
     S.sy.since=mx;S.sy.init=true;delete S.sy.adopt;
