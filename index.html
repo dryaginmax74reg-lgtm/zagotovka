@@ -691,7 +691,7 @@ const homeOf=k=>S.home[k]!==undefined?S.home[k]:ing(k).h;
 
 /* ---------- sync (общий план Максима и Даши) ---------- */
 let writing=Promise.resolve(),dbDoc=null,lastSent='',syncT=null;
-const SH=['cook','bf','fav','chk','sub','home','norms','lock','scale','rate','ban','hist','wk','rep','price','mp'];
+const SH=['cook','bf','fav','chk','sub','home','norms','lock','scale','rate','ban','hist','wk','rep','price','mp','yields'];
 const shared=()=>{const o={};SH.forEach(k=>o[k]=S[k]);return o;};
 const sharedLink=()=>{const o=shared();delete o.hist;return o;};
 function save(){
@@ -716,28 +716,66 @@ async function initSync(){
 }
 
 /* ---------- общий план через Google Apps Script ---------- */
-const MAPK=['fav','chk','sub','home','lock','rate','ban','price','norms'],WHO={m:'Максим',d:'Даша'};
-let gBusy=false,gPend=false,gT=null;const gst={ok:null,at:0};
-function flat(){const o={};SH.forEach(k=>{const v=S[k];if(MAPK.includes(k)&&v&&typeof v==='object'){Object.keys(v).forEach(e=>{o[k+'|'+e]=JSON.stringify(v[e]);});}else o[k]=JSON.stringify(v===undefined?null:v);});return o;}
+const MAPK=['fav','chk','sub','home','lock','rate','ban','price','norms','yields'],WHO={m:'Максим',d:'Даша'};
+let gBusy=false,gPend=false,gT=null;const gst={ok:null,at:0,waiting:false};
+function flat(){const o={};SH.forEach(k=>{const v=S[k];if(MAPK.includes(k)){Object.keys(v||{}).forEach(e=>{o[k+'|'+e]=JSON.stringify(v[e]);});}else o[k]=JSON.stringify(v===undefined?null:v);});return o;}
+function validSyncRow(key){
+  if(typeof key!=='string')return false;
+  const [field,item,extra]=key.split('|');
+  return SH.includes(field)&&(item===undefined||(extra===undefined&&MAPK.includes(field)&&!!item&&!['__proto__','constructor','prototype'].includes(item)));
+}
+function readSyncValue(row){
+  const value=JSON.parse(row.v);
+  if(row.k==='cook'&&(!Array.isArray(value)||value.length!==5||!value.every(day=>day&&['m','s','l'].every(k=>Number.isInteger(day[k])&&REC[day[k]]))))
+    throw new Error('invalid menu');
+  if(row.k==='bf'&&(!Array.isArray(value)||value.length!==5||!value.every(i=>Number.isInteger(i)&&REC[i])))
+    throw new Error('invalid breakfasts');
+  return value;
+}
 function applyRow(ck,val){const i=ck.indexOf('|');
   if(i<0){S[ck]=val;if(ck==='norms')S.norms=fixNorms(S.norms);return;}
   const k=ck.slice(0,i),e=ck.slice(i+1);if(!S[k]||typeof S[k]!=='object')S[k]={};
   if(val===undefined)delete S[k][e];else S[k][e]=val;}
-async function gcall(body){const u=S.sy.u;
-  if(body){const r=await fetch(u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});return r.json();}
-  const r=await fetch(u+(u.indexOf('?')>=0?'&':'?')+'c='+encodeURIComponent(S.sy.c)+'&since='+(S.sy.since||0)+'&_='+Date.now());return r.json();}
+async function gcall(connection,body){
+  const url=new URL(connection.u),controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),12000);
+  try{
+    if(!body){url.searchParams.set('c',connection.c);url.searchParams.set('since',connection.since||0);url.searchParams.set('_',Date.now());}
+    const options=body?{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}:{};
+    const response=await fetch(url,{...options,signal:controller.signal});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    return await response.json();
+  }finally{clearTimeout(timeout);}
+}
+function refreshSyncStatus(){
+  const el=document.getElementById('syncst');
+  if(el)el.textContent=syncTxt();
+}
 function gKick(){clearTimeout(gT);gT=setTimeout(gsync,700);}
 async function gsync(){
   if(!S.sy)return;if(gBusy){gPend=true;return;}
-  gBusy=true;let changed=false,other=null;
+  const connection=S.sy;gBusy=true;refreshSyncStatus();let changed=false,other=null;
   try{
     if(!S.fb)S.fb={};if(!S.ts)S.ts={};
-    const first=!S.sy.init,rj=await gcall();if(!rj||!rj.ok)throw new Error(rj&&rj.error||'bad');
+    const first=!connection.init,rj=await gcall(connection);if(S.sy!==connection)return;
+    if(!rj?.ok||!Array.isArray(rj.rows))throw new Error('read');
+    const remotePlan=rj.rows.find(row=>row.k==='cook'&&!row.d);
+    if(first&&connection.adopt&&!remotePlan){
+      gst.waiting=true;gst.ok=null;return;
+    }
+    gst.waiting=false;
+    if(first&&remotePlan){
+      readSyncValue(remotePlan);
+      const breakfasts=rj.rows.find(row=>row.k==='bf'&&!row.d);
+      if(!breakfasts)throw new Error('incomplete plan');
+      readSyncValue(breakfasts);
+      for(const k of MAPK)if(k!=='norms')S[k]={};
+    }
     const cur=flat();let mx=S.sy.since||0;
-    rj.rows.forEach(row=>{const ck=row.k;mx=Math.max(mx,row.st);
+    rj.rows.forEach(row=>{const ck=row.k;if(!validSyncRow(ck)||!Number.isFinite(row.st))return;mx=Math.max(mx,row.st);
       if((S.ts[ck]||0)>=row.st)return;
       if(!first&&cur[ck]!==S.fb[ck])return;
-      let val;if(!row.d){try{val=JSON.parse(row.v);}catch(e){return;}}
+      let val;if(!row.d){try{val=readSyncValue(row);}catch(e){return;}}
       applyRow(ck,val);S.ts[ck]=row.st;if(row.d)delete S.fb[ck];else S.fb[ck]=row.v;
       changed=true;if(row.u&&row.u!==S.me&&(ck==='cook'||ck==='bf'))other=row.u;});
     if(first&&S.sy.adopt){const c3=flat();['cook','bf','lock','wk','scale','rep','hist','mp'].forEach(k=>{if(!rj.rows.some(r=>r.k===k))S.fb[k]=c3[k];});}
@@ -745,18 +783,20 @@ async function gsync(){
     const c2=flat(),set=[];
     Object.keys(c2).forEach(ck=>{if(c2[ck]!==S.fb[ck]&&c2[ck].length<45000)set.push({k:ck,v:c2[ck]});});
     Object.keys(S.fb).forEach(ck=>{if(ck.indexOf('|')>0&&!(ck in c2))set.push({k:ck,d:1});});
-    if(set.length){const pr=await gcall({c:S.sy.c,u:S.me||'',set});if(!pr||!pr.ok)throw new Error('push');
+    if(set.length){const pr=await gcall(connection,{c:connection.c,u:S.me||'',set});if(S.sy!==connection)return;if(!pr?.ok||!Array.isArray(pr.st))throw new Error('push');
       const by={};pr.st.forEach(x=>{by[x.k]=x.st;});
       set.forEach(it=>{S.ts[it.k]=by[it.k]||S.ts[it.k];if(it.d)delete S.fb[it.k];else S.fb[it.k]=it.v;});}
     gst.ok=true;gst.at=Date.now();
-  }catch(e){gst.ok=false;}
+  }catch(e){if(S.sy===connection){gst.ok=false;gst.waiting=false;}}
+  finally{
   gBusy=false;
   try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
   if(changed){const a=document.activeElement;if(!(a&&a.tagName==='INPUT')){enter=false;render();}if(other){showToast(WHO[other]+' обновил(а) план',false);paintLayer();}}
-  else if(S.tab==='week'&&!sheet&&!ck){const a=document.activeElement;if(!(a&&a.tagName==='INPUT')){const el=document.getElementById('syncst');if(el)el.textContent=syncTxt();}}
+  refreshSyncStatus();
   if(gPend){gPend=false;gKick();}
+  }
 }
-const syncTxt=()=>gst.ok===false?'Нет связи, повторю позже':gst.ok?'Синхронизировано в '+new Date(gst.at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'Подключаюсь…';
+const syncTxt=()=>gBusy?'Сверяю изменения…':gst.waiting?'Жду, пока другой телефон отправит первый план':gst.ok===false?'Связь не подтверждена. Изменения сохранены на телефоне, попробую снова.':gst.ok?'Синхронизировано в '+new Date(gst.at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'Подключаюсь…';
 setInterval(()=>{if(S.sy&&!document.hidden)gsync();},20000);
 document.addEventListener('visibilitychange',()=>{if(S.sy&&!document.hidden)gsync();});
 function syncCard(){
@@ -1064,7 +1104,7 @@ function viewWeek(){
   h+='<div class="act-row" style="margin-top:12px"><button class="btn '+(confirmClose?'red':'alt')+'" style="height:42px;font-size:14px;padding:0 16px" data-act="closeweek">'+(confirmClose?'Точно закрыть? Нажмите ещё раз':'Закрыть неделю и собрать новую')+'</button>'+(hl.length?'<button class="btn alt" style="height:42px;font-size:14px;padding:0 16px" data-act="histopen">'+(histOpen?'Скрыть историю':'История недель')+'</button>':'')+'</div>';
   if(histOpen&&hl.length)h+='<div class="hist">'+hl.slice(0,10).map(x=>'<div><b>'+wkTxt(x.w)+'</b><br>'+x.cook.map(c=>esc(c.m)).join('; ')+'</div>').join('')+'</div>';
   h+='</div>';}
-  h+=syncCard();
+  h+='<div class="act-row"><button class="btn alt" data-act="household">Наш кабинет · '+(S.sy?'общий план':'подключить второй телефон')+'</button></div>';
   h+='<div class="warn" style="background:var(--soft);color:var(--ink);margin-top:12px"><b>Звук таймера</b><div class="snd">'+Object.keys(SND).map(k=>'<button data-act="snd" data-v="'+k+'" class="'+((S.snd||'hen')===k?'on':'')+'">'+SND[k].n+'</button>').join('')+'<button data-act="snd" data-v="off" class="'+(S.snd==='off'?'on':'')+'">Без звука</button></div><div class="small mut" style="margin-top:8px">Нажмите на название, чтобы послушать.</div></div>';
   h+='<div class="warn" style="background:var(--soft);color:var(--mut);margin-top:12px"><b style="color:var(--ink)">Норма на день, ккал</b><div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap"><label>Максим <input type="number" inputmode="numeric" id="nm" data-act="norm" data-v="m" value="'+S.norms.m+'" style="width:96px;margin-left:4px"></label><label>Даша <input type="number" inputmode="numeric" id="nd" data-act="norm" data-v="d" value="'+S.norms.d+'" style="width:96px;margin-left:4px"></label></div><div style="margin-top:8px">Калории в блюдах даны на базовую порцию. Размер порции подгоняется под норму, переключатель выше.</div></div>';
   return h;
@@ -1198,6 +1238,12 @@ function roleInfo(role){
 function sheetHtml(){
   if(!sheet)return'';
   const head=(sub,title)=>'<div class="shade" data-act="close"></div><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><div class="grab"></div><div class="hd" id="shd"><div style="min-width:0"><div class="small mut" style="font-weight:600">'+esc(sub)+'</div><h2 style="font-size:19px;margin-top:3px">'+esc(title)+'</h2></div><button class="rb" data-act="close" aria-label="Закрыть">'+IC.close+'</button></div>';
+  if(sheet.kind==='household'){
+    return head('Заготовка','Наш кабинет')+'<div class="bd">'+syncCard()
+      +'<div class="sec">Цели питания</div>'+['m','d'].map(k=>'<div class="si"><label for="house-'+k+'">'+WHO[k]+' · ккал в день</label><input id="house-'+k+'" type="number" min="800" inputmode="numeric" data-act="norm" data-v="'+k+'" value="'+S.norms[k]+'" style="width:95px"></div>').join('')
+      +'<div class="act-row"><button class="btn alt" data-act="pantry">Остатки дома</button><button class="btn alt" data-act="nutrition">Баланс меню</button></div>'
+      +'<p class="small mut">Общие данные: меню, цели, покупки, остатки, оценки, отметки заготовки и замеры гарниров. На каждом телефоне можно открыть свой день и рецепт.</p></div></div>';
+  }
   if(sheet.kind==='nutrition'){
     const daily=([name,target,f])=>'<div class="sec">'+name+' · цель '+fmt(target)+' ккал</div>'+FULL_DAYS.map(d=>{
       const t=dayTotals(d),low=[];
@@ -1233,8 +1279,9 @@ function sheetHtml(){
     return head('Первый запуск','Кто вы?')+'<div class="bd"><p class="small mut" style="line-height:1.45;margin-top:2px">Телефон запомнит выбор. Ваши порции будут первыми, а в общем плане будет видно, кто его менял.</p><div class="act-row" style="margin-top:14px"><button class="btn red" data-act="whoset" data-v="m">Я Максим</button><button class="btn red" data-act="whoset" data-v="d">Я Даша</button></div></div></div>';
   }
   if(sheet.kind==='sync'){
-    return head('Один раз, около 5 минут','Общий план с Дашей')+'<div class="bd"><ol style="margin:0;padding-left:20px;font-size:14px;line-height:1.5"><li style="margin-bottom:6px">Откройте <b>sheets.new</b> на компьютере: создастся пустая Google Таблица. Назовите её «Заготовка».</li><li style="margin-bottom:6px">Меню <b>Расширения → Apps Script</b>. Удалите всё и вставьте код из файла Code.gs, который я прислал. Сохраните.</li><li style="margin-bottom:6px">Справа вверху <b>Начать развёртывание → Новое развёртывание</b>, тип «Веб-приложение». Выполнять от своего имени, доступ «У всех». Нажмите «Развернуть» и разрешите доступ.</li><li style="margin-bottom:6px">Скопируйте <b>URL веб-приложения</b> и вставьте ниже. Код доступа написан в начале файла Code.gs (строка const CODE).</li></ol><label for="gu" style="display:block;margin-top:12px;font-weight:700">URL веб-приложения</label><input type="text" id="gu" placeholder="https://script.google.com/macros/s/…/exec" style="width:100%"><label for="gc" style="display:block;margin-top:10px;font-weight:700">Код доступа</label><input type="text" id="gc" placeholder="10 символов" style="width:100%"><div class="act-row" style="margin-top:14px"><button class="btn red" data-act="syncon" data-v="adopt">Подключить, план возьму у Даши</button><button class="btn alt" data-act="syncon" data-v="mine">Подключить, мой план главный</button></div><p class="small mut" style="line-height:1.45">После подключения нажмите «Позвать Дашу»: она откроет ссылку на своём телефоне, и всё настроится само.</p></div></div>';
+    return head('Подключение телефона','Общий план')+'<div class="bd"><p>На первом телефоне подключите свой адрес хранилища и код доступа. Когда появится время синхронизации, откройте «Наш кабинет» и нажмите «Позвать».</p><p>На втором телефоне откройте ссылку-приглашение и подтвердите подключение в том приложении, где будете пользоваться планом.</p><label for="gu">Адрес веб-приложения Apps Script</label><input type="url" id="gu" placeholder="https://script.google.com/macros/s/…/exec" style="width:100%"><label for="gc">Код доступа</label><input type="password" id="gc" autocomplete="off" style="width:100%"><div class="act-row"><button class="btn red" data-act="syncon" data-v="mine">Подключить хранилище</button><button class="btn alt" data-act="household">Назад</button></div></div></div>';
   }
+  if(sheet.kind==='inviteconfirm')return head('Приглашение','Общий план')+'<div class="bd"><p>Подключить этот телефон как '+WHO[sheet.invite.me]+'? Меню, покупки и остатки на телефоне будут заменены данными из общего плана.</p><div class="act-row"><button class="btn red" data-act="joinhouse">Подключиться</button><button class="btn alt" data-act="close">Отмена</button></div></div></div>';
   if(sheet.kind==='master'){
     const mp=masterPlan(),dn2=mpDone();let tot=0,dd=0;mp.stages.forEach(x=>x.items.forEach(z=>{tot++;if(dn2[z.key])dd++;}));
     let h=head('Воскресенье, '+dtxt(0),'Мастер-план заготовки')+'<div class="bd"><div class="kv" style="grid-template-columns:repeat(3,1fr)"><div><b>≈ '+mp.total+'</b>минут</div><div><b>'+mp.n+'</b>'+plu(mp.n,['заготовка','заготовки','заготовок'])+'</div><div><b>'+dd+'/'+tot+'</b>сделано</div></div>';
@@ -1473,12 +1520,14 @@ document.addEventListener('click',e=>{
     case 'me':S.me=v;save();enter=false;render();break;
     case 'whoset':S.me=v;save();sheet=null;paintLayer();render();break;
     case 'syncopen':sheet={kind:'sync'};paintLayer();break;
+    case 'household':sheet={kind:'household'};paintLayer();break;
+    case 'joinhouse':{const {u,c,me}=sheet.invite;S.me=me;connectHouse(u,c,true);break;}
     case 'syncon':{const u=(document.getElementById('gu').value||'').trim(),c=(document.getElementById('gc').value||'').trim();
-      if(!/^https:\/\/script\.google\.com\//.test(u)||!c){showToast('Проверьте адрес и код',false);paintLayer();break;}
-      S.sy={u,c,since:0,init:false,adopt:v==='adopt'};S.fb={};S.ts={};save();sheet=null;paintLayer();showToast('Подключаю общий план…',false);paintLayer();gsync();break;}
+      if(!validHouse(u,c)){showToast('Проверьте адрес и код',false);paintLayer();break;}
+      connectHouse(u,c,false);break;}
     case 'syncnow':showToast('Обновляю…',false);paintLayer();gsync();break;
     case 'syncoff':S.sy=null;S.fb={};S.ts={};save();showToast('Общий план отключён',false);enter=false;render();break;
-    case 'invite':{const o={u:S.sy.u,c:S.sy.c,me:S.me==='d'?'m':'d'};const url=location.href.split('#')[0]+'#s='+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+    case 'invite':{if(!S.sy?.init||!gst.ok){showToast('Сначала дождитесь успешной синхронизации',false);paintLayer();break;}const o={u:S.sy.u,c:S.sy.c,me:S.me==='d'?'m':'d'};const url=location.href.split('#')[0]+'#s='+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
       const done=()=>{showToast('Ссылка скопирована. Отправьте её '+(S.me==='d'?'Максиму':'Даше'),false);paintLayer();};
       if(navigator.share){navigator.share({title:'Заготовка: общий план',url}).catch(()=>{});}else if(navigator.clipboard){navigator.clipboard.writeText(url).then(done).catch(()=>{showToast('Не удалось скопировать',false);paintLayer();});}
       break;}
@@ -1563,11 +1612,18 @@ function endSw(e){
 }
 document.addEventListener('pointerup',endSw);document.addEventListener('pointercancel',()=>{if(sw&&sw.s){sw.s.style.transition='transform 300ms var(--spring)';sw.s.style.transform='';}sw=null;});
 
+function validHouse(u,c){return typeof u==='string'&&/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u)&&typeof c==='string'&&c.length>0&&c.length<=256;}
+function connectHouse(u,c,adopt){
+  S.sy={u,c,since:0,init:false,adopt};S.fb={};S.ts={};
+  gst.ok=null;gst.waiting=false;gst.at=0;
+  save();sheet={kind:'household'};paintLayer();gsync();
+}
 (function importSync(){
   try{const m=/^#s=(.+)$/.exec(location.hash);if(!m)return;
     const o=JSON.parse(decodeURIComponent(escape(atob(m[1]))));
-    if(o&&o.u&&o.c){S.sy={u:o.u,c:o.c,since:0,init:false};S.fb={};S.ts={};if(o.me)S.me=o.me;save();history.replaceState(null,'',location.pathname+location.search);
-      setTimeout(()=>{showToast('Общий план подключён',false);paintLayer();gsync();},300);}
+    if(o&&validHouse(o.u,o.c)&&['m','d'].includes(o.me)){
+      sheet={kind:'inviteconfirm',invite:o};history.replaceState(null,'',location.pathname+location.search);
+    }
   }catch(e){}
 })();
 (function importHash(){
@@ -1578,7 +1634,7 @@ document.addEventListener('pointerup',endSw);document.addEventListener('pointerc
   }catch(e){}
 })();
 window.__z={sundayPrep,blanksOf,masterPlan,fq,REC,gs:()=>S,gsync};
-if(!S.me)sheet={kind:'who'};
+if(!S.me&&!sheet)sheet={kind:'who'};
 render();initSync();if(S.sy)gsync();paintLayer();
 })();
 
