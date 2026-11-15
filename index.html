@@ -510,45 +510,178 @@ const MEAT_REST='Доведите мясо до 63 °C в центре само�
 const MEAT_LEFTOVERS='Обеденные порции уберите в неглубоких контейнерах в холодильник в течение 2 часов. Разогревайте до 74 °C.';
 // Количество в контрольной порции NIH ODS. Масса в граммах.
 // Используем только сопоставимые позиции; прочие значения остаются неизвестными.
+// DRI for healthy adults. Arrays are ordered 19–30, 31–50, 51–70, 71+.
+const MICRO_AGES=['19–30','31–50','51–70','71+'];
 const MICRO_DATA=[
-  {name:'Кальций',unit:'мг',ref:'Calcium',goal:[1000,1000],foods:{cot:[138,226],moz:[333,42.5]}},
-  {name:'Железо',unit:'мг',ref:'Iron',goal:[8,18],foods:{kid:[2,125],chk:[2,82],beef:[1.6,100]}},
-  {name:'Магний',unit:'мг',ref:'Magnesium',goal:[420,310],foods:{psd:[156,28.35],alm:[80,28.35],ban:[32,118],mlk:[27,244],beef:[23,100]}},
-  {name:'Калий',unit:'мг',ref:'Potassium',goal:[3400,2600],foods:{ban:[422,118],spi:[334,60],tom:[292,123],yog:[240,170],apple:[195,182]}},
-  {name:'Йод',unit:'мкг',ref:'Iodine',goal:[150,150],foods:{yog:[87,170]},cooked:{cod:[146,85]}},
-  {name:'Витамин D',unit:'мкг',ref:'VitaminD',goal:[15,15],foods:{},cooked:{trt:[16.2,85]}},
-  {name:'Витамин C',unit:'мг',ref:'VitaminC',goal:[90,75],foods:{pep:[95,74],ora:[70,131],kiw:[64,69],grf:[39,123],tom:[17,123]},cooked:{bro:[51,78],cab:[28,75]}},
-  {name:'Фолаты (B9)',unit:'мкг DFE',ref:'folate',goal:[400,400],foods:{spi:[58,30],rom:[64,47],avo:[59,73]}},
-  {name:'Витамин B12',unit:'мкг',ref:'VitaminB12',goal:[2.4,2.4],foods:{mlk:[1.3,244],beef:[1.1,100]},cooked:{sal:[2.6,85],egg:[.5,50],tkb:[.3,85]}}
-];
-// USDA/FDA/ODS Iodine Database 4.0, amounts per 100 g.
-const IODINE_PER_100G={"pol":43.5,"shr":14.2,"sal":3.2,"per":9.3,"hal":8,"pink":26.2,"scl":7.4,"egg":49.2,"yog":51.2,"fet":48.4,"mlk":35.8,"cot":36.6,"moz":51,"par":82.4,"grf":0.1,"onion":0.3,"gar":1,"cab":0,"spi":6.7,"mush":0.3,"cel":1.7,"avo":0.2,"tom":0.2,"apple":0.1,"ora":0.2,"ban":0.2,"pear":0.1,"man":0.1,"blu":0.3,"hon":0.7,"mst":0.4,"cod":113.7,"til":4.1,"cuc":0.5,"carrot":0.6,"chk":0,"kid":0,"cor":0.3};
-const RAW_MICRO_DISH=/^(Овсянка overnight|Йогурт с|Творог с)/;
-const RAW_SALAD_COOKED=new Set(['egg','asp','shr','sqd','pea','gb','pum','egp']);
-const COOKED_WEIGHT_RATIO={cod:.8,trt:.8,sal:.8,tkb:.8,egg:.95,bro:.9,cab:.9};
+ ['a','Витамин A','мкг RAE',900,700],['c','Витамин C','мг',90,75],
+ ['d','Витамин D','мкг',[15,15,15,20],[15,15,15,20]],['e','Витамин E','мг',15,15],
+ ['k','Витамин K','мкг',120,90,'AI'],['b1','Витамин B1','мг',1.2,1.1],
+ ['b2','Витамин B2','мг',1.3,1.1],['b3','Витамин B3','мг NE',16,14],
+ ['b5','Витамин B5','мг',5,5,'AI'],['b6','Витамин B6','мг',[1.3,1.3,1.7,1.7],[1.3,1.3,1.5,1.5]],
+ ['b7','Биотин (B7)','мкг',30,30,'AI'],['b9','Фолаты (B9)','мкг DFE',400,400],
+ ['b12','Витамин B12','мкг',2.4,2.4],['choline','Холин','мг',550,425,'AI'],
+ ['ca','Кальций','мг',[1000,1000,1000,1200],[1000,1000,1200,1200]],
+ ['fe','Железо','мг',8,[18,18,8,8]],['mg','Магний','мг',[400,420,420,420],[310,320,320,320]],
+ ['p','Фосфор','мг',700,700],['kalium','Калий','мг',3400,2600,'AI'],
+ ['na','Натрий','мг',2300,2300,'limit'],['zn','Цинк','мг',11,8],
+ ['cu','Медь','мг',.9,.9],['mn','Марганец','мг',2.3,1.8,'AI'],['se','Селен','мкг',55,55],
+ ['i','Йод','мкг',150,150],['cr','Хром','мкг',[35,35,30,30],[25,25,20,20],'AI'],
+ ['f','Фтор','мг',4,3,'AI'],['mo','Молибден','мкг',45,45],
+ ['cl','Хлориды','мг',[2300,2300,2000,1800],[2300,2300,2000,1800],'AI']
+].map(([key,name,unit,m,f,kind='RDA'],index)=>({key,name,unit,m,f,kind,index}));
+const MICRO_FOOD={
+  chb:[9.0,0.0,0.0,0.56,0.0,0.094,0.177,14.316666666666666,1.495,0.811,null,9.0,0.21,82.1,5.0,0.37,28.0,213.0,334.0,45.0,0.68,0.037,0.011,22.8,null,null,null,null,null], // USDA 171077 · CoFID 18-290
+  cht:[7.0,0.0,0.0,0.18,2.9,0.088,0.196,9.257000000000001,null,0.451,null,4.0,0.61,53.6,7.0,0.81,23.0,185.0,242.0,95.0,1.58,0.062,0.013,22.9,null,null,null,null,null], // USDA 173627 · CoFID 18-289
+  tkg:[22.0,0.0,0.4,0.11,0.0,0.067,0.185,8.966999999999999,1.0,0.35,null,7.0,1.2,53.0,21.0,1.17,21.0,193.0,213.0,69.0,2.53,0.107,0.008,19.0,null,null,null,null,null], // USDA 172850
+  tkt:[19.0,0.0,0.5,0.18,0.0,0.059,0.307,10.416333333333334,1.3,0.482,null,null,2.17,75.9,4.0,1.42,22.0,177.0,269.0,75.0,2.95,0.083,0.006,21.5,null,null,null,null,null], // USDA 174518 · CoFID 18-348
+  tkb:[5.0,0.0,0.2,0.09,0.0,0.052,0.165,15.094999999999999,1.05,0.814,null,null,1.35,52.3,9.0,0.76,27.0,185.0,267.0,74.0,1.16,0.054,0.006,22.1,null,null,null,null,null], // USDA 174515 · CoFID 18-349
+  cod:[12.0,1.0,0.9,0.64,0.1,0.076,0.065,5.379666666666667,0.153,0.245,null,7.0,0.91,65.2,16.0,0.38,32.0,203.0,413.0,54.0,0.45,0.028,0.015,33.1,113.7,null,null,null,null], // USDA 171955 · CoFID 16-372 · Iodine 498
+  pol:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,12.0,0.27,34.0,190.0,331.0,159.0,0.4,0.041,0.011,null,43.5,null,null,null,null], // USDA 173725 · CoFID 16-378 · Iodine 396
+  til:[0.0,0.0,3.1,0.4,1.4,0.041,0.063,7.4030000000000005,0.487,0.162,null,24.0,1.58,42.5,10.0,0.56,27.0,170.0,302.0,52.0,0.33,0.075,0.037,41.8,4.1,null,null,null,null], // USDA 175176 · CoFID 16-154 · Iodine 497
+  shr:[54.0,0.0,0.1,1.32,0.3,0.02,0.015,4.3613333333333335,0.31,0.161,null,19.0,1.11,80.9,54.0,0.21,22.0,244.0,113.0,566.0,0.97,0.182,0.029,29.6,14.2,null,null,null,null], // USDA 174210 · CoFID 16-387 · Iodine 391
+  sqd:[10.0,4.7,0.0,1.2,0.0,0.02,0.412,5.074999999999999,0.5,0.056,null,5.0,1.3,65.0,32.0,0.68,33.0,221.0,246.0,44.0,1.53,1.891,0.035,44.8,null,null,null,null,null], // USDA 174223 · CoFID 16-263
+  msl:[48.0,8.0,0.0,0.55,0.1,0.16,0.21,3.816666666666667,0.5,0.05,null,42.0,12.0,65.0,26.0,3.95,34.0,197.0,320.0,286.0,1.6,0.094,3.4,44.8,null,null,null,null,null], // USDA 174216 · CoFID 16-497
+  sal:[58.0,3.9,11.0,3.55,0.5,0.207,0.155,12.155333333333335,1.547,0.636,null,26.0,3.23,78.5,9.0,0.34,27.0,240.0,363.0,59.0,0.36,0.045,0.011,24.0,3.2,null,null,null,null], // USDA 175167 · CoFID 16-356 · Iodine 496
+  trt:[84.0,2.9,15.9,2.34,0.1,0.12,0.09,9.467,1.667,0.34,null,11.0,4.3,65.0,25.0,0.31,25.0,226.0,377.0,51.0,0.45,0.046,0.011,23.6,null,null,null,null,null], // USDA 173717 · CoFID 16-395
+  bass:[46.0,0.0,5.6,0.84,0.1,0.11,0.12,5.033333333333333,0.75,0.4,null,5.0,0.3,60.8,10.0,0.29,41.0,194.0,256.0,68.0,0.4,0.019,0.015,36.5,null,null,null,null,null], // USDA 175142 · CoFID 16-385
+  mac:[50.0,0.4,16.1,1.52,5.0,0.176,0.312,12.546666666666667,0.856,0.399,null,1.0,8.71,65.0,12.0,1.63,76.0,217.0,314.0,90.0,0.63,0.073,0.015,44.1,null,null,null,null,null], // USDA 175119 · CoFID 16-393
+  per:[12.0,0.0,1.2,0.76,0.1,0.04,0.048,4.138333333333334,0.272,0.073,null,9.0,1.5,65.0,28.0,0.22,23.0,248.0,187.0,287.0,0.29,0.021,0.011,28.6,9.3,null,null,null,null], // USDA 175125 · Iodine 379
+  hal:[20.0,0.0,4.7,0.61,0.0,0.05,0.03,10.396333333333333,0.343,0.548,null,12.0,1.1,61.8,7.0,0.16,23.0,236.0,435.0,68.0,0.36,0.023,0.011,45.6,8,null,null,null,null], // USDA 174200 · CoFID 16-073 · Iodine 378
+  pink:[35.0,0.0,10.9,0.4,0.4,0.08,0.105,11.678333333333333,1.03,0.611,null,4.0,4.15,94.6,7.0,0.38,27.0,261.0,366.0,75.0,0.39,0.063,0.011,31.4,26.2,null,null,null,null], // USDA 175138 · Iodine 381
+  scl:[1.0,0.0,0.0,0.0,0.0,0.007,0.015,2.403,0.215,0.073,null,16.0,1.41,65.0,6.0,0.38,22.0,334.0,205.0,392.0,0.91,0.023,0.017,12.8,7.4,null,null,null,null], // USDA 174220 · Iodine 394
+  kal:[241.0,93.4,0.0,0.66,389.6,0.113,0.347,1.7633333333333332,0.37,0.147,null,62.0,0.0,0.5,254.0,1.6,33.0,55.0,348.0,53.0,0.39,0.053,0.92,0.9,null,null,null,null,null], // USDA 168421 · CoFID 13-234
+  koh:[2.0,62.0,0.0,0.48,0.1,0.05,0.02,0.5666666666666667,0.165,0.15,null,16.0,0.0,12.3,24.0,0.4,19.0,46.0,350.0,20.0,0.03,0.129,0.139,0.7,null,null,null,null,null], // USDA 168424 · CoFID 13-261
+  fen:[48.0,12.0,0.0,0.58,62.8,0.01,0.032,null,0.232,0.047,null,27.0,0.0,13.2,49.0,0.73,17.0,50.0,414.0,52.0,0.2,0.066,0.191,0.7,null,null,null,null,null], // USDA 169385 · CoFID 13-241
+  egg:[160.0,0.0,2.0,1.05,0.3,0.04,0.457,2.8583333333333334,1.533,0.17,null,47.0,0.89,293.8,56.0,1.75,12.0,198.0,138.0,142.0,1.29,0.072,0.028,30.7,49.2,0.4545,0.0011,null,null], // USDA 171287 · CoFID 12-937 · Iodine 353
+  cot:[11.0,0.0,0.0,0.01,0.1,0.021,0.165,2.428,0.215,0.068,null,12.0,0.63,17.5,61.0,0.14,5.0,134.0,86.0,406.0,0.38,0.028,0.003,9.0,36.6,null,0.0316,null,null], // USDA 173417 · Iodine 161
+  yog:[1.0,0.0,0.0,0.01,0.0,0.023,0.278,null,0.331,0.063,null,7.0,0.75,15.1,110.0,0.07,11.0,135.0,141.0,36.0,0.52,0.017,0.009,9.7,51.2,null,null,null,null], // USDA 170894 · CoFID 12-555 · Iodine 361
+  mlk:[28.0,0.2,0.0,0.03,0.2,0.039,0.185,0.7919999999999999,0.356,0.038,null,5.0,0.53,16.4,120.0,0.02,11.0,92.0,140.0,47.0,0.48,0.006,0.014,2.5,35.8,null,0.0034,9.0164,null], // USDA 172205 · CoFID 12-313 · Iodine 21
+  fet:[125.0,0.0,0.4,0.18,1.8,0.154,0.844,4.324333333333334,0.967,0.424,null,32.0,1.69,15.4,493.0,0.65,19.0,337.0,62.0,1139.0,2.88,0.032,0.028,15.0,48.4,null,null,null,null], // USDA 173420 · CoFID 12-525 · Iodine 450
+  moz:[179.0,0.0,0.4,0.19,2.3,0.03,0.283,8.687333333333333,0.141,0.037,null,7.0,2.28,15.4,505.0,0.44,20.0,354.0,76.0,486.0,2.92,0.011,0.03,17.0,51,null,null,null,null], // USDA 170845 · CoFID 12-360 · Iodine 191
+  par:[207.0,0.0,0.5,0.22,1.7,0.039,0.332,8.304333333333334,0.453,0.091,null,7.0,1.2,15.4,1184.0,0.82,44.0,694.0,92.0,1175.0,2.75,0.032,0.02,22.5,82.4,null,null,null,null], // USDA 170848 · CoFID 12-526 · Iodine 349
+  buck:[0.0,0.0,0.0,null,null,0.101,0.425,10.219999999999999,1.233,0.21,null,30.0,0.0,null,18.0,2.2,231.0,347.0,460.0,1.0,2.4,1.1,1.3,8.3,null,null,null,null,null], // USDA 170286
+  rice:[0.0,0.0,0.0,0.11,0.1,0.07,0.049,2.9833333333333334,1.014,0.164,null,8.0,0.0,5.8,28.0,0.8,25.0,115.0,115.0,5.0,1.09,0.22,1.088,15.1,null,null,null,null,null], // USDA 169756 · CoFID 11-861
+  brr:[0.0,0.0,0.0,0.6,0.6,0.541,0.095,8.177333333333333,1.065,0.477,null,23.0,0.0,21.5,9.0,1.29,116.0,311.0,250.0,5.0,2.13,0.302,2.853,17.1,null,null,null,null,null], // USDA 169703 · CoFID 11-868
+  cus:[0.0,0.0,0.0,null,null,0.163,0.078,6.206666666666667,1.243,0.11,null,20.0,0.0,null,24.0,1.08,44.0,170.0,166.0,10.0,0.83,0.247,0.78,null,null,null,null,null,null], // USDA 169699 · CoFID 11-901
+  bul:[0.0,0.0,0.0,0.06,1.9,0.232,0.115,8.280666666666667,1.045,0.342,null,27.0,0.0,28.1,35.0,2.46,164.0,300.0,410.0,17.0,1.93,0.335,3.048,2.3,null,null,null,null,null], // USDA 170688 · CoFID 11-904
+  oat:[0.0,0.0,0.0,0.42,2.0,0.46,0.155,4.158333333333333,1.12,0.1,null,32.0,0.0,40.4,52.0,4.25,138.0,410.0,362.0,6.0,3.64,0.391,3.63,28.9,null,null,null,null,null], // USDA 173904 · CoFID 11-788
+  qui:[1.0,null,0.0,2.44,0.0,0.36,0.318,4.303333333333333,0.772,0.487,null,184.0,0.0,70.2,47.0,4.57,197.0,457.0,563.0,5.0,3.1,0.59,2.033,8.5,null,null,null,null,null], // USDA 168874 · CoFID 14-843
+  len:[2.0,4.5,0.0,0.49,5.0,0.873,0.211,6.288333333333333,2.14,0.54,null,479.0,0.0,96.4,35.0,6.51,47.0,281.0,677.0,6.0,3.27,0.754,1.393,0.1,null,null,null,null,null], // USDA 172420 · CoFID 13-089
+  chk:[1.0,0.1,0.0,0.29,3.4,0.027,0.015,1.29,0.37,0.116,1.3,48.0,0.0,null,45.0,1.07,26.0,85.0,126.0,246.0,0.63,0.253,0.846,3.1,0,null,null,null,13], // USDA 173800 · CoFID 13-670 · Iodine 456
+  kid:[null,0.2,0.0,0.52,null,0.067,0.016,2.0433333333333334,0.15,0.07,0.5,28.0,0.0,null,57.0,1.5,30.0,121.0,277.0,231.0,0.75,0.272,0.384,1.6,0,null,null,null,9], // USDA 174285 · CoFID 13-660 · Iodine 271
+  cor:[null,1.7,0.0,null,null,0.015,0.015,1.1133333333333333,null,null,null,29.0,0.0,null,2.0,0.22,11.0,41.0,116.0,163.0,0.28,0.031,0.056,null,0.3,null,null,null,null], // USDA 168397 · CoFID 13-529 · Iodine 45
+  olv:[17.0,0.9,0.0,1.65,1.4,0.003,0.0,null,0.015,0.009,null,0.0,0.0,10.3,88.0,6.28,4.0,3.0,8.0,735.0,0.22,0.251,0.02,0.9,2.1,null,null,null,null], // USDA 169094 · Iodine 153
+  tmc:[20.0,12.6,0.0,0.59,2.6,0.575,0.055,0.8453333333333333,0.117,0.111,null,8.0,0.0,6.4,33.0,0.57,10.0,17.0,191.0,115.0,0.12,0.052,0.068,0.7,null,null,0.0050999999999999995,null,null], // USDA 170051 · CoFID 13-530
+  tpa:[76.0,21.9,0.0,4.3,11.4,0.06,0.153,3.5926666666666667,0.142,0.216,null,12.0,0.0,38.5,36.0,2.98,42.0,83.0,1014.0,59.0,0.63,0.365,0.302,5.3,null,null,null,null,null], // USDA 170459 · CoFID 13-531
+  onion:[0.0,7.4,0.0,0.02,0.4,0.046,0.027,0.34933333333333333,0.123,0.12,null,19.0,0.0,6.1,23.0,0.21,10.0,29.0,146.0,4.0,0.17,0.039,0.129,0.5,0.3,null,0.0011,null,null], // USDA 170000 · CoFID 13-499 · Iodine 82
+  gar:[0.0,31.2,0.0,0.08,1.7,0.2,0.11,1.8,0.596,1.235,null,3.0,0.0,23.2,181.0,1.7,25.0,153.0,401.0,17.0,1.16,0.299,1.672,14.2,1,null,null,null,null], // USDA 169230 · CoFID 13-244 · Iodine 454
+  carrot:[835.0,5.9,0.0,0.66,13.2,0.066,0.058,1.183,0.273,0.138,null,19.0,0.0,8.8,33.0,0.3,12.0,35.0,320.0,69.0,0.24,0.045,0.143,0.1,0.6,0.4918,0.0032,null,null], // USDA 170393 · CoFID 13-496 · Iodine 175
+  cab:[5.0,36.6,0.0,0.15,76.0,0.061,0.04,0.41733333333333333,0.212,0.124,null,43.0,0.0,10.7,40.0,0.47,12.0,26.0,170.0,18.0,0.18,0.019,0.16,0.3,0,null,0.001,null,null], // USDA 169975 · CoFID 13-509 · Iodine 204
+  nap:[16.0,27.0,0.0,0.12,42.9,0.04,0.05,0.6000000000000001,0.105,0.232,null,79.0,0.0,7.6,77.0,0.31,13.0,29.0,238.0,9.0,0.23,0.036,0.19,0.6,null,null,null,null,null], // USDA 169979 · CoFID 13-187
+  beet:[2.0,4.9,0.0,0.04,0.2,0.031,0.04,0.6506666666666667,0.155,0.067,null,109.0,0.0,6.0,16.0,0.8,23.0,40.0,325.0,78.0,0.35,0.075,0.329,0.7,null,null,null,null,null], // USDA 169145 · CoFID 13-164
+  zuc:[10.0,17.9,0.0,0.12,4.3,0.045,0.094,0.6176666666666667,0.204,0.163,3.1,24.0,0.0,9.5,16.0,0.37,18.0,38.0,261.0,8.0,0.32,0.053,0.177,0.2,5,null,null,null,45], // USDA 169291 · CoFID 13-627
+  spi:[469.0,28.1,0.0,2.03,482.9,0.078,0.189,1.374,0.065,0.195,null,194.0,0.0,19.3,99.0,2.71,79.0,49.0,558.0,79.0,0.53,0.13,0.897,1.0,6.7,null,null,null,null], // USDA 168462 · CoFID 13-572 · Iodine 206
+  aru:[119.0,15.0,0.0,0.43,108.6,0.044,0.086,null,0.437,0.073,null,97.0,0.0,15.3,160.0,1.46,47.0,52.0,369.0,27.0,0.47,0.076,0.321,0.3,null,null,null,null,null], // USDA 169387 · CoFID 13-522
+  rom:[436.0,4.0,0.0,0.13,102.5,0.072,0.067,0.4796666666666667,0.142,0.074,null,136.0,0.0,9.9,33.0,0.97,14.0,30.0,247.0,8.0,0.23,0.048,0.155,0.4,null,null,null,null,null], // USDA 169247
+  bro:[31.0,89.2,0.0,0.78,101.6,0.071,0.117,1.189,0.573,0.175,null,63.0,0.0,18.7,47.0,0.73,21.0,66.0,316.0,33.0,0.41,0.049,0.21,2.5,null,null,null,null,null], // USDA 170379 · CoFID 13-502
+  mush:[0.0,2.1,0.2,0.01,0.0,0.081,0.402,4.190333333333333,1.497,0.104,null,17.0,0.04,17.3,3.0,0.5,9.0,86.0,318.0,5.0,0.52,0.318,0.047,9.3,0.3,null,null,null,null], // USDA 169251 · CoFID 13-505 · Iodine 141
+  rad:[0.0,14.8,0.0,0.0,1.3,0.012,0.039,0.404,0.165,0.071,0.4,25.0,0.0,6.5,25.0,0.34,10.0,20.0,233.0,39.0,0.28,0.05,0.069,0.6,1,null,0.006,null,37], // USDA 169276 · CoFID 13-656
+  swp:[709.0,2.4,0.0,0.26,1.8,0.078,0.061,1.0736666666666668,0.8,0.209,null,11.0,0.0,12.3,30.0,0.61,25.0,47.0,337.0,55.0,0.3,0.151,0.258,0.6,null,null,null,null,null], // USDA 168482 · CoFID 13-463
+  pum:[426.0,9.0,0.0,1.06,1.1,0.05,0.11,0.8,0.298,0.061,null,16.0,0.0,8.2,21.0,0.8,12.0,44.0,340.0,1.0,0.32,0.127,0.125,0.3,null,null,null,null,null], // USDA 168448 · CoFID 13-326
+  cel:[22.0,3.1,0.0,0.27,29.3,0.021,0.057,0.47,0.246,0.074,0.1,36.0,0.0,6.1,40.0,0.2,11.0,24.0,260.0,80.0,0.13,0.035,0.103,0.4,1.7,0.25,0.004,null,210], // USDA 169988 · CoFID 13-636 · Iodine 73
+  avo:[7.0,10.0,0.0,2.07,21.0,0.067,0.13,2.1546666666666665,1.389,0.257,2.4,81.0,0.0,14.2,12.0,0.55,29.0,52.0,485.0,7.0,0.64,0.19,0.142,0.4,0.2,null,0.007,null,17], // USDA 171705 · CoFID 14-386 · Iodine 67
+  cuc:[5.0,2.8,0.0,0.03,16.4,0.027,0.033,0.18133333333333335,0.259,0.04,null,7.0,0.0,6.0,16.0,0.28,13.0,24.0,147.0,2.0,0.2,0.041,0.079,0.3,0.5,null,0.0013,null,null], // USDA 168409 · CoFID 13-523 · Iodine 79
+  tom:[42.0,13.7,0.0,0.54,7.9,0.037,0.019,0.694,0.089,0.08,null,15.0,0.0,6.7,10.0,0.27,11.0,24.0,237.0,5.0,0.17,0.059,0.114,0.0,0.2,0.7317,0.0023,null,null], // USDA 170457 · CoFID 13-517 · Iodine 76
+  pep:[157.0,127.7,0.0,1.58,4.9,0.054,0.085,1.179,0.317,0.291,null,46.0,0.0,5.6,7.0,0.43,12.0,26.0,211.0,4.0,0.25,0.017,0.112,0.1,null,null,null,null,null], // USDA 170108 · CoFID 13-524
+  egp:[1.0,2.2,0.0,0.3,3.5,0.039,0.037,0.799,0.281,0.084,null,22.0,0.0,6.9,9.0,0.23,14.0,24.0,229.0,2.0,0.16,0.081,0.232,0.3,null,null,null,null,null], // USDA 169228 · CoFID 13-161
+  gb:[35.0,12.2,0.0,0.41,43.0,0.082,0.104,1.0506666666666666,0.225,0.141,null,33.0,0.0,15.3,37.0,1.03,25.0,38.0,211.0,6.0,0.24,0.069,0.216,0.6,null,null,0.019,null,null], // USDA 169961 · CoFID 13-514
+  pea:[38.0,40.0,0.0,0.13,24.8,0.266,0.132,2.7066666666666666,0.104,0.169,null,65.0,0.0,28.4,25.0,1.47,33.0,108.0,244.0,5.0,1.24,0.176,0.41,1.8,null,null,null,null,null], // USDA 170419 · CoFID 13-438
+  asp:[38.0,5.6,0.0,1.13,41.6,0.143,0.141,1.428,0.274,0.091,null,52.0,0.0,16.0,24.0,2.14,14.0,52.0,202.0,2.0,0.54,0.189,0.158,2.3,null,null,null,null,null], // USDA 168389 · CoFID 13-157
+  lek:[83.0,12.0,0.0,0.92,47.0,0.06,0.03,0.6000000000000001,0.14,0.233,3.035,64.0,0.0,9.5,59.0,2.1,28.0,35.0,180.0,20.0,0.12,0.12,0.481,1.0,2,null,null,null,59], // USDA 169246 · CoFID 13-624
+  apple:[3.0,4.6,0.0,0.18,2.2,0.017,0.026,0.10766666666666666,0.061,0.041,null,3.0,0.0,3.4,6.0,0.12,5.0,11.0,107.0,1.0,0.04,0.027,0.035,0.0,0.1,0.7692,0.0033,null,null], // USDA 171688 · CoFID 14-319 · Iodine 54
+  ora:[11.0,53.2,0.0,0.18,0.0,0.087,0.04,0.43199999999999994,0.25,0.06,null,30.0,0.0,8.4,40.0,0.1,10.0,14.0,181.0,0.0,0.07,0.045,0.025,0.5,0.2,0.3053,null,null,null], // USDA 169097 · CoFID 14-327 · Iodine 55
+  ban:[3.0,8.7,0.0,0.1,0.5,0.031,0.073,0.8150000000000001,0.334,0.367,null,20.0,0.0,9.8,5.0,0.26,27.0,22.0,358.0,1.0,0.15,0.078,0.27,1.0,0.2,0.8475,0.0022,12.7119,null], // USDA 173944 · CoFID 14-318 · Iodine 56
+  lime:[2.0,30.0,0.0,0.22,0.6,0.025,0.015,0.1753333333333333,0.123,0.038,null,10.0,0.0,5.1,14.0,0.09,8.0,14.0,117.0,2.0,0.08,0.027,0.018,0.1,null,null,null,null,null], // USDA 168156
+  lem:[1.0,53.0,0.0,0.15,0.0,0.04,0.02,null,0.19,0.08,null,11.0,0.0,5.1,26.0,0.6,8.0,16.0,138.0,2.0,0.06,0.037,0.03,0.4,null,null,null,null,null], // USDA 167746
+  kiw:[4.0,92.7,0.0,1.46,40.3,0.027,0.025,0.591,0.183,0.063,null,25.0,0.0,7.8,34.0,0.31,17.0,34.0,312.0,3.0,0.14,0.13,0.098,0.2,2,null,null,null,33], // USDA 168153 · CoFID 14-371
+  grf:[58.0,31.2,0.0,0.13,0.0,0.043,0.031,0.3373333333333333,0.262,0.053,0.68,13.0,0.0,7.7,22.0,0.08,9.0,18.0,135.0,0.0,0.07,0.032,0.022,0.1,0.1,null,null,null,12], // USDA 174673 · CoFID 14-384 · Iodine 65
+  pear:[1.0,4.3,0.0,0.12,4.4,0.012,0.026,0.19433333333333333,0.049,0.029,null,7.0,0.0,5.1,9.0,0.18,7.0,12.0,116.0,1.0,0.1,0.082,0.048,0.1,0.1,null,0.0022,null,null], // USDA 169118 · CoFID 14-321 · Iodine 60
+  pom:[0.0,10.2,0.0,0.6,16.4,0.067,0.053,0.5,0.377,0.075,null,38.0,0.0,7.6,10.0,0.3,12.0,36.0,236.0,3.0,0.35,0.158,0.119,0.5,null,null,null,null,null], // USDA 169134 · CoFID 14-226
+  man:[54.0,36.4,0.0,0.9,4.2,0.028,0.038,0.8856666666666667,0.197,0.119,0.6,43.0,0.0,7.6,11.0,0.16,10.0,14.0,168.0,1.0,0.09,0.111,0.063,0.6,0.1,null,null,null,27], // USDA 169910 · CoFID 14-378 · Iodine 453
+  blu:[3.0,9.7,0.0,0.57,19.3,0.037,0.041,0.46799999999999997,0.124,0.052,null,6.0,0.0,6.0,6.0,0.28,6.0,12.0,77.0,1.0,0.16,0.057,0.336,0.1,0.3,null,null,null,null], // USDA 171711 · CoFID 14-325 · Iodine 196
+  prs:[421.0,133.0,0.0,0.75,1640.0,0.086,0.098,2.0629999999999997,0.4,0.09,null,152.0,0.0,12.8,138.0,6.2,50.0,58.0,554.0,56.0,1.07,0.149,0.16,0.1,null,null,null,null,null], // USDA 170416 · CoFID 13-844
+  dil:[386.0,85.0,0.0,null,null,0.058,0.296,1.8033333333333335,0.397,0.185,null,150.0,0.0,null,208.0,6.59,55.0,66.0,738.0,61.0,0.91,0.146,1.264,null,null,null,null,null,null], // USDA 172233
+  cil:[337.0,27.0,0.0,2.5,310.0,0.067,0.162,null,0.57,0.149,null,62.0,0.0,12.8,67.0,1.77,26.0,48.0,521.0,46.0,0.5,0.225,0.426,0.9,null,null,null,null,null], // USDA 169997 · CoFID 13-888
+  gin:[0.0,5.0,0.0,0.26,0.1,0.025,0.034,0.95,0.203,0.16,null,11.0,0.0,28.8,16.0,0.6,43.0,34.0,415.0,13.0,0.34,0.226,0.229,0.7,null,null,null,null,null], // USDA 169231 · CoFID 13-890
+  oo:[0.0,0.0,0.0,14.35,60.2,0.0,0.0,0.0,0.0,0.0,null,0.0,0.0,0.3,1.0,0.56,0.0,0.0,1.0,2.0,0.0,0.0,0.0,0.0,0.2,null,null,null,null], // USDA 171413 · Iodine 182
+  wal:[1.0,1.3,0.0,0.7,2.7,0.341,0.15,3.9583333333333335,0.57,0.537,null,98.0,0.0,39.2,98.0,2.91,158.0,346.0,441.0,2.0,3.09,1.586,3.414,4.9,0,null,null,null,null], // USDA 170187 · CoFID 14-879 · Iodine 201
+  alm:[0.0,0.0,0.0,25.63,0.0,0.205,1.138,7.134666666666666,0.471,0.137,64,44.0,0.0,52.1,269.0,3.71,270.0,481.0,733.0,1.0,3.12,1.031,2.179,4.1,0,null,null,null,18], // USDA 170567 · CoFID 14-896 · Iodine 227
+  ses:[0.0,0.0,0.0,0.25,0.0,0.791,0.247,10.981666666666666,0.05,0.79,null,97.0,0.0,25.6,975.0,14.55,351.0,629.0,468.0,11.0,7.75,4.082,2.46,34.4,null,null,null,null,null], // USDA 170150 · CoFID 14-844
+  psd:[1.0,1.9,0.0,2.18,7.3,0.273,0.153,14.587,0.75,0.143,null,58.0,0.0,63.0,46.0,8.82,592.0,1233.0,809.0,7.0,7.81,1.343,4.543,9.4,null,null,null,null,null], // USDA 170556 · CoFID 14-842
+  tah:[3.0,4.2,0.0,null,null,1.59,0.12,null,null,0.15,null,98.0,0.0,null,141.0,4.42,95.0,790.0,459.0,35.0,4.62,1.61,null,34.4,null,null,null,null,null], // USDA 168604
+  soy:[0.0,0.0,0.0,0.0,0.0,0.059,0.152,6.967666666666666,0.376,0.2,null,18.0,0.0,38.4,20.0,2.38,40.0,130.0,212.0,5586.0,0.43,0.135,0.499,0.8,null,null,null,null,null], // USDA 174278
+  hon:[0.0,0.5,0.0,0.0,0.0,0.0,0.038,0.18766666666666665,0.068,0.024,null,2.0,0.0,2.2,6.0,0.42,2.0,4.0,52.0,4.0,0.22,0.036,0.08,0.8,0.7,null,0.007,null,null], // USDA 169640 · CoFID 17-050 · Iodine 97
+  mst:[5.0,0.3,0.0,0.36,1.4,0.177,0.07,0.715,0.254,0.07,null,7.0,0.0,22.4,63.0,1.61,48.0,108.0,152.0,1104.0,0.64,0.074,0.422,33.5,0.4,null,0.0015,null,null], // USDA 172234 · CoFID 17-364 · Iodine 152
+  beef:[0.0,0.0,0.1,0.32,1.3,0.068,0.111,9.259666666666666,0.653,0.619,null,13.0,1.09,92.3,25.0,1.61,23.0,207.0,349.0,56.0,4.04,0.075,0.013,27.1,null,null,null,null,null], // USDA 174055 · CoFID 18-064
+  pork:[0.0,0.0,0.2,0.22,0.0,0.998,0.342,10.350666666666667,0.846,0.777,4.8,0.0,0.51,80.8,5.0,0.98,27.0,247.0,399.0,53.0,1.89,0.09,0.015,30.8,null,null,null,null,51], // USDA 168249 · CoFID 18-510
+};
 function microEstimate(recipe,entry){
   let amount=0,known=0;
   for(const [key,grams] of recipe.i){
-    if(entry.ref==='Iodine'){
-      if(Object.hasOwn(IODINE_PER_100G,key)){
-        amount+=IODINE_PER_100G[key]*grams/100/recipe.p;
-        known++;
-      }
-      continue;
-    }
-    const rawDish=recipe.t==='Салат'?!RAW_SALAD_COOKED.has(key)&&!recipe.st[0].startsWith('Овощи нарежьте крупно'):RAW_MICRO_DISH.test(recipe.n);
-    const stable=['cot','moz','kid','chk','psd','alm','mlk','yog','beef'].includes(key);
-    const raw=(rawDish||stable)&&entry.foods[key];
-    const cooked=!rawDish&&entry.cooked?.[key];
-    const source=raw||cooked;
-    if(!source)continue;
-    const [value,referenceGrams]=source;
-    const edibleWeight=grams*(cooked?(COOKED_WEIGHT_RATIO[key]||1):1);
-    amount+=value*edibleWeight/referenceGrams/recipe.p;
-    known++;
+    const value=MICRO_FOOD[key]?.[entry.index];
+    if(Number.isFinite(value)){amount+=value*grams/100/recipe.p;known++;}
   }
   return {amount,known,total:recipe.i.length};
 }
+function microProfile(key){
+  const saved=S.microProfile?.[key];
+  if(saved&&['m','f'].includes(saved.sex)&&Number.isInteger(saved.age)&&saved.age>=0&&saved.age<4)return saved;
+  if(saved)return null;
+  // Defaults apply only to the named household members.
+  if(key==='m'&&roleName(key)==='Максим')return {sex:'m',age:1};
+  if(key==='d'&&roleName(key)==='Даша')return {sex:'f',age:0};
+  return null;
+}
+function microGoal(entry,profile){
+  if(!profile)return null;
+  const value=entry[profile.sex];
+  return Array.isArray(value)?value[profile.age]:value;
+}
+const MICRO_PORTIONS={egg:55,mlk:200,yog:170,cot:150,fet:30,moz:30,par:20,
+  cod:120,pol:120,sal:120,trt:120,mac:120,pink:120,til:120,shr:120,msl:120,
+  beef:120,chb:120,pork:120,chk:100,kid:100,bro:120,spi:60,pep:100,carrot:100,
+  gb:120,pea:100,swp:150,mush:100,cab:120,tom:120,avo:70,apple:150,ora:150,
+  ban:120,kiw:100,grf:150,blu:100,alm:25,wal:25,psd:20,ses:15,oat:40};
+function microFoodAllowed(key){
+  return !Object.entries(FOOD_FILTERS).some(([filter,[,ingredients]])=>S.excluded?.[filter]&&ingredients.split(' ').includes(key));
+}
+function microExtras(key){
+  const saved=S.microAdd?.[key];
+  if(saved?.week!==S.wk||!saved.foods||typeof saved.foods!=='object')return [];
+  return Object.entries(saved.foods).filter(([id,grams])=>MICRO_PORTIONS[id]===grams);
+}
+function microOptions(rows,profile,extras){
+  const already=new Set(extras.map(([key])=>key));
+  const sodium=rows.find(row=>row.entry.key==='na')?.amount||0;
+  return Object.entries(MICRO_PORTIONS).flatMap(([key,grams])=>{
+    if(already.has(key)||!microFoodAllowed(key))return [];
+    const amounts=MICRO_FOOD[key],extraSodium=(amounts[MICRO_DATA.find(x=>x.key==='na').index]||0)*grams/100;
+    if(extraSodium>250||(sodium>=2300&&extraSodium>50))return [];
+    const contributions=rows.flatMap(row=>{
+      if(row.entry.kind==='limit'||row.known===0||row.known/row.total<.75)return [];
+      const goal=microGoal(row.entry,profile),gap=goal-row.amount;
+      const value=amounts[row.entry.index]*grams/100;
+      if(gap<goal*.05||value<goal*.08)return [];
+      return [{entry:row.entry,value,score:Math.min(gap,value)/goal}];
+    }).sort((a,b)=>b.score-a.score);
+    return contributions.length?[{key,grams,contributions,score:contributions.reduce((sum,row)=>sum+row.score,0)}]:[];
+  }).sort((a,b)=>b.score-a.score||a.grams-b.grams);
+}
+function microAmount(number){
+  if(number>0&&number<.01)return '< 0,01';
+  return x1(number);
+}
+
 // Новые блюда добавляются в конец, чтобы сохранить номера в старых планах.
 const NEW_RECIPES=[
   ['Форель с брокколи и кунжутом','Основное','Рыба',4,12,[['trt',600],['bro',360],['ses',16],['oo',12]],['Брокколи разберите на небольшие соцветия, перемешайте с половиной масла и выложите на противень.','Запекайте брокколи 10 минут при 200 °C.','Филе выложите рядом, смажьте оставшимся маслом и посыпьте кунжутом. Запекайте ещё 12–16 минут, до 63 °C в толстой части рыбы.']],
@@ -862,7 +995,7 @@ const homeOf=k=>S.home[k]!==undefined?S.home[k]:ing(k).h;
 
 /* ---------- sync (общий план Максима и Даши) ---------- */
 let writing=Promise.resolve(),dbDoc=null,lastSent='',syncT=null;
-const SH=['cook','bf','fav','chk','sub','home','norms','lock','scale','rate','ban','hist','wk','rep','price','mp','yields','people','excluded','names'];
+const SH=['cook','bf','fav','chk','sub','home','norms','lock','scale','rate','ban','hist','wk','rep','price','mp','yields','people','excluded','names','microProfile','microAdd'];
 const shared=()=>{const o={};SH.forEach(k=>o[k]=S[k]);return o;};
 const sharedLink=()=>{const o=shared();delete o.hist;return o;};
 function save(){
@@ -887,7 +1020,7 @@ async function initSync(){
 }
 
 /* ---------- общий план через Google Apps Script ---------- */
-const MAPK=['fav','chk','sub','home','lock','rate','ban','price','norms','yields','excluded'],WHO={m:'Максим',d:'Даша'};
+const MAPK=['fav','chk','sub','home','lock','rate','ban','price','norms','yields','excluded','microProfile','microAdd'],WHO={m:'Максим',d:'Даша'};
 const roleName=k=>S.names?.[k]||WHO[k]||'Участник';
 const FOOD_FILTERS={
   bird:['Птица','chb cht tkg tkt tkb'],
@@ -1069,23 +1202,41 @@ function menuNutritionPenalty(){
   const pulseDishes=dishes.filter(i=>REC[i].pulses).length;
   const fish=S.cook.filter(c=>['Рыба','Морепродукты'].includes(REC[c.m].c)).length;
   const ids=FULL_DAYS.flatMap(dayRecipes);
-  const gap=people.slice(0,2).reduce((sum,p,i)=>sum+calculatedMicros(ids,p,FULL_DAYS.length)
-    .reduce((loss,row)=>loss+(row.known===row.total?Math.max(0,1-row.amount/row.entry.goal[i]):0),0),0);
+  const gap=people.reduce((sum,p)=>{
+    const profile=microProfile(p.key);
+    if(!profile)return sum;
+    return sum+calculatedMicros(ids,p,FULL_DAYS.length).reduce((loss,row)=>{
+      const goal=microGoal(row.entry,profile);
+      if(row.entry.kind==='limit')return loss+Math.max(0,row.amount/goal-1);
+      return loss+(row.known===row.total?Math.max(0,1-row.amount/goal):0);
+    },0);
+  },0)/people.length;
   return dayNutritionPenalty(people)+missing*6+gap*2+(4-wholeDays)*6+Math.max(0,2-pulseDishes)*7+Math.max(0,2-fish)*6;
 }
-function calculatedMicros(ids,person,days){
-  return MICRO_DATA.map((entry,index)=>{
-    let amount=0,known=0,total=0;
-    for(const i of ids){const r=REC[i],m=r.micro[index];amount+=m.amount*portionFactor(person,r);known+=m.known;total+=m.total;}
-    return {entry,amount:amount/days,known,total};
+function calculatedMicros(ids,person,days,extras=[]){
+  const rows=MICRO_DATA.map(entry=>({entry,amount:0,known:0,total:0}));
+  for(const id of ids){
+    const recipe=REC[id],factor=portionFactor(person,recipe)/days;
+    recipe.micro.forEach((m,index)=>{
+      const row=rows[index];
+      row.amount+=m.amount*factor;
+      row.known+=m.known;
+      row.total+=m.total;
+    });
+  }
+  for(const [key,grams] of extras)rows.forEach(row=>{
+    row.total+=days;
+    const value=MICRO_FOOD[key][row.entry.index];
+    if(Number.isFinite(value)){row.amount+=value*grams/100;row.known+=days;}
   });
+  return rows;
 }
 const signed=n=>(n>=0?'+':'−')+x1(Math.abs(Math.round(n*10)/10));
 function menuSnapshot(){
   const people=profiles();
   const days=FULL_DAYS.map(d=>({d,totals:people.map(p=>dayTotals(d,p))}));
   const ids=FULL_DAYS.flatMap(dayRecipes);
-  return {days,micro:people.map(p=>calculatedMicros(ids,p,FULL_DAYS.length)),cost:planCost(),needs:shopList()};
+  return {days,people,micro:people.map(p=>calculatedMicros(ids,p,FULL_DAYS.length)),cost:planCost(),needs:shopList()};
 }
 function swapImpact(before,after){
   const lines=after.days.flatMap(({d,totals},j)=>totals.map((t,i)=>{
@@ -1096,7 +1247,7 @@ function swapImpact(before,after){
   const extra=after.needs.filter(r=>r.buy>(prev.get(r.k)||0)).map(r=>esc(r.n)+' +'+ingredientAmount(r.k,r.buy-(prev.get(r.k)||0)));
   const changes=after.micro.flatMap((entries,i)=>entries.map((row,j)=>{
     const delta=row.amount-before.micro[i][j].amount;
-    return Math.abs(delta)>=.1?{text:profileName(i)+' · '+row.entry.name+' '+signed(delta)+' '+row.entry.unit,weight:Math.abs(delta)/(row.entry.goal[i]||row.entry.goal[0])}:null;
+    return Math.abs(delta)>=.1?{text:profileName(i)+' · '+row.entry.name+' '+signed(delta)+' '+row.entry.unit,weight:Math.abs(delta)/(microGoal(row.entry,microProfile(after.people[i].key))||1)}:null;
   })).filter(Boolean).sort((a,b)=>b.weight-a.weight).slice(0,4);
   return [...lines,...changes.map(x=>x.text+' в сутки по известным продуктам'),extra.length?'Докупить: '+extra.join(', '):'Дополнительных покупок нет'].join('<br>');
 }
@@ -1105,6 +1256,9 @@ function needsOf(ids){
   for(const i of ids){
     const r=REC[i],factor=sf(r,people);
     for(const [k,gr] of r.i)g[k]=(g[k]||0)+Math.round(gr*factor*10);
+  }
+  for(const person of people)for(const [key,grams] of microExtras(person.key)){
+    g[key]=(g[key]||0)+grams*10*FULL_DAYS.length;
   }
   return Object.fromEntries(Object.entries(g).map(([k,v])=>[k,v/10]));
 }
@@ -1418,6 +1572,10 @@ function viewDay(){
   h+='<div class="pager"><button class="rb" data-act="dprev" aria-label="Предыдущий день"'+(d===0?' disabled':'')+'>'+IC.left+'</button><div class="mid"><h1>'+DN[d]+'</h1><div class="small mut" style="margin-top:4px">'+dtxt(d)+' · '+profiles().map(p=>p.name).join(', ')+'</div></div><button class="rb" data-act="dnext" aria-label="Следующий день"'+(d===5?' disabled':'')+'>'+IC.right+'</button></div>';
   h+='<div class="strip" role="group" aria-label="Дни">'+DS.map((x,i)=>'<button data-act="gotoday" data-v="'+i+'" class="'+(i===d?'on':'')+'" aria-label="'+DN[i]+'">'+x+'<b>'+dateOf(i).getDate()+'</b></button>').join('')+'</div>';
   h+=todayCard(d);
+  if(FULL_DAYS.includes(d)){
+    const todayExtras=profiles().flatMap(person=>microExtras(person.key).map(([key,grams])=>person.name+' · '+esc(ing(key).n)+' '+ingredientAmount(key,grams)));
+    if(todayExtras.length)h+='<div class="rbox"><b>Дополнения к меню</b><br>'+todayExtras.join('<br>')+'</div>';
+  }
   h+='<div class="seg" role="tablist"><i style="transform:translateX('+(si*100)+'%)"></i>'+['Завтрак','Обед','Ужин'].map(s=>'<button role="tab" data-act="slot" data-v="'+s+'" class="'+(slot===s?'on':'')+'"'+(dis(s)?' disabled':'')+'>'+s+'</button>').join('')+'</div>';
   const ids=mealOf(d,slot);
   h+='<div id="swipe">';
@@ -1486,6 +1644,9 @@ function shopItems(rows=shopList()){
       if(open){const al=analogs(r.k);
         const used=usageOf(r.k);
         h+='<div class="ext"><div style="color:var(--ink)"><b>Где используется на этой неделе</b></div>'+(used.length?used.map(u=>'<button class="use" data-act="detail" data-v="'+u.id+'"><b>'+esc(REC[u.id].n)+'</b><span>'+esc(u.tags.join(', '))+' · '+ingredientAmount(r.k,u.g)+'</span></button>').join(''):'<div>—</div>')+'<div style="margin-top:6px">'+esc(p.w||'Любая сеть')+'</div>'+(p.a?'<div style="margin-top:6px;color:var(--ink)"><b>Нет в магазине:</b> '+esc(p.a)+'</div>':'');
+        const supplements=profiles().flatMap(person=>microExtras(person.key)
+          .filter(([key])=>key===r.k).map(([,grams])=>person.name+' · '+ingredientAmount(r.k,grams)+' в день, Пн–Чт'));
+        if(supplements.length)h+='<div class="small">Дополнения к меню: '+supplements.join('; ')+'</div>';
         if(al.length)h+='<div class="al">'+al.map(a=>'<div><b>'+esc(a.n)+'</b> · '+Math.round(a.k)+' ккал/100 г ('+(a.k-p.k>=0?'+':'−')+Math.abs(Math.round(a.k-p.k))+') · '+fmt(a.pr)+' ₽/кг</div>').join('')+'</div>';
         h+='<label for="sb'+r.k+'">Купил вместо (вручную)</label><input type="text" id="sb'+r.k+'" data-act="subtxt" data-v="'+r.k+'" value="'+esc(S.sub[r.k]||'')+'" placeholder="Что взяли"><label for="pr'+r.k+'">Цена в вашем магазине, ₽ '+(r.k==='egg'?'за 10 шт.':'за кг')+'</label><input type="number" inputmode="decimal" id="pr'+r.k+'" data-act="price" data-v="'+r.k+'" value="'+(S.price[r.k]>0?Math.round((r.k==='egg'?S.price[r.k]*EGG_GRAMS/100:S.price[r.k])*100)/100:'')+'" placeholder="сейчас в базе: '+x1(r.k==='egg'?p.pr*EGG_GRAMS/100:p.pr)+'" style="width:190px"><label for="hg'+r.k+'">Есть дома, '+(r.k==='egg'?'шт.':'г')+'</label><input type="number" min="0" step="0.01" inputmode="decimal" id="hg'+r.k+'" data-act="homeg" data-v="'+r.k+'" value="'+inputAmount(r.k,homeOf(r.k))+'" style="width:130px"></div>';}
       h+='</div>';
@@ -1540,32 +1701,64 @@ function sheetHtml(){
       +'<p class="small mut">Общие данные: меню, цели, покупки, остатки, оценки, отметки заготовки и замеры гарниров. На каждом телефоне можно открыть свой день и рецепт.</p></div></div>';
   }
   if(sheet.kind==='nutrition'){
-    const people=profiles();
-    const daily=p=>'<div class="sec">'+p.name+' · цель '+fmt(p.target)+' ккал</div>'+DS.map((_,d)=>{
-      const t=dayTotals(d,p),low=[],full=FULL_DAYS.includes(d);
-      if(full&&Math.abs(t.k-p.target)>p.target*.08)low.push('калории вне ±8%');
-      if(full&&t.fiber<25)low.push('клетчатка ниже 25 г');
-      if(full&&t.produce<400)low.push('овощи и фрукты ниже 400 г');
-      const meals=['Завтрак','Обед','Ужин'].filter(slot=>mealOf(d,slot).length).join(', ').toLowerCase();
-      return '<div class="rbox"><b>'+DN[d]+'</b> · '+meals+'<br>'+nutritionLine(t)+'<br>Овощи и фрукты '+fmt(t.produce)+' г'+(low.length?'<div class="warn">'+low.join(' · ')+'</div>':'')+'</div>';
+    const people=profiles(), person=people.find(p=>p.key===sheet.person)||people[0];
+    const profile=microProfile(person.key), extras=microExtras(person.key);
+    const ids=FULL_DAYS.flatMap(dayRecipes), rows=calculatedMicros(ids,person,FULL_DAYS.length,extras);
+    const options=profile?microOptions(rows,profile,extras):[];
+    const select='<div class="act-row">'+people.map(p=>'<button class="btn '+(p.key===person.key?'red':'alt')+'" data-act="microperson" data-v="'+p.key+'" aria-pressed="'+(p.key===person.key)+'">'+p.name+'</button>').join('')+'</div>';
+    const settings='<div class="si"><label for="micro-sex">Нормы</label><select id="micro-sex" data-act="microprofile" data-field="sex"><option value="">Выберите пол</option>'
+      +[['m','Мужские'],['f','Женские']].map(([key,name])=>'<option value="'+key+'"'+((profile?.sex||S.microProfile?.[person.key]?.sex)===key?' selected':'')+'>'+name+'</option>').join('')
+      +'</select><label for="micro-age">Возраст</label><select id="micro-age" data-act="microprofile" data-field="age"><option value="">Выберите</option>'
+      +MICRO_AGES.map((label,i)=>'<option value="'+i+'"'+((profile?.age??S.microProfile?.[person.key]?.age)===i?' selected':'')+'>'+label+'</option>').join('')+'</select></div>';
+    const rowHtml=row=>{
+      const {entry,amount,known,total}=row, goal=microGoal(entry,profile), partial=known<total;
+      const gap=goal?Math.max(0,goal-amount):0;
+      let outcome='';
+      if(goal&&known){
+        if(entry.kind==='limit')outcome=amount>goal?'выше ориентира':partial?'сумма по известным продуктам':'в пределах ориентира';
+        else if(partial)outcome=fmt(amount/goal*100)+'% по учтённым продуктам';
+        else if(gap>0)outcome=fmt(amount/goal*100)+'% · до ориентира '+microAmount(gap)+' '+entry.unit;
+        else outcome=fmt(amount/goal*100)+'% · ориентир достигнут';
+      }
+      const match=goal&&gap>0&&entry.kind!=='limit'?options
+        .filter(opt=>opt.contributions.some(c=>c.entry===entry))
+        .sort((a,b)=>b.contributions.find(c=>c.entry===entry).score-a.contributions.find(c=>c.entry===entry).score).slice(0,2):[];
+      const sources=partial&&!match.length&&entry.kind!=='limit'&&(!goal||amount<goal)?Object.entries(MICRO_PORTIONS)
+        .filter(([key])=>microFoodAllowed(key)&&!extras.some(([id])=>id===key))
+        .flatMap(([key,grams])=>{
+          const value=MICRO_FOOD[key][entry.index];
+          return Number.isFinite(value)&&value>0?[{key,grams,value:value*grams/100}]:[];
+        }).sort((a,b)=>b.value-a.value).slice(0,2):[];
+      return '<div class="rbox"><b>'+entry.name+'</b> · '+(known?microAmount(amount)+' '+entry.unit:'нет данных о составе для этого меню')
+        +(goal?'<br>Ориентир '+(entry.kind==='limit'?'≤ ':'')+microAmount(goal)+' '+entry.unit+' в день'+(entry.kind==='AI'?' · AI':''):'')
+        +(outcome?' · '+outcome:'')+(partial?'<br><span class="small mut">Данные для '+known+' из '+total+' позиций</span>':'')
+        +(sources.length?'<br><span class="small mut">Продукты с измеренным содержанием:</span>':'')
+        +sources.map(opt=>'<button class="use" data-act="microadd" data-v="'+opt.key+'"><b>'+esc(ing(opt.key).n)+' · '+ingredientAmount(opt.key,opt.grams)+'</b><span>+'+microAmount(opt.value)+' '+entry.unit+' в день</span></button>').join('')
+        +match.map(opt=>'<button class="use" data-act="microadd" data-v="'+opt.key+'"><b>Добавить '+esc(ing(opt.key).n)+' · '+ingredientAmount(opt.key,opt.grams)+'</b><span>+'+microAmount(opt.contributions.find(c=>c.entry===entry).value)+' '+entry.unit+' в день</span></button>').join('')+'</div>';
+    };
+    const ranked=[...rows].sort((a,b)=>{
+      const urgency=row=>{
+        const goal=microGoal(row.entry,profile);
+        if(!goal||!row.known)return -2;
+        if(row.entry.kind==='limit')return row.amount>goal?2:-1;
+        return row.known/row.total>=.75?1-row.amount/goal:-1;
+      };
+      return urgency(b)-urgency(a);
+    });
+    const extraHtml=extras.length?'<div class="sec">Добавлено на понедельник–четверг</div>'+extras.map(([key,grams])=>'<button class="use" data-act="microremove" data-v="'+key+'"><b>'+esc(ing(key).n)+' · '+ingredientAmount(key,grams)+'</b><span>Убрать · +'+fmt(ing(key).k*grams/100)+' ккал в день</span></button>').join(''):'';
+    const top=options.length?'<div class="sec">Что добавить к меню</div>'+options.slice(0,4).map(({key,grams,contributions})=>'<button class="use" data-act="microadd" data-v="'+key+'"><b>'+esc(ing(key).n)+' · '+ingredientAmount(key,grams)+'</b><span>'
+      +contributions.slice(0,3).map(c=>c.entry.name+' +'+microAmount(c.value)+' '+c.entry.unit).join(' · ')+' · +'+fmt(ing(key).k*grams/100)+' ккал в день</span></button>').join('')
+      +'<p class="small mut">Нажмите на продукт, чтобы пересчитать показатели и добавить четыре порции в покупки.</p>':'';
+    const daily=DS.map((_,d)=>{
+      const t=dayTotals(d,person),plus=FULL_DAYS.includes(d)?extras.reduce((sum,[key,grams])=>sum+ing(key).k*grams/100,0):0;
+      return '<div class="rbox"><b>'+DN[d]+'</b> · '+nutritionLine(t)+(plus?'<br>Дополнения: +'+fmt(plus)+' ккал · всего '+fmt(t.k+plus)+' ккал':'')+'<br>Овощи и фрукты в меню '+fmt(t.produce)+' г</div>';
     }).join('');
-    const w=foodWeights(FULL_DAYS.flatMap(dayRecipes),smallestPortion(people));
-    const ids=FULL_DAYS.flatMap(dayRecipes);
-    const microRows=people.map((p,j)=>'<div class="sec">'+p.name+' · среднее за полный день</div>'+calculatedMicros(ids,p,FULL_DAYS.length).map(({entry,amount,known,total})=>{
-      const percent=100*amount/entry.goal[j];
-      const status=known===0?'Справочник пока не покрывает продукты в меню':known<total?'Частичный расчёт':j>=2?'Расчёт по меню':percent>=100?'Ориентир достигнут':'Ниже ориентира по меню';
-      return '<div class="rbox"><b>'+entry.name+'</b> · '+status+(known?'<br>≈ '+x1(amount)+' '+entry.unit+(j<2&&known===total?' · '+fmt(percent)+'% ориентира':''):'')
-        +'<br><span class="small mut">'+known+' из '+total+' позиций ингредиентов с данными · <a href="https://ods.od.nih.gov/factsheets/'+entry.ref+'-HealthProfessional/" target="_blank" rel="noopener">Источник и ориентир</a></span></div>';
-    }).join('')).join('');
-    return head('Понедельник–четверг','Баланс меню')+'<div class="bd"><p class="small mut">С целями сравниваются понедельник–четверг. Воскресенье и пятница показаны по запланированным приёмам пищи.</p>'+people.map(daily).join('')
-      +'<div class="sec">Расчёт витаминов и минералов</div><p class="small mut">Среднее за четыре полных дня. Для йода использован <a href="https://www.ars.usda.gov/ARSUserFiles/80400535/Data/Iodine/IODINE_DATABASE_RELEASE_4_PER_100G.pdf" target="_blank" rel="noopener">справочник USDA/FDA/NIH</a>, для остальных значений — таблицы NIH. Если часть продуктов не учтена, показывается только сумма известных значений.</p>'+microRows
-      +'<div class="sec">Витамины и минералы</div><p class="small mut">Показаны продукты-источники для меньшей порции за четыре полных дня. Для оценки суточного покрытия нужны данные о содержании каждого нутриента.</p>'
-      +MICRO_SOURCES.map(g=>{
-        const found=sourceFoods(g,w);
-        const names=keys=>keys.slice(0,3).map(k=>esc(ING[k].n)).join(', ');
-        return '<div class="'+(found.length?'rbox':'warn')+'"><b>'+g.name+'</b> · '+(found.length?names(found):'мало продуктов-источников. Варианты из каталога: '+names([...g.keys]))+'</div>';
-      }).join('')
-      +'<p class="small mut">Ориентиры для клетчатки и овощей: <a href="https://www.who.int/news-room/fact-sheets/detail/healthy-diet" target="_blank" rel="noopener">ВОЗ</a>.</p></div></div>';
+    return head('Понедельник–четверг','Баланс меню')+'<div class="bd">'+select+settings
+      +(profile?'':'<p class="small mut">Укажите пол и возрастную группу для сравнения с нормами взрослых.</p>')
+      +extraHtml+top+'<div class="sec">Витамины и минералы · в среднем за день</div>'+ranked.map(rowHtml).join('')
+      +'<details><summary>Калории и БЖУ по дням · цель '+fmt(person.target)+' ккал</summary>'+daily+'</details>'
+      +'<p class="small mut">Вес взят до приготовления. Потери при нагреве, соль по вкусу, напитки вне меню и заменённые продукты не учтены. Ориентиры RDA и AI предназначены для здоровых взрослых вне беременности и грудного вскармливания. Разница относится к меню за эти четыре дня. AI — ориентир адекватного потребления.</p>'
+      +'<p class="small mut"><a href="https://ods.od.nih.gov/HealthInformation/nutrientrecommendations/" target="_blank" rel="noopener">Нормы DRI</a> · <a href="https://fdc.nal.usda.gov/download-datasets/" target="_blank" rel="noopener">USDA</a> · <a href="https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid" target="_blank" rel="noopener">CoFID</a> · <a href="https://www.ars.usda.gov/ARSUserFiles/80400535/Data/Iodine/IODINE_DATABASE_RELEASE_4_PER_100G.pdf" target="_blank" rel="noopener">Йод</a></p></div></div>';
   }
   if(sheet.kind==='pantry'){
     const ids=Object.keys(ING).sort((a,b)=>Number(homeOf(b)>0)-Number(homeOf(a)>0)||ing(a).n.localeCompare(ing(b).n,'ru'));
@@ -1821,7 +2014,7 @@ function closeWeek(){
   S.hist.push({w:S.wk,cook:S.cook.map(c=>({m:nm(c.m),s:nm(c.s),l:nm(c.l)})),bf:S.bf.map(nm)});
   if(S.hist.length>26)S.hist=S.hist.slice(-26);
   Object.assign(S.home,sheet.left);
-  S.lock={};const g=generate();if(g){S.cook=g.cook;S.bf=g.bf;}S.chk={};
+  S.lock={};S.microAdd={};const g=generate();if(g){S.cook=g.cook;S.bf=g.bf;}S.chk={};
   const nx=new Date(S.wk+'T12:00:00');nx.setDate(nx.getDate()+7);const ws=iso(weekStart()),ni=iso(nx);S.wk=ni<ws?ws:ni;
   const todo=ids.filter(i=>!rt(i)&&!banned(i));
   save();
@@ -1935,7 +2128,17 @@ document.addEventListener('click',e=>{
     case 'shopfilter':shopRemaining=!shopRemaining;render();break;
     case 'shopopen':shopOpen=shopOpen===v?null:v;render();break;
     case 'pantry':sheet={kind:'pantry'};paintLayer();break;
-    case 'nutrition':sheet={kind:'nutrition'};paintLayer();break;
+    case 'nutrition':sheet={kind:'nutrition',person:S.me};paintLayer();break;
+    case 'microperson':sheet.person=v;paintLayer();break;
+    case 'microadd':
+    case 'microremove':{
+      if(sheet?.kind!=='nutrition'||!Object.hasOwn(MICRO_PORTIONS,v)||(a==='microadd'&&!microFoodAllowed(v)))break;
+      const people=profiles(),person=people.find(p=>p.key===sheet.person)||people[0];
+      const foods=Object.fromEntries(microExtras(person.key));
+      if(a==='microadd')foods[v]=MICRO_PORTIONS[v];else delete foods[v];
+      S.microAdd??={};S.microAdd[person.key]={week:S.wk,foods};
+      save();render();break;
+    }
     case 'uncheck':S.chk={};save();render();break;
     case 'libt':S.lib.t=v;S.lib.c='';S.lib.n=60;enter=true;save();render();break;
     case 'libc':S.lib.c=v;enter=true;save();render();break;
@@ -1969,6 +2172,15 @@ document.addEventListener('input',e=>{
 });
 document.addEventListener('change',e=>{
   const el=e.target,a=el.dataset?.act;
+  if(a==='microprofile'&&sheet?.kind==='nutrition'){
+    const people=profiles(),person=people.find(p=>p.key===sheet.person)||people[0];
+    const previous=S.microProfile?.[person.key]||microProfile(person.key)||{};
+    const field=el.dataset.field;
+    if(!['sex','age'].includes(field))return;
+    S.microProfile??={};
+    S.microProfile[person.key]={...previous,[field]:field==='age'?(el.value===''?null:Number(el.value)):el.value};
+    save();paintLayer();
+  }
   if(a==='people'){S.people=Math.max(1,Math.min(8,Number(el.value)||2));save();render();}
   if(a==='exclude'&&Object.hasOwn(FOOD_FILTERS,el.dataset.v)){
     S.excluded??={};
