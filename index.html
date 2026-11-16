@@ -1692,6 +1692,7 @@ function sheetHtml(){
   const head=(sub,title)=>'<div class="shade" data-act="close"></div><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><div class="grab"></div><div class="hd" id="shd"><div style="min-width:0"><div class="small mut" style="font-weight:600">'+esc(sub)+'</div><h2 style="font-size:19px;margin-top:3px">'+esc(title)+'</h2></div><button class="rb" data-act="close" aria-label="Закрыть">'+IC.close+'</button></div>';
   if(sheet.kind==='household'){
     return head('Заготовка','Наш кабинет')+'<div class="bd">'+syncCard()
+      +'<div class="sec">Уведомления таймера</div><button class="btn alt" data-act="cookalerts">'+(S.cookAlerts&&globalThis.Notification?.permission==='granted'?'Выключить уведомления':'Включить уведомления')+'</button><p class="small mut">Сигнал сработает, пока приложение открыто. Если телефон приостановит приложение, таймер проверится при возврате.</p>'
       +'<div class="sec">Сколько человек едят</div><label for="house-count">Участники</label> <select id="house-count" data-act="people">'+Array.from({length:8},(_,i)=>'<option value="'+(i+1)+'"'+(peopleCount()===i+1?' selected':'')+'>'+(i+1)+'</option>').join('')+'</select>'
       +'<div class="sec">Цели питания</div>'+profiles().map(p=>'<div class="si"><label for="house-'+p.key+'">'+p.name+' · ккал в день</label><input id="house-'+p.key+'" type="number" min="800" inputmode="numeric" data-act="norm" data-v="'+p.key+'" value="'+p.target+'" style="width:95px"></div>').join('')
       +'<div class="sec">Исключить из меню</div>'+Object.entries(FOOD_FILTERS).map(([key,[name]])=>'<label class="si"><input type="checkbox" data-act="exclude" data-v="'+key+'"'+(S.excluded?.[key]?' checked':'')+'> '+name+'</label>').join('')
@@ -1901,8 +1902,9 @@ function cookHtml(){
   const m=stepMin(fq(st[s],r));
   let h='<div class="cook" id="cook" style="--paint:'+c+'" role="dialog" aria-modal="true" aria-label="Готовим: '+esc(r.n)+'"><div class="top"><button class="rb paint" data-act="cookx" aria-label="Закрыть">'+IC.close+'</button><div class="dots">'+st.map((x,j)=>'<i class="'+(j<=s?'d':'')+'"></i>').join('')+'</div><span class="small" style="font-weight:700">'+(s+1)+'/'+n+'</span></div>';
   h+='<div class="body"><div style="display:flex;align-items:center;gap:14px"><span class="pt" style="width:92px;height:92px;flex:none;filter:drop-shadow(0 8px 10px rgba(16,38,26,.28));animation:plate 600ms var(--spring) both">'+PAINT_ART.art(ck.id,REC)+'</span><div style="font-weight:700;opacity:.85;font-size:14px;line-height:1.25">'+esc(r.n)+'</div></div><div class="cp '+(ck.back?'back':'')+'" key="'+s+'"><div class="stepn">'+(s+1)+'</div><div class="big" style="margin-top:14px">'+esc(fq(st[s],r))+'</div></div>';
+  const current=cookTimer?.id===ck.id&&cookTimer.mode===ck.mode&&cookTimer.step===s?cookTimer:null;
   if(ck.alarm){h+='<div class="tm"><div class="tt" style="animation:wob .6s ease-in-out infinite">Время!</div><button class="btn" style="height:44px;padding:0 18px;background:var(--paint-ink);color:#fff" data-act="alarmoff">Выключить</button></div>';}
-  else if(m){const run=ck.timer&&ck.timer.step===s;h+='<div class="tm">'+'<div class="tr"><svg viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" id="tmc" cx="32" cy="32" r="26" stroke-dasharray="163.4" stroke-dashoffset="'+(run?163.4*(1-Math.max(0,(ck.timer.end-Date.now())/ck.timer.total)):163.4)+'"/></svg></div><div><div class="tt" id="tmt">'+(run?tfmt(ck.timer.end-Date.now()):m+':00')+'</div><button class="btn" style="height:38px;padding:0 14px;margin-top:4px;background:var(--paint-ink);color:#fff;font-size:13px" data-act="timer" data-v="'+m+'">'+(run?'Сбросить':'Запустить таймер')+'</button></div></div>';}
+  else if(m){const run=!!current;h+='<div class="tm">'+'<div class="tr"><svg viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" id="tmc" cx="32" cy="32" r="26" stroke-dasharray="163.4" stroke-dashoffset="'+(run?163.4*(1-Math.max(0,(current.end-Date.now())/current.total)):163.4)+'"/></svg></div><div><div class="tt" id="tmt">'+(run?tfmt(current.end-Date.now()):m+':00')+'</div><button class="btn" style="height:38px;padding:0 14px;margin-top:4px;background:var(--paint-ink);color:#fff;font-size:13px" data-act="timer" data-v="'+m+'">'+(run?'Сбросить':cookTimer?'Заменить активный таймер':'Запустить таймер')+'</button></div></div>';}
   h+='</div><div class="nav"><button class="btn alt" data-act="cprev" aria-label="Назад"'+(s===0?' disabled style="opacity:.4"':'')+'>'+IC.left+'</button><button class="btn" data-act="cnext">'+(s===n-1?'Готово':'Дальше')+'</button></div></div>';
   return h;
 }
@@ -1912,12 +1914,58 @@ function stepMin(t){
   return m?+m[1]:0;
 }
 const tfmt=ms=>{ms=Math.max(0,Math.ceil(ms/1000));return Math.floor(ms/60)+':'+String(ms%60).padStart(2,'0');};
-let tmI=null;
+const COOK_TIMER_KEY=KEY+'.cook-timer';
+let tmI=null,cookTimer=null,finishedTimer=null;
+function readCookTimer(){
+  try{
+    const t=JSON.parse(localStorage.getItem(COOK_TIMER_KEY));
+    if(t&&REC[t.id]&&Number.isInteger(t.step)&&t.step>=0&&t.step<recipeSteps(REC[t.id],t.mode).length
+      &&Number.isFinite(t.end)&&Number.isFinite(t.total)&&t.total>0)return t;
+  }catch(e){}
+  return null;
+}
+function storeCookTimer(timer,persist=true){
+  cookTimer=timer;
+  clearInterval(tmI);tmI=null;
+  if(persist)try{if(timer)localStorage.setItem(COOK_TIMER_KEY,JSON.stringify(timer));else localStorage.removeItem(COOK_TIMER_KEY);}catch(e){}
+  if(timer)tmI=setInterval(tick,250);
+}
+function timerStatus(){
+  if(!cookTimer&&!finishedTimer)return '';
+  const t=cookTimer||finishedTimer;
+  return '<button class="use" style="margin:8px auto;width:calc(100% - 24px)" data-act="timerview"><b>'+esc(REC[t.id].n)+'</b><span id="timerstatus">'+(cookTimer?'Таймер · '+tfmt(t.end-Date.now()):'Таймер закончился · открыть рецепт')+'</span></button>';
+}
+function notifyCookTimer(r){
+  if(S.cookAlerts!==true||globalThis.Notification?.permission!=='granted'||!navigator.serviceWorker)return;
+  navigator.serviceWorker.getRegistration().then(reg=>reg?.showNotification('Таймер закончился',{
+    body:r.n,icon:'./icon-192.png',tag:'zagotovka-cook-timer'
+  })).catch(()=>{});
+}
+async function enableCookAlerts(){
+  if(!globalThis.Notification||!navigator.serviceWorker){
+    showToast('На iPhone откройте «Заготовку» с экрана «Домой».',false);paintLayer();return;
+  }
+  try{
+    const permission=await Notification.requestPermission();
+    if(permission==='granted'){S.cookAlerts=true;save();paintLayer();return;}
+  }catch(e){}
+  showToast('Разрешите уведомления «Заготовки» в настройках устройства.',false);paintLayer();
+}
 function tick(){
-  if(!ck||!ck.timer){clearInterval(tmI);tmI=null;return;}
-  const left=ck.timer.end-Date.now(),t=document.getElementById('tmt'),c=document.getElementById('tmc');
-  if(t)t.textContent=tfmt(left);if(c)c.setAttribute('stroke-dashoffset',String(163.4*(1-Math.max(0,left/ck.timer.total))));
-  if(left<=0){clearInterval(tmI);tmI=null;try{navigator.vibrate&&navigator.vibrate([200,100,200,100,200]);}catch(e){}ck.timer=null;ck.alarm=true;startAlarm();paintLayer();}
+  const timer=cookTimer;
+  if(!timer)return;
+  const left=timer.end-Date.now(),status=document.getElementById('timerstatus');
+  if(status)status.textContent='Таймер · '+tfmt(left);
+  const sameStep=ck?.id===timer.id&&ck.mode===timer.mode&&ck.step===timer.step;
+  const time=sameStep&&document.getElementById('tmt'),ring=sameStep&&document.getElementById('tmc');
+  if(time)time.textContent=tfmt(left);
+  if(ring)ring.setAttribute('stroke-dashoffset',String(163.4*(1-Math.max(0,left/timer.total))));
+  if(left>0)return;
+  storeCookTimer(null);finishedTimer=timer;
+  if(sameStep)ck.alarm=true;
+  try{navigator.vibrate?.([200,100,200,100,200]);}catch(e){}
+  if(!sameStep)showToast('Таймер закончился · '+REC[timer.id].n,false);
+  startAlarm();notifyCookTimer(REC[timer.id]);render();
 }
 function toastHtml(){return toast?'<div class="toast" role="status"><span>'+esc(toast.msg)+'</span>'+(toast.undo?'<button data-act="'+(toast.undo==='purchase'?'undopurchase':'undo')+'">Отменить</button>':'')+'</div>':'';}
 function showToast(msg,u){toast={msg,undo:u};clearTimeout(showToast.t);showToast.t=setTimeout(()=>{toast=null;paintLayer();},5000);}
@@ -1937,7 +1985,7 @@ function closeSheet(){
 function render(){
   const y=window.scrollY;
   const html=(S.tab==='week'?viewWeek():S.tab==='day'?viewDay():S.tab==='shop'?viewShop():viewBook());
-  $app.innerHTML=html+dockHtml();
+  $app.innerHTML=timerStatus()+html+dockHtml();
   $app.classList.toggle('noanim',!enter);
   paintLayer();countUp();
   enter=false;
@@ -2152,12 +2200,26 @@ document.addEventListener('click',e=>{
       break;}
     case 'theme':{const d=document.documentElement,dark=d.dataset.theme?d.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;d.dataset.theme=dark?'light':'dark';break;}
     case 'cook':{ck={id:+v,mode:el.dataset.mode,step:0,timer:null};sheet=null;paintLayer();try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{});}catch(e2){}break;}
-    case 'cookx':clearInterval(tmI);tmI=null;stopAlarm();ck=null;paintLayer();break;
-    case 'alarmoff':stopAlarm();if(ck)ck.alarm=false;paintLayer();break;
+    case 'cookx':stopAlarm();ck=null;render();break;
+    case 'alarmoff':stopAlarm();finishedTimer=null;if(ck)ck.alarm=false;render();break;
+    case 'cookalerts':
+      if(S.cookAlerts&&globalThis.Notification?.permission==='granted'){S.cookAlerts=false;save();paintLayer();}else enableCookAlerts();
+      break;
+    case 'timerview':{
+      const timer=cookTimer||finishedTimer;if(!timer)break;
+      ck={id:timer.id,mode:timer.mode,step:timer.step,alarm:!cookTimer};sheet=null;paintLayer();break;
+    }
     case 'snd':S.snd=v;save();if(v!=='off')preview(v);render();break;
-    case 'cnext':{const n=recipeSteps(REC[ck.id],ck.mode).length;if(ck.step>=n-1){clearInterval(tmI);tmI=null;const rid=ck.id;ck=null;if(!rt(rid)&&!banned(rid))sheet={kind:'review',ids:[rid],title:'Приятного аппетита',sub:'Как получилось?'};else showToast('Приятного аппетита',false);paintLayer();break;}stopAlarm();ck.alarm=false;ck.step++;ck.back=false;ck.timer=null;paintLayer();break;}
-    case 'cprev':if(ck.step>0){stopAlarm();ck.alarm=false;ck.step--;ck.back=true;ck.timer=null;paintLayer();}break;
-    case 'timer':{if(ck.timer&&ck.timer.step===ck.step){ck.timer=null;clearInterval(tmI);tmI=null;}else{ac();const ms=(+v)*60000;ck.timer={step:ck.step,end:Date.now()+ms,total:ms};clearInterval(tmI);tmI=setInterval(tick,250);}paintLayer();break;}
+    case 'cnext':{const n=recipeSteps(REC[ck.id],ck.mode).length;if(ck.step>=n-1){stopAlarm();finishedTimer=null;const rid=ck.id;ck=null;if(!rt(rid)&&!banned(rid))sheet={kind:'review',ids:[rid],title:'Приятного аппетита',sub:'Как получилось?'};else showToast('Приятного аппетита',false);paintLayer();break;}stopAlarm();ck.alarm=false;ck.step++;ck.back=false;paintLayer();break;}
+    case 'cprev':if(ck.step>0){stopAlarm();ck.alarm=false;ck.step--;ck.back=true;paintLayer();}break;
+    case 'timer':{
+      if(!ck)break;
+      const ms=Number(v)*60000;if(!Number.isFinite(ms)||ms<=0)break;
+      stopAlarm();finishedTimer=null;
+      if(cookTimer?.id===ck.id&&cookTimer.mode===ck.mode&&cookTimer.step===ck.step)storeCookTimer(null);
+      else{ac();storeCookTimer({id:ck.id,mode:ck.mode,step:ck.step,end:Date.now()+ms,total:ms});}
+      render();break;
+    }
   }
 });
 document.addEventListener('input',e=>{
@@ -2350,7 +2412,12 @@ window.addEventListener('hashchange',()=>{
 })();
 window.__z={sundayPrep,blanksOf,masterPlan,fq,REC,gs:()=>S,gsync};
 if(!S.me&&!sheet)sheet={kind:'who'};
-render();initSync();if(S.sy)gsync();paintLayer();
+storeCookTimer(readCookTimer(),false);
+window.addEventListener('storage',event=>{
+  if(event.key===COOK_TIMER_KEY){storeCookTimer(readCookTimer(),false);render();}
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick();});
+render();tick();initSync();if(S.sy)gsync();paintLayer();
 })();
 
 </script>
