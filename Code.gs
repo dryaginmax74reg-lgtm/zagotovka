@@ -43,10 +43,6 @@ function householdRequest(event, write) {
         return reply({ok:false,error:'access'});
       const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, request.c);
       sheetName = 'Family_' + digest.map(b => ((b + 256) % 256).toString(16).padStart(2,'0')).join('');
-      if (action === 'create') {
-        const betaCode = props.getProperty('BETA_CREATE_CODE');
-        if (!betaCode || request.beta !== betaCode) return reply({ok:false,error:'access'});
-      }
     } else {
       const secret = props.getProperty('HOUSEHOLD_CODE');
       if (!secret || request.c !== secret) return reply({ok: false, error: 'access'});
@@ -72,7 +68,7 @@ function householdRequest(event, write) {
         return reply({ok: false, error: 'invalid batch'});
       const keys = new Map(rows.map(([k], i) => [k, i]));
       const stamp = Math.max(Date.now(), rows.reduce((n,row) => Math.max(n,row[2]),0) + 1);
-      const author = ['m','d'].includes(request.u) ? request.u : '';
+      const author = typeof request.u === 'string' && /^(m|d|p[2-7])$/.test(request.u) ? request.u : '';
       const updates = [];
       for (const {k,v,d} of request.set) {
         if (typeof k !== 'string' || !/^[A-Za-z][A-Za-z0-9]*(?:\|[^|\r\n]+)?$/.test(k) || k.length > 256)
