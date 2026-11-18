@@ -1117,9 +1117,14 @@ setInterval(()=>{if(S.sy&&!document.hidden)gsync();},20000);
 document.addEventListener('visibilitychange',()=>{if(S.sy&&!document.hidden)gsync();});
 function syncCard(){
   let h='<div class="warn" style="background:var(--soft);color:var(--ink);margin-top:12px"><b>Общий план</b>';
-  if(S.sy)h+='<div class="small mut">Кто сейчас с телефоном</div><div class="snd">'+['m','d'].map(k=>'<button data-act="me" data-v="'+k+'" class="'+(S.me===k?'on':'')+'">'+esc(roleName(k))+'</button>').join('')+'</div>';
-  if(S.sy){h+='<div class="small mut" style="margin-top:10px;line-height:1.45">План и оценки общие на двух телефонах. <span id="syncst">'+syncTxt()+'</span></div><div class="act-row" style="margin-top:10px"><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="syncnow">Обновить</button><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="invite">Пригласить на второй телефон</button><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="askoff">Выйти на этом телефоне</button></div>';}
-  else h+='<p class="small mut">План хранится на этом устройстве.</p><div class="act-row">'+(S.hub?'<button class="btn red" data-act="startmode" data-v="pair">Создать общий план</button>':'<button class="btn alt" data-act="joinlink">Войти в общий план</button>')+'<button class="btn alt" data-act="syncopen">Подключить своё хранилище</button></div>';
+  if(S.sy)h+='<div class="small mut">Кто сейчас с телефоном</div><div class="snd">'+memberKeys().map(k=>'<button data-act="me" data-v="'+k+'" class="'+(S.me===k?'on':'')+'">'+esc(roleName(k))+'</button>').join('')+'</div>';
+  if(S.sy){h+='<div class="small mut" style="margin-top:10px;line-height:1.45">Меню, покупки и остатки общие для участников. <span id="syncst">'+syncTxt()+'</span></div><div class="act-row" style="margin-top:10px"><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="syncnow">Обновить</button><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="invite">Пригласить участника</button><button class="btn alt" style="height:40px;font-size:14px;padding:0 14px" data-act="askoff">Выйти на этом телефоне</button></div>';}
+  else h+='<p class="small mut">План хранится на этом устройстве.</p><div class="act-row">'+'<button class="btn red" data-act="uploadplan">Сохранить текущее меню в облаке</button><button class="btn alt" data-act="startmode" data-v="pair">Настроить новый план</button><button class="btn alt" data-act="joinlink">Войти в общий план</button></div>';
+  if(S.sy){
+    const code=knownPlanCode();
+    h+='<div class="sec">Код общего плана</div>'+(code?'<input id="family-code" type="text" readonly value="'+esc(code)+'" style="width:100%;font-family:monospace;font-size:16px" aria-label="Код общего плана"><button class="btn alt" data-act="copycode">Скопировать код</button><p class="small mut">На другом телефоне выберите «Войти в общий план» и вставьте этот код. Сохраните его для повторного входа.</p>':'<p class="small mut">План подключён по старому приглашению. Передайте доступ кнопкой «Пригласить участника».</p>');
+    h+='<p class="small mut">Участники: '+memberKeys().map(k=>esc(roleName(k))).join(', ')+'. Код даёт право читать и редактировать план.</p>';
+  }
   return h+'</div>';
 }
 
@@ -1774,21 +1779,21 @@ function sheetHtml(){
       +'<div class="act-row"><button class="btn red" data-act="confirmweek">Собрать новую неделю</button><button class="btn alt" data-act="close">Отмена</button></div></div></div>';
   }
   if(sheet.kind==='joinlink'){
-    return head('Общий план','Подключиться к плану')+'<div class="bd"><label for="join-link">Код общего плана или приглашение</label><input id="join-link" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:100%"><label for="join-person">Кто подключается по коду</label><select id="join-person"><option value="m">Максим</option><option value="d">Даша</option></select><p id="join-error" class="small" role="alert"></p><div class="act-row"><button class="btn red" data-act="readjoin"'+(sheet.busy?' disabled':'')+'>'+(sheet.busy?'Проверяю…':'Войти')+'</button><button class="btn alt" data-act="startback">Назад</button></div></div></div>';
+    return head('Общий план','Подключиться к плану')+'<div class="bd"><label for="join-link">Код общего плана или приглашение</label><input id="join-link" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:100%"><label for="join-person">Кто подключается по коду</label><select id="join-person"><option value="m">Первый участник</option><option value="d">Второй участник</option></select><p id="join-error" class="small" role="alert"></p><div class="act-row"><button class="btn red" data-act="readjoin"'+(sheet.busy?' disabled':'')+'>'+(sheet.busy?'Проверяю…':'Войти')+'</button><button class="btn alt" data-act="startback">Назад</button></div></div></div>';
   }
   if(sheet.kind==='who'){
     return head('Первый запуск','Как будете готовить?')+'<div class="bd"><div class="act-row"><button class="btn red" data-act="startmode" data-v="solo">Готовлю один</button><button class="btn alt" data-act="startmode" data-v="pair">Готовим вместе</button><button class="btn alt" data-act="joinlink">Войти в общий план</button></div></div></div>';
   }
   if(sheet.kind==='onboarding'){
-    const pair=sheet.mode==='pair',cloud=pair&&!!S.hub;
+    const pair=sheet.mode==='pair',cloud=true;
     return head('Настройка меню',pair?'Готовим вместе':'Готовлю один')+'<div class="bd">'
       +'<label for="start-name">Ваше имя</label><input id="start-name" type="text" maxlength="40" autocomplete="given-name" value="'+esc(sheet.names?.m||'')+'" style="width:100%">'
         +(pair?'<label for="start-partner">Имя второго человека</label><input id="start-partner" type="text" maxlength="40" value="'+esc(sheet.names?.d||'')+'" style="width:100%">':'')
         +'<details'+(sheet.settings?' open':'')+'><summary>Калории и исключения · необязательно</summary>'
         +['m',...(pair?['d']:[])].map((k,i)=>'<div class="si"><label for="start-kcal-'+k+'">'+(i?'Цель второго участника':'Ваша цель')+', ккал</label><input id="start-kcal-'+k+'" type="number" min="800" step="1" inputmode="numeric" placeholder="'+S.norms[k]+'" value="'+esc(sheet.goals?.[k]||'')+'" style="width:100px"></div>').join('')
         +Object.entries(FOOD_FILTERS).map(([k,[name]])=>'<label class="si"><input type="checkbox" data-start-exclude="'+k+'"'+((sheet.filters||S.excluded)?.[k]?' checked':'')+'> Исключить: '+name+'</label>').join('')+'</details>'
-      +(pair&&!cloud?'<p class="small mut">Меню на двоих сохранится на этом устройстве. Если у вас уже есть общий план, подключитесь по приглашению.</p>':'')
-      +'<div class="act-row">'+'<button class="btn red" data-act="startsave"'+(sheet.busy?' disabled':'')+'>'+(sheet.busy?'Создаю…':cloud?'Создать общий план':'Открыть меню')+'</button>'
+      +'<p class="small mut">План сохранится в облаке. Код подключения появится в кабинете.</p>'
+      +'<div class="act-row">'+'<button class="btn red" data-act="startsave"'+(sheet.busy?' disabled':'')+'>'+(sheet.busy?'Создаю…':'Создать план')+'</button>'
       +(pair?'<button class="btn alt" data-act="joinlink"'+(sheet.busy?' disabled':'')+'>Подключиться к плану</button>':'')
       +'<button class="btn alt" data-act="startback">Назад</button></div></div></div>';
   }
@@ -1796,7 +1801,11 @@ function sheetHtml(){
     return head('Подключение телефона','Общий план')+'<div class="bd"><p>На первом телефоне подключите свой адрес хранилища и код доступа. Когда появится время синхронизации, откройте «Наш кабинет» и нажмите «Позвать».</p><p>На втором телефоне откройте ссылку-приглашение и подтвердите подключение в том приложении, где будете пользоваться планом.</p><label for="gu">Адрес веб-приложения Apps Script</label><input type="url" id="gu" placeholder="https://script.google.com/macros/s/…/exec" style="width:100%"><label for="gc">Код доступа</label><input type="password" id="gc" autocomplete="off" style="width:100%"><div class="act-row"><button class="btn red" data-act="syncon" data-v="mine">Подключить хранилище</button><button class="btn alt" data-act="household">Назад</button></div></div></div>';
   }
   if(sheet.kind==='signout')return head('Общий план','Выйти на этом телефоне?')+'<div class="bd"><p>Меню останется на телефоне. Чтобы снова получать изменения, войдите по коду плана.</p><div class="act-row"><button class="btn red" data-act="syncoff">Выйти</button><button class="btn alt" data-act="household">Отмена</button></div></div></div>';
-  if(sheet.kind==='inviteconfirm')return head('Приглашение','Общий план')+'<div class="bd"><p>Подключить телефон к общему плану? Он заменит меню, покупки и остатки на этом устройстве.</p><div class="act-row"><button class="btn red" data-act="joinhouse">Подключиться</button><button class="btn alt" data-act="close">Отмена</button></div></div></div>';
+  if(sheet.kind==='inviteconfirm'){
+    const members=Object.entries(sheet.names||{}).filter(([key,name])=>/^(m|d|p[2-7])$/.test(key)&&typeof name==='string'&&name.length);
+    return head('Приглашение','Войти в общий план')+'<div class="bd">'+(members.length?'<label for="join-member">Кто вы?</label><select id="join-member" style="width:100%">'+members.map(([key,name])=>'<option value="'+key+'"'+(key===sheet.invite.me?' selected':'')+'>'+esc(name)+'</option>').join('')+'</select>':'')
+      +'<p>Меню, покупки и остатки телефона будут заменены данными общего плана.</p><div class="act-row"><button class="btn red" data-act="joinhouse">Войти</button><button class="btn alt" data-act="close">Отмена</button></div></div></div>';
+  }
   if(sheet.kind==='master'){
     const mp=masterPlan(),dn2=mpDone(),done=z=>!!(dn2[z.key]||(z.doneWith&&dn2[z.doneWith]));
     const tasks=mp.stages.flatMap(stage=>stage.items),tot=tasks.length,dd=tasks.filter(done).length;
@@ -2133,21 +2142,28 @@ document.addEventListener('click',e=>{
     case 'master':sheet={kind:'master'};paintLayer();break;
     case 'me':S.me=v;save();enter=false;render();break;
     case 'whoset':S.me=v;save();sheet=null;paintLayer();render();break;
-    case 'startmode':sheet={kind:'onboarding',mode:v,names:{...S.names}};paintLayer();break;
+    case 'startmode':sheet={kind:'onboarding',mode:v,names:{m:'',d:''}};paintLayer();break;
     case 'startback':sheet={kind:S.me?'household':'who'};paintLayer();break;
     case 'startsave':startMenu();break;
+    case 'uploadplan':if(!S.sy&&!sheet?.busy)createRoom(sheet,{...S,me:S.me||'m'});break;
+    case 'copycode':{
+      const code=knownPlanCode();if(!code)break;
+      if(navigator.clipboard)navigator.clipboard.writeText(code).then(()=>{showToast('Код скопирован',false);paintLayer();}).catch(()=>document.getElementById('family-code')?.select());
+      else document.getElementById('family-code')?.select();
+      break;
+    }
     case 'joinlink':sheet={kind:'joinlink'};paintLayer();break;
     case 'readjoin':readJoinInput();break;
     case 'askoff':sheet={kind:'signout'};paintLayer();break;
     case 'syncopen':sheet={kind:'sync'};paintLayer();break;
     case 'household':sheet={kind:'household'};paintLayer();break;
-    case 'joinhouse':{const {u,c,me,room}=sheet.invite;S.me=me;connectHouse(u,c,true,room);break;}
+    case 'joinhouse':{const {u,c,me,room}=sheet.invite;S.me=document.getElementById('join-member')?.value||me;connectHouse(u,c,true,room);break;}
     case 'syncon':{const u=(document.getElementById('gu').value||'').trim(),c=(document.getElementById('gc').value||'').trim();
       if(!validHouse(u,c)){showToast('Проверьте адрес и код',false);paintLayer();break;}
       connectHouse(u,c,false);break;}
     case 'syncnow':showToast('Обновляю…',false);paintLayer();gsync();break;
     case 'syncoff':S.sy=null;S.fb={};S.ts={};save();sheet={kind:'household'};showToast('Вы вышли из общего плана',false);enter=false;render();break;
-    case 'invite':{if(!S.sy?.init||!gst.ok){showToast('Сначала дождитесь успешной синхронизации',false);paintLayer();break;}const o={u:S.sy.u,c:S.sy.c,room:S.sy.room,me:S.me==='d'?'m':'d'};const url=location.href.split('#')[0]+'#s='+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+    case 'invite':{if(!S.sy?.init||!gst.ok){showToast('Сначала дождитесь успешной синхронизации',false);paintLayer();break;}const code=knownPlanCode();if(code){sheet={kind:'household'};paintLayer();document.getElementById('family-code')?.select();break;} const o={u:S.sy.u,c:S.sy.c,room:S.sy.room,me:S.me==='d'?'m':'d'};const url=location.href.split('#')[0]+'#s='+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
       const done=()=>{showToast('Ссылка-приглашение скопирована',false);paintLayer();};
       if(navigator.share){navigator.share({title:'Заготовка: общий план',url}).catch(()=>{});}else if(navigator.clipboard){navigator.clipboard.writeText(url).then(done).catch(()=>{showToast('Не удалось скопировать',false);paintLayer();});}
       break;}
@@ -2289,6 +2305,10 @@ function endSw(e){
 }
 document.addEventListener('pointerup',endSw);document.addEventListener('pointercancel',()=>{if(sw&&sw.s){sw.s.style.transition='transform 300ms var(--spring)';sw.s.style.transform='';}sw=null;});
 
+const HOUSE_ENDPOINT="https://script.google.com/macros/s/AKfycbzY1YdiktS017fbUgDeJMtreCDZgSLFpOr1Gm8usUuCuS0AzuFHEDuRKKdBdAvocZ5gJg/exec";
+const memberKeys=()=>Array.from({length:peopleCount()},(_,i)=>i===0?'m':i===1?'d':'p'+i);
+function rememberPlanCode(key,code){try{const codes=JSON.parse(localStorage.getItem(KEY+'.codes')||'{}');codes[key]=code;localStorage.setItem(KEY+'.codes',JSON.stringify(codes));}catch(e){}}
+function knownPlanCode(){try{return JSON.parse(localStorage.getItem(KEY+'.codes')||'{}')[S.sy?.c]||'';}catch(e){return '';}}
 function validHouse(u,c){return typeof u==='string'&&/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u)&&typeof c==='string'&&c.length>0&&c.length<=256;}
 function connectHouse(u,c,adopt,room=false){
   S.sy={u,c,since:0,init:false,adopt,room};S.fb={};S.ts={};
@@ -2318,24 +2338,27 @@ async function startMenu(){
     if(!plan){showToast('С такими исключениями меню не собрать. Разрешите ещё одну категорию.',false);paintLayer();return;}
     Object.assign(draft,plan,{lock:{},chk:{}});
   }
-  if(!pair||!S.hub){
-    S=draft;save();sheet=null;render();return;
-  }
+  await createRoom(form,draft);
+}
+async function createRoom(form,draft){
+  if(!form||form.busy)return;
   if(S.sy)return;
-  form.names=names;form.busy=true;paintLayer();
+  form.busy=true;paintLayer();
   try{
-    const {u,c:beta}=S.hub;
-    form.token??=Array.from(crypto.getRandomValues(new Uint8Array(32)),x=>x.toString(16).padStart(2,'0')).join('');
-    const c=form.token;
+    const u=HOUSE_ENDPOINT;
+    form.planCode??=Array.from(crypto.getRandomValues(new Uint8Array(16)),x=>x.toString(16).padStart(2,'0')).join('');
+    const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(form.planCode));
+    const c=Array.from(new Uint8Array(digest),x=>x.toString(16).padStart(2,'0')).join('');
     const snapshot=flat(draft);
     const set=Object.entries(snapshot).map(([k,v])=>({k,v}));
-    const response=await gcall({u},{action:'create',c,beta,u:'m',set});
+    const response=await gcall({u},{action:'create',c,u:'m',set});
     if(!response?.ok)throw new Error(response?.error||'storage');
     if(sheet!==form)return;
     S=draft;
+    rememberPlanCode(c,form.planCode);
     connectHouse(u,c,true,true);render();
   }catch(e){
-    if(sheet===form)showToast(e.message==='capacity'?'Лимит тестовых семей исчерпан':'Не получилось создать план. Проверьте связь и повторите.',false);
+    if(sheet===form)showToast(e.message==='capacity'?'Достигнут лимит общих планов':'Не получилось создать план. Проверьте связь и повторите.',false);
   }finally{
     form.busy=false;if(sheet===form)paintLayer();
   }
@@ -2363,7 +2386,7 @@ async function readJoinInput(){
   let invite;
   try{invite=readSyncInvite(new URL(value).hash);}catch(e){}
   if(invite){sheet={kind:'inviteconfirm',invite};paintLayer();return;}
-  if(!/^[A-Za-z0-9_-]{22}$/.test(value)){
+  if(!/^(?:[A-Za-z0-9_-]{22}|[a-f0-9]{32})$/.test(value)){
     error.textContent='Введите код общего плана или вставьте приглашение';return;
   }
   const button=document.querySelector('[data-act="readjoin"]');
@@ -2371,12 +2394,14 @@ async function readJoinInput(){
   try{
     const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));
     const c=Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');
-    const u="https://script.google.com/macros/s/AKfycbzY1YdiktS017fbUgDeJMtreCDZgSLFpOr1Gm8usUuCuS0AzuFHEDuRKKdBdAvocZ5gJg/exec";
+    const u=HOUSE_ENDPOINT;
     const response=await gcall({u,c,room:true});
     if(sheet!==form)return;
     if(response?.error==='access'){error.textContent='Код не подошёл. Проверьте его и попробуйте снова.';return;}
     if(!response?.ok||!response.rows?.some(row=>row.k==='cook'&&!row.d))throw new Error('plan');
-    sheet={kind:'inviteconfirm',invite:{u,c,me,room:true}};paintLayer();
+    rememberPlanCode(c,value);
+    let names={};try{names=JSON.parse(response.rows.find(row=>row.k==='names'&&!row.d)?.v||'{}');}catch(e){}
+    sheet={kind:'inviteconfirm',invite:{u,c,me,room:true},names};paintLayer();
   }catch(e){
     if(sheet===form)error.textContent='Не удалось проверить код. Проверьте интернет и повторите.';
   }finally{
@@ -2388,7 +2413,7 @@ function readSyncInvite(hash){
     const m=/^#s=(.+)$/.exec(hash);
     if(!m)return;
     const o=JSON.parse(decodeURIComponent(escape(atob(m[1]))));
-    if(o&&validHouse(o.u,o.c)&&['m','d'].includes(o.me)&&(!o.room||/^[a-f0-9]{64}$/.test(o.c)))return o;
+    if(o&&validHouse(o.u,o.c)&&/^(m|d|p[2-7])$/.test(o.me)&&(!o.room||/^[a-f0-9]{64}$/.test(o.c)))return o;
   }catch(e){}
 }
 function importSync(){
