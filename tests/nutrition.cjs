@@ -11,7 +11,7 @@ for(const match of html.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g)){
 }
 const z=sandbox.__z,s=z.gs();let checks=0;
 const check=(x,message)=>{assert(x,message);checks++};
-check(z.REC.length===412,'catalog retained');
+check(z.REC.length===436,'catalog retained');
 for(const r of z.REC)for(const key of ['k','P','F','C','fiber','produce'])check(Number.isFinite(r[key])&&r[key]>=0,'finite recipe '+r.n+key);
 s.nutritionProfile={m:{weight:86,height:175,age:31,sex:'m',activity:1.375,goal:'maintain',mode:'auto'},d:{weight:53,height:170,age:29,sex:'f',activity:1.55,goal:'maintain',mode:'auto'}};
 let people=z.profiles();
