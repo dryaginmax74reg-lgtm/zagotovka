@@ -898,7 +898,7 @@ function saladSteps(r){
   const roastKeys=roast?r.i.map(([k])=>k).filter(k=>['pep','zuc','egp','beet','pum'].includes(k)):[];
   if(roastKeys.length){
     const oil=r.i.some(([k])=>k==='oo');
-    prep.push('Овощи для запекания: '+roastKeys.map(k=>ING[k].n+' ({'+k+'})').join(', ')+'. Нарежьте кусочками около 2 см'+(oil?', перемешайте с маслом ({oo})':'')+'. Запекайте при 200 °C до мягкости, проверяя вилкой. Свёкла обычно готовится дольше остальных.');
+    prep.push('Овощи для запекания: '+roastKeys.map(k=>ING[k].n+' ({'+k+'})').join(', ')+'. Нарежьте кусочками около 2 см'+(oil?', перемешайте с маслом ({oo})':'')+'. Запекайте при 200 °C до мягкости, проверяя вилкой.'+(roastKeys.includes('beet')?' Свёклу при необходимости допеките отдельно.':''));
   }
   r.i.forEach(([k])=>{
     if(roastKeys.includes(k)||(roastKeys.length&&k==='oo'))return;
@@ -991,11 +991,143 @@ REC.forEach(r=>{
   if(r.t!=='Завтрак'&&r.i.some(([k])=>k==='rice'||k==='brr'))
     r.st.push('Порции с рисом быстро охладите в неглубоких контейнерах, желательно в течение часа. Храните в холодильнике до 24 часов, разогревайте один раз до горячего состояния по всему объёму.');
 });
+
+/* Explicit cooking operations for the original recipe families. */
+const recipeRef=k=>ING[k].n.toLowerCase()+' ({'+k+'})';
+function finishIngredients(r){
+  const keys=r.i.map(([k])=>k),steps=[];
+  for(const k of ['prs','dil','cil'])if(keys.includes(k))steps.push('Мелко порубите '+recipeRef(k)+', добавьте перед подачей.');
+  for(const k of ['lem','lime'])if(keys.includes(k))steps.push('Выжмите сок из '+recipeRef(k)+', добавьте в готовое блюдо.');
+  return steps;
+}
+function originalFishSteps(r){
+  const has=k=>r.i.some(([id])=>id===k),fish=r.i[0][0],steps=[
+    'Разогрейте духовку до 190 °C. Рыба: '+recipeRef(fish)+'. При необходимости разморозьте в холодильнике, удалите кости и обсушите.'];
+  const veg=['onion','carrot','pep','tom','zuc','bro','lek'].filter(has);
+  if(veg.length)steps.push('Подготовьте: '+veg.map(k=>recipeRef(k)+' — '+(SALAD_CUT[k]||'нарежьте небольшими кусочками')).join('; ')+'.');
+  if(has('tpa')||has('tmc')){
+    if(veg.length)steps.push('Обжарьте подготовленные овощи '+(has('oo')?'на половине общего количества масла ({oo})':'на антипригарной сковороде с небольшим количеством воды')+' 5–7 минут.');
+    steps.push('Добавьте '+['tpa','tmc'].filter(has).map(recipeRef).join(', ')+'. Влейте {water:100}, тушите 5 минут. Переложите соус в форму.');
+  }else if(veg.length)steps.push('Выложите подготовленные овощи в форму, '+(has('oo')?'перемешайте с половиной общего количества масла ({oo}).':'добавьте немного воды.')+((has('carrot')||has('onion'))?' Предварительно запеките '+['carrot','onion'].filter(has).map(k=>ING[k].n.toLowerCase()).join(' и ')+' 10 минут.':''));
+  if(has('olv'))steps.push('Нарежьте маслины ({olv}) кольцами и добавьте в форму.');
+  const coat=['oo','gar','soy','hon','mst','yog','gin'].filter(has);
+  if(coat.length)steps.push('Для рыбы смешайте '+coat.map(k=>(k==='oo'&&veg.length?'оставшаяся половина масла':recipeRef(k))+(['gar','gin'].includes(k)?' — мелко натрите':'')).join(', ')+'. '+'Смажьте филе и выложите в форму.');
+  else steps.push('Выложите филе в форму.');
+  if(has('egg'))steps.push('Взбейте яйцо ({egg}), смажьте им филе перед панировкой.');
+  if(has('ses'))steps.push('Посыпьте рыбу кунжутом ({ses}).');
+  steps.push('Запекайте 12–18 минут в зависимости от толщины филе. Проверяйте термометром: в центре рыбы должно быть 63 °C. Если овощи ещё твёрдые, выньте рыбу и допеките овощи отдельно.');
+  const cheese=['moz','par','fet'].filter(has);
+  if(cheese.length)steps.push('В конце посыпьте '+cheese.map(recipeRef).join(', ')+' и верните в духовку на 2–3 минуты.');
+  return [...steps,...finishIngredients(r),'Обеденные порции уберите в неглубокие контейнеры и поставьте в холодильник в течение 2 часов. Разогревайте до 74 °C.'];
+}
+function originalSeafoodSteps(r){
+  const has=k=>r.i.some(([id])=>id===k),main=r.i[0][0],steps=[
+    recipeRef(main)+' разморозьте в холодильнике и обсушите. '+(main==='sqd'?'Очищенную тушку нарежьте кольцами толщиной около 1 см.':'Для этого рецепта используйте сырые очищенные морепродукты. Если продукт уже варёный, добавляйте его только для короткого прогрева в конце.')];
+  const veg=['onion','carrot','pep','tom','zuc','bro','lek'].filter(has);
+  if(veg.length)steps.push('Подготовьте '+veg.map(k=>recipeRef(k)+' — '+(SALAD_CUT[k]||'мелко нарежьте')).join('; ')+'. '+(has('bro')?'Брокколи предварительно готовьте на пару 3–4 минуты. ':'')+'На масле ({oo}) обжарьте овощи до мягкости, 5–8 минут.');
+  else steps.push('Разогрейте сковороду с маслом ({oo}) на среднем огне.');
+  const aromatics=['gar','gin'].filter(has);
+  if(aromatics.length)steps.push('Мелко натрите '+aromatics.map(recipeRef).join(', ')+', добавьте в сковороду на 30 секунд, не давая подгореть.');
+  const sauce=['tmc','tpa','soy'].filter(has);
+  if(sauce.length)steps.push('Добавьте '+sauce.map(recipeRef).join(', ')+'. '+(has('tmc')||has('tpa')?'Тушите соус 5–8 минут.':'Перемешайте.'));
+  if(has('yog'))steps.push('Убавьте огонь и вмешайте йогурт ({yog}), не доводя соус до бурного кипения.');
+  steps.push(main==='sqd'?'Добавьте кольца кальмара и готовьте 2–3 минуты, пока мякоть не станет непрозрачной; ориентир температуры — 63 °C. Не тушите кальмар 12–15 минут: он станет жёстким.':
+    main==='shr'?'Добавьте креветки. Готовьте около 2–3 минут с каждой стороны, пока мякоть полностью не станет непрозрачной; ориентир температуры — 63 °C.':
+    main==='scl'?'Добавьте гребешки и готовьте около 2–3 минут с каждой стороны до непрозрачной середины; ориентир температуры — 63 °C.':
+    'Добавьте очищенные мидии и готовьте до полной готовности по инструкции упаковки; ориентир температуры — 63 °C. Варёно-мороженые мидии достаточно прогреть.');
+  return [...steps,...finishIngredients(r),'Обеденные порции уберите в неглубокие контейнеры в холодильник в течение 2 часов. Разогревайте до 74 °C.'];
+}
+function originalSideSteps(r){
+  const has=k=>r.i.some(([id])=>id===k),steps=[],grain=['buck','rice','brr','cus','bul','qui','len'].find(has);
+  if(grain){
+    steps.push('Сухая закладка: '+recipeRef(grain)+'. '+(grain==='cus'?'Залейте кипятком по пропорции на упаковке, накройте на 5 минут и взрыхлите вилкой.':
+      'Промойте. Добавьте воду по инструкции на упаковке и варите до мягкости: '+({buck:'15–20',rice:'15–20',brr:'35–45',bul:'12–15',qui:'15–20',len:'20–25'}[grain])+' минут. Для чечевицы уточните время по сорту.'));
+    const veg=['onion','carrot','tom','pep','zuc','egp','mush','pum','lek'].filter(has);
+    if(veg.length)steps.push('Подготовьте '+veg.map(k=>recipeRef(k)+' — '+(SALAD_CUT[k]||'нарежьте небольшими кусочками')).join('; ')+'. '+(has('pum')?'Тыкву запекайте при 200 °C 20–25 минут до мягкости; прочие овощи обжарьте до мягкости.':'Обжарьте на среднем огне 5–8 минут до мягкости.')+' Используйте масло ({oo}).');
+    else if(has('oo'))steps.push('Вмешайте масло ({oo}) в готовую крупу.');
+    if(has('tpa'))steps.push('Добавьте томатную пасту ({tpa}) к овощам, прогрейте 1 минуту и вмешайте в готовый гарнир.');
+    if(has('tmc'))steps.push('Добавьте томаты в собственном соку ({tmc}) к овощам, тушите 5–8 минут и соедините с готовой крупой.');
+    const frozen=['bro','gb','pea'].filter(has);
+    if(frozen.length)steps.push('Приготовьте '+frozen.map(recipeRef).join(', ')+' до мягкости по инструкции упаковки. Соедините с крупой'+(veg.length?' и обжаренными овощами':'')+'.');
+    else if(veg.length)steps.push('Соедините готовую крупу с овощами.');
+    const canned=['chk','kid','cor'].filter(has);
+    if(canned.length)steps.push('Слейте жидкость с '+canned.map(recipeRef).join(', ')+', промойте бобовые и прогрейте вместе с гарниром 2–3 минуты. Консервированные бобовые нарезать не нужно.');
+  }else{
+    const veg=r.i.filter(([k])=>!['oo','gar','lem','lime','prs','dil','cil','tpa'].includes(k)).map(([k])=>k);
+    steps.push('Подготовьте '+veg.map(k=>recipeRef(k)+' — '+(SALAD_CUT[k]||'нарежьте кусочками около 2 см')).join('; ')+'.');
+    if(/Запечён|Запечен/i.test(r.n))steps.push('Перемешайте овощи с маслом ({oo})'+(has('gar')?' и натёртым чесноком ({gar})':'')+'. Запекайте при 200 °C 25–35 минут до мягкости, один раз перемешайте.');
+    else steps.push('Разогрейте масло ({oo}), обжарьте овощи 5–8 минут. '+(has('gar')?'Добавьте натёртый чеснок ({gar}) на последние 30 секунд. ':'')+(has('tpa')?'Вмешайте томатную пасту ({tpa}). ':'')+'Влейте немного воды, накройте и тушите до мягкости'+(has('cab')?' ещё 15–20 минут':has('gb')||has('asp')?' ещё 3–5 минут':' ещё 8–12 минут')+'.');
+  }
+  if(grain&&has('gar'))steps.push('Мелко натрите чеснок ({gar}), добавьте к горячим овощам за 30 секунд до конца приготовления.');
+  return [...steps,...finishIngredients(r),'Обеденные порции переложите в неглубокие контейнеры и поставьте в холодильник в течение 2 часов.',
+    ...(has('rice')||has('brr')?['Рис желательно охладить в течение часа. Храните обеденную порцию в холодильнике до 24 часов и разогревайте один раз.']:[])];
+}
+function originalBreakfastSteps(r){
+  const has=k=>r.i.some(([id])=>id===k),refs=ks=>ks.filter(has).map(recipeRef).join(', '),steps=[];
+  const fruits=['apple','pear','ban','ora','grf','kiw','man','blu','pom'].filter(has),nuts=['wal','alm','psd','ses'].filter(has);
+  const prepFruit=()=>fruits.map(k=>recipeRef(k)+' — '+(k==='ban'?'разомните вилкой':SALAD_CUT[k]||'вымойте и нарежьте')).join('; ');
+  if(r.n.includes('overnight'))return ['Вечером смешайте '+refs(['oat','mlk','yog','hon'])+'. Накройте и уберите в холодильник на ночь.',
+    'Утром подготовьте '+prepFruit()+'. Добавьте к овсянке подготовленные фрукты'+(nuts.length?' и '+refs(nuts):'')+'.'+(nuts.some(k=>k==='alm'||k==='wal')?' Орехи предварительно порубите.':'')];
+  if(r.n.startsWith('Йогурт')||r.n.startsWith('Творог с')){
+    if(has('oat'))steps.push('Смешайте '+refs(['yog','cot','oat'])+', накройте и уберите в холодильник на ночь, чтобы хлопья размягчились.');
+    else steps.push('Выложите '+refs(['yog','cot'])+' в миску.');
+    steps.push('Подготовьте '+prepFruit()+'. Добавьте в миску.');
+    if(nuts.length)steps.push('Добавьте '+refs(nuts)+'.'+(nuts.some(k=>k==='wal'||k==='alm')?' Орехи предварительно порубите.':''));
+    if(has('hon'))steps.push('Полейте мёдом ({hon}) перед подачей.');
+    return steps;
+  }
+  if(r.n.startsWith('Яйца с'))return ['Яйца ({egg}) сварите вкрутую, примерно 9–10 минут после закипания. Охладите, очистите и нарежьте.',
+    'Подготовьте '+r.i.filter(([k])=>!['egg','lem'].includes(k)).map(([k])=>recipeRef(k)+' — '+(SALAD_CUT[k]||'подготовьте')).join('; ')+'.',
+    'Разложите по тарелкам'+(has('lem')?', добавьте лимонный сок ({lem})':'')+'.'];
+  if(/блины|оладьи/i.test(r.n)){
+    steps.push('Измельчите овсяные хлопья ({oat}) в муку. '+prepFruit()+'.');
+    steps.push('Смешайте '+refs(['egg','mlk','oat'])+' с подготовленными фруктами. Оставьте тесто на 5 минут.');
+    steps.push('Разогрейте антипригарную сковороду на среднем огне. Используйте масло ({oo}) на всю партию, добавляя понемногу. Жарьте небольшие блины или оладьи по 2–3 минуты с каждой стороны до готовой середины.');
+    if(has('hon'))steps.push('Подавайте с мёдом ({hon}).');return steps;
+  }
+  if(r.n.startsWith('Шакшука'))return ['Мелко нарежьте лук ({onion}) и перец ({pep}). Обжарьте на масле ({oo}) 5 минут.',
+    'Добавьте томаты ({tmc})'+(has('spi')?' и шпинат ({spi})':'')+', тушите 8 минут.',
+    'Сделайте углубления, добавьте яйца ({egg}), накройте и готовьте 6–8 минут до схватившихся белков и желтков.'+(has('prs')?' Посыпьте нарезанной петрушкой ({prs}).':'')];
+  return null;
+}
+REC.forEach((r,id)=>{
+  if(id<308){
+    if(r.c==='Рыба')r.st=originalFishSteps(r);
+    if(r.c==='Морепродукты')r.st=originalSeafoodSteps(r);
+    if(r.t==='Гарнир')r.st=originalSideSteps(r);
+    if(r.t==='Завтрак'){const steps=originalBreakfastSteps(r);if(steps)r.st=steps;}
+  }
+  if(r.bt){
+    const has=k=>r.i.some(([id])=>id===k);
+    for(const k of ['gar','gin'])if(has(k)&&!r.bs.some(([,tx])=>new RegExp('(?:натр[^.]*\\{'+k+'\\}|\\{'+k+'\\}[^.]*натр)').test(tx)))r.bs.unshift(['v','Мелко натрите '+recipeRef(k)+'.']);
+    // Reserve cutlet oil for cooking instead of freezing it into the mix.
+    if(r.bt==='cut'&&has('oo')){
+      r.st[1]+=' Смажьте котлеты маслом ({oo}) перед запеканием.';
+    }
+    r.bs=r.bs.map(([stage,text])=>[stage,text
+      .replace('Мясо, овощи или грибы и маринад','Мясо, подготовленные добавки и маринад')
+      .replace('16–20 небольших котлет (шариков)','небольшие котлеты или шарики диаметром около 3 см')
+      .replace('100 мл воды','{water:100}').replace('воды 100 мл','{water:100}')]);
+    // A can of chickpeas must be drained, never diced like a raw vegetable.
+    if(['ragu','bake'].includes(r.bt))r.bs=r.bs.map(([stage,text])=>{
+      if(stage!=='v')return [stage,text];
+      const keys=[...text.matchAll(/\{(\w+)\}/g)].map(m=>m[1]);
+      return [stage,keys.map(k=>recipeRef(k)+' — '+(['chk','kid','cor'].includes(k)?'слейте жидкость и промойте':SALAD_CUT[k]||'нарежьте кусочками около 1,5 см')).join('; ')+'.'];
+    });
+  }
+  r.st=r.st.map(text=>text.replace('Свёкла обычно готовится дольше остальных.',r.i.some(([k])=>k==='beet')?'Свёклу при необходимости допеките отдельно.':'')
+    .replace('Используйте масло для обжаривания овощей или запекания тыквы.',r.i.some(([k])=>k==='pum')?'Используйте масло для запекания тыквы.':'Используйте масло для обжаривания овощей.')
+    .replace('Две порции','Обеденные порции'));
+});
+for(const k of ['chk','kid','cor','olv'])ING[k].n+=' · вес без жидкости';
+ING.mac.n='Скумбрия, филе без костей';
+ING.sqd.n='Кальмар, очищенная тушка';
+
 if(!S.price)S.price={};if(!S.rate)S.rate={};if(!S.ban)S.ban={};if(!S.hist)S.hist=[];if(!S.rep)S.rep=6;
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 if(!S.lib)S.lib={t:'Основное',q:'',c:'',fav:false};
 const ing=k=>ING[k]||{n:k,k:0,P:0,F:0,C:0,pr:0,c:'Бакалея',h:0,g:'',w:'',a:''};
-const homeOf=k=>S.home[k]!==undefined?S.home[k]:ing(k).h;
+const homeOf=k=>Number.isFinite(Number(S.home?.[k]))?Math.max(0,Number(S.home[k])):0;
 
 /* ---------- sync (общий план Максима и Даши) ---------- */
 let writing=Promise.resolve(),dbDoc=null,lastSent='',syncT=null;
@@ -1393,7 +1525,7 @@ function carryover(){
 const carryoverStamp=rows=>JSON.stringify([S.wk,S.cook,S.bf,rows]);
 const stockMatches=ids=>shopList().filter(r=>r.home>0&&ids.some(i=>REC[i].i.some(([k])=>k===r.k)));
 const q5=(g,r)=>Math.round(g*sf(r)*10)/10;
-function fq(t,r){return t.replace(/\{(\w+)\}/g,(m,k)=>{const z=r.i.find(x=>x[0]===k);return z?ingredientAmount(k,q5(z[1],r)):'';}).replace(/Две порции/g,'Обеденные порции').replace(/ужин и обед на двоих/gi,'ужин и обед для '+peopleCount()+' чел.');}
+function fq(t,r){return t.replace(/\{water:(\d+)\}/g,(_,ml)=>x1(q5(Number(ml),r))+' мл воды').replace(/\{(\w+)\}/g,(m,k)=>{const z=r.i.find(x=>x[0]===k);return z?ingredientAmount(k,q5(z[1],r)):'';}).replace(/Две порции/g,'Обеденные порции').replace(/ужин и обед на двоих/gi,'ужин и обед для '+peopleCount()+' чел.');}
 const plu=(n,a)=>a[n%10===1&&n%100!==11?0:(n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?1:2];
 const SOLIDK=new Set(['onion','pep','carrot','mush','pum','zuc','egp','lek','chk','kid','cor','pea','len','rice','bul']),HERBK=new Set(['prs','dil','cil']),FILLK=new Set(['moz','fet','par','spi','bro','tom','olv','gb']),GRAIN=new Set(['rice','bul']);
 const blanksOf=()=>{const a=[];S.cook.forEach((c,d)=>{const r=REC[c.m];if(r&&r.bt)a.push({d,id:c.m,r});});return a;};
@@ -1415,11 +1547,17 @@ function recipeSteps(r,mode){
     const split=/^Запекайте (\d+) минут, затем снимите фольгу и (?:готовьте ещё|добавьте ещё) (\d+) минут\.$/.exec(s);
     return split?['Запекайте под фольгой '+split[1]+' мин.','Снимите фольгу и запекайте ещё '+split[2]+' мин.']:[s];
   });
-  const rest=r.st.filter(s=>/Дайте отдохнуть|Две порции|Порции с рисом/.test(s));
+  const rest=r.st.filter(s=>/Дайте отдохнуть|Обеденные порции|Две порции|Порции с рисом/.test(s));
   const finish=r.st.filter(s=>s.startsWith('За 10 минут'));
   const check=r.bt==='cut'||r.bt==='shash'?12:r.bt==='stuff'?25:20;
   const uncover=['cuts','ragu','stuff'].includes(r.bt)?['Снимите фольгу, когда блюдо почти готово.']:[];
-  return [r.st[0],freshSetup[r.bt],
+  const prep=r.bs.filter(([stage])=>stage!=='p').map(([,text])=>text
+    .replace(/(?:положите|сложите) в один zip-пакет(?: или контейнер)?[^.]*\./g,'соедините в миске.')
+    .replace(/Пакет (?:разложите|положите) плоско\./g,'')
+    .replace('Разлейте в отдельный пакет.','Отставьте соус до запекания.').replace('в миске или zip-пакете','в миске').replace(/ \(деревянные шпажки замочите на 30 минут\)/g,''));
+
+  const soak=r.bs.some(([,text])=>text.includes('деревянные шпажки замочите'))?['Если используете деревянные шпажки, замочите их в воде на 30 минут перед сборкой.']:[];
+  return [r.st[0],...soak,...prep,freshSetup[r.bt]+(r.bt==='cut'&&r.i.some(([k])=>k==='oo')?' Смажьте котлеты маслом ({oo}).':''),
     'Запекайте '+check+' мин, затем начните проверять готовность.',
     ...uncover,
     ...finish.map(s=>s.replace('За 10 минут до конца добавьте:','Когда блюдо почти готово, добавьте:')),
@@ -1448,6 +1586,7 @@ function vegMethod(bt,k){
   if(['carrot','pum'].includes(k))return 'натереть на крупной тёрке';
   if(k==='spi'||k==='bro')return 'ошпарить кипятком, отжать и мелко порубить';
   if(k==='moz')return 'нарезать мелким кубиком';
+  if(k==='gar'||k==='gin')return 'мелко натереть';
   if(k==='par')return 'натереть';
   if(k==='fet')return 'раскрошить';
   return 'мелко нарезать (можно в комбайне)';
@@ -1455,7 +1594,8 @@ function vegMethod(bt,k){
 function vegKeys(r){
   const bt=r.bt,ks=r.i.slice(1).map(z=>z[0]);
   return ks.filter(k=>{
-    if(bt==='cut'||bt==='cuts'||bt==='roll')return SOLIDK.has(k)||HERBK.has(k)||FILLK.has(k);
+    if(k==='gar'||k==='gin')return true;
+    if(bt==='cut'||bt==='cuts'||bt==='roll')return SOLIDK.has(k)||HERBK.has(k)||FILLK.has(k)||(bt==='roll'&&k==='gar');
     if(bt==='stuff')return k==='onion'||k==='rice'||k==='pep';
     if(bt==='shash')return ['pep','onion','zuc'].includes(k)||HERBK.has(k);
     if(bt==='marin')return HERBK.has(k);
