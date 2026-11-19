@@ -1,0 +1,5143 @@
+{
+  "schema": 1,
+  "retailer": "Лента",
+  "observedAt": "2026-11-19",
+  "priceType": "Карта №1",
+  "region": null,
+  "store": null,
+  "autoUpdate": false,
+  "method": "Извлечение публичных карточек каталога, проверка сопоставимости, нижняя медиана нормализованных цен. Полный чек зависит от магазина и наличия.",
+  "entries": {
+    "chb": {
+      "price": 449.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Филе куриное 365 ДНЕЙ, весовое",
+        "url": "https://lenta.com/catalog/ptica-141/",
+        "cardPrice": 449.99,
+        "packGrams": null,
+        "packQuantity": 0.8,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 449.99,
+        "regularPricePerKg": 526.3125,
+        "limitKg": 3,
+        "conditions": [
+          "Спец цена до 3 кг Баллы за отзыв"
+        ],
+        "evidence": [
+          "Спец цена до 3 кг Баллы за отзыв",
+          "4.9",
+          "Филе куриное 365 ДНЕЙ, весовое 0.8 кг",
+          "449 99 ₽ за 1 кг",
+          "С Картой №1",
+          "359₽",
+          "421 05",
+          "-14%"
+        ]
+      },
+      "range": [
+        449.99,
+        514.99
+      ],
+      "samples": [
+        {
+          "title": "Филе куриное 365 ДНЕЙ, весовое",
+          "url": "https://lenta.com/catalog/ptica-141/",
+          "cardPrice": 449.99,
+          "packGrams": null,
+          "packQuantity": 0.8,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 449.99,
+          "regularPricePerKg": 526.3125,
+          "limitKg": 3,
+          "conditions": [
+            "Спец цена до 3 кг Баллы за отзыв"
+          ],
+          "evidence": [
+            "Спец цена до 3 кг Баллы за отзыв",
+            "4.9",
+            "Филе куриное 365 ДНЕЙ, весовое 0.8 кг",
+            "449 99 ₽ за 1 кг",
+            "С Картой №1",
+            "359₽",
+            "421 05",
+            "-14%"
+          ]
+        },
+        {
+          "title": "Филе грудки куриное ПЕРВАЯ СВЕЖЕСТЬ, весовое",
+          "url": "https://lenta.com/catalog/ptica-141/",
+          "cardPrice": 514.99,
+          "packGrams": null,
+          "packQuantity": 0.8,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 514.99,
+          "regularPricePerKg": 542.1,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Филе грудки куриное ПЕРВАЯ СВЕЖЕСТЬ, весовое 0.8 кг",
+            "514 99 ₽ за 1 кг",
+            "С Картой №1",
+            "411₽",
+            "433 68"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "cht": {
+      "price": 549.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Филе бедра куриное ПЕРВАЯ СВЕЖЕСТЬ, весовое",
+        "url": "https://lenta.com/catalog/ptica-141/",
+        "cardPrice": 549.99,
+        "packGrams": null,
+        "packQuantity": 0.7,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 549.99,
+        "regularPricePerKg": 578.9857142857144,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.6",
+          "Филе бедра куриное ПЕРВАЯ СВЕЖЕСТЬ, весовое 0.7 кг",
+          "549 99 ₽ за 1 кг",
+          "С Картой №1",
+          "384₽",
+          "405 29"
+        ]
+      },
+      "range": [
+        466.65,
+        559.99
+      ],
+      "samples": [
+        {
+          "title": "Филе бедра куриное ТРОЕКУРОВО, 750г",
+          "url": "https://lenta.com/catalog/ptica-141/",
+          "cardPrice": 349.99,
+          "packGrams": 750,
+          "packQuantity": 750,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 466.65333333333336,
+          "regularPricePerKg": 491.2266666666667,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.5",
+            "Филе бедра куриное ТРОЕКУРОВО 750г",
+            "С Картой №1",
+            "349 99₽",
+            "368 42"
+          ]
+        },
+        {
+          "title": "Филе бедра куриное ПЕРВАЯ СВЕЖЕСТЬ, весовое",
+          "url": "https://lenta.com/catalog/ptica-141/",
+          "cardPrice": 549.99,
+          "packGrams": null,
+          "packQuantity": 0.7,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 549.99,
+          "regularPricePerKg": 578.9857142857144,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.6",
+            "Филе бедра куриное ПЕРВАЯ СВЕЖЕСТЬ, весовое 0.7 кг",
+            "549 99 ₽ за 1 кг",
+            "С Картой №1",
+            "384₽",
+            "405 29"
+          ]
+        },
+        {
+          "title": "Мясо бедра куриного ПЕТЕЛИНКА бескостное, весовое",
+          "url": "https://lenta.com/catalog/ptica-141/",
+          "cardPrice": 559.99,
+          "packGrams": null,
+          "packQuantity": null,
+          "packUnit": null,
+          "weighted": true,
+          "pricePerKg": 559.99,
+          "regularPricePerKg": 589.47,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.7",
+            "Мясо бедра куриного ПЕТЕЛИНКА бескостное, весовое",
+            "Цена за 1 кг",
+            "С Картой №1",
+            "559 99₽",
+            "589 47"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "tkg": {
+      "price": 511.09,
+      "packGrams": 450,
+      "reference": {
+        "title": "Фарш из индейки ИНДИЛАЙТ Классический, 450г",
+        "url": "https://lenta.com/catalog/farsh-679/",
+        "cardPrice": 229.99,
+        "packGrams": 450,
+        "packQuantity": 450,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 511.0888888888889,
+        "regularPricePerKg": 538.2,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.8",
+          "Фарш из индейки ИНДИЛАЙТ Классический 450г",
+          "С Картой №1",
+          "229 99₽",
+          "242 19",
+          "до 9 шт"
+        ]
+      },
+      "range": [
+        444.42,
+        577.76
+      ],
+      "samples": [
+        {
+          "title": "Фарш индейки ПАВА ПАВА Нежный, 450г",
+          "url": "https://lenta.com/catalog/farsh-679/",
+          "cardPrice": 199.99,
+          "packGrams": 450,
+          "packQuantity": 450,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 444.4222222222222,
+          "regularPricePerKg": 526.4222222222222,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.5",
+            "Фарш индейки ПАВА ПАВА Нежный 450г",
+            "С Картой №1",
+            "199 99₽",
+            "236 89",
+            "-15%",
+            "до 9 шт"
+          ]
+        },
+        {
+          "title": "Фарш из индейки ИНДИЛАЙТ Классический, 450г",
+          "url": "https://lenta.com/catalog/farsh-679/",
+          "cardPrice": 229.99,
+          "packGrams": 450,
+          "packQuantity": 450,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 511.0888888888889,
+          "regularPricePerKg": 538.2,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Фарш из индейки ИНДИЛАЙТ Классический 450г",
+            "С Картой №1",
+            "229 99₽",
+            "242 19",
+            "до 9 шт"
+          ]
+        },
+        {
+          "title": "Фарш из филе грудки индейки ПАВА ПАВА, 450г",
+          "url": "https://lenta.com/catalog/farsh-679/",
+          "cardPrice": 259.99,
+          "packGrams": 450,
+          "packQuantity": 450,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 577.7555555555556,
+          "regularPricePerKg": 701.7333333333333,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Фарш из филе грудки индейки ПАВА ПАВА 450г",
+            "С Картой №1",
+            "259 99₽",
+            "315 78",
+            "-17%",
+            "до 12 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "tkt": {
+      "price": 687.49,
+      "packGrams": 800,
+      "reference": {
+        "title": "Филе бедра индейки ПАВА ПАВА, 800г",
+        "url": "https://lenta.com/catalog/ptica-141/",
+        "cardPrice": 549.99,
+        "packGrams": 800,
+        "packQuantity": 800,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 687.4875000000001,
+        "regularPricePerKg": 789.4625000000001,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.8",
+          "Филе бедра индейки ПАВА ПАВА 800г",
+          "С Картой №1",
+          "549 99₽",
+          "631 57",
+          "-12%"
+        ]
+      },
+      "range": [
+        659,
+        799.98
+      ],
+      "samples": [
+        {
+          "title": "Филе бедра индейки ЛЕНТА FRESH, весовое",
+          "url": "https://lenta.com/catalog/ptica-141/",
+          "cardPrice": 659,
+          "packGrams": null,
+          "packQuantity": null,
+          "packUnit": null,
+          "weighted": true,
+          "pricePerKg": 659,
+          "regularPricePerKg": 842.19,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.9",
+            "Филе бедра индейки ЛЕНТА FRESH, весовое",
+            "Цена за 1 кг",
+            "С Картой №1",
+            "659₽",
+            "842 19",
+            "-21%"
+          ]
+        },
+        {
+          "title": "Филе бедра индейки ПАВА ПАВА, 800г",
+          "url": "https://lenta.com/catalog/ptica-141/",
+          "cardPrice": 549.99,
+          "packGrams": 800,
+          "packQuantity": 800,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 687.4875000000001,
+          "regularPricePerKg": 789.4625000000001,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Филе бедра индейки ПАВА ПАВА 800г",
+            "С Картой №1",
+            "549 99₽",
+            "631 57",
+            "-12%"
+          ]
+        },
+        {
+          "title": "Филе бедра индейки ПАВА ПАВА, 450г",
+          "url": "https://lenta.com/catalog/ptica-141/",
+          "cardPrice": 359.99,
+          "packGrams": 450,
+          "packQuantity": 450,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 799.9777777777778,
+          "regularPricePerKg": 842.2,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.6",
+            "Филе бедра индейки ПАВА ПАВА 450г",
+            "С Картой №1",
+            "359 99₽",
+            "378 99"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "tkb": {
+      "price": 769.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Филе грудки индейки ЛЕНТА FRESH, весовое",
+        "url": "https://lenta.com/catalog/ptica-141/",
+        "cardPrice": 769.99,
+        "packGrams": null,
+        "packQuantity": 0.8,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 769.99,
+        "regularPricePerKg": 894.7875,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв",
+          "4.9",
+          "Филе грудки индейки ЛЕНТА FRESH, весовое 0.8 кг",
+          "769 99 ₽ за 1 кг",
+          "С Картой №1",
+          "615₽",
+          "715 83",
+          "-13%"
+        ]
+      },
+      "range": [
+        687.49,
+        812.49
+      ],
+      "samples": [
+        {
+          "title": "Филе грудки ПАВА ПАВА большое, 800г",
+          "url": "https://lenta.com/catalog/ptica-141/",
+          "cardPrice": 549.99,
+          "packGrams": 800,
+          "packQuantity": 800,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 687.4875000000001,
+          "regularPricePerKg": 828.9375,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Филе грудки ПАВА ПАВА большое 800г",
+            "С Картой №1",
+            "549 99₽",
+            "663 15",
+            "-17%"
+          ]
+        },
+        {
+          "title": "Филе грудки индейки ЛЕНТА FRESH, весовое",
+          "url": "https://lenta.com/catalog/ptica-141/",
+          "cardPrice": 769.99,
+          "packGrams": null,
+          "packQuantity": 0.8,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 769.99,
+          "regularPricePerKg": 894.7875,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.9",
+            "Филе грудки индейки ЛЕНТА FRESH, весовое 0.8 кг",
+            "769 99 ₽ за 1 кг",
+            "С Картой №1",
+            "615₽",
+            "715 83",
+            "-13%"
+          ]
+        },
+        {
+          "title": "Филе грудки индейки ПАВА ПАВА вырезка, 800г",
+          "url": "https://lenta.com/catalog/ptica-141/",
+          "cardPrice": 649.99,
+          "packGrams": 800,
+          "packQuantity": 800,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 812.4875000000001,
+          "regularPricePerKg": 855.2500000000001,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Филе грудки индейки ПАВА ПАВА вырезка 800г",
+            "С Картой №1",
+            "649 99₽",
+            "684 20"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "cod": {
+      "price": 2249.98,
+      "packGrams": 400,
+      "reference": {
+        "title": "Треска Атлантическая FISH & MORE филе-кусок без кожи, 400г",
+        "url": "https://lenta.com/catalog/ryba-zamorozhennaya-1169/",
+        "cardPrice": 899.99,
+        "packGrams": 400,
+        "packQuantity": 400,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 2249.975,
+        "regularPricePerKg": 2973.725,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.8",
+          "Треска Атлантическая FISH & MORE филе-кусок без кожи 400г",
+          "С Картой №1",
+          "899 99₽",
+          "1 189 49",
+          "-24%",
+          "до 33 шт"
+        ]
+      },
+      "range": [
+        2099.99,
+        2999.98
+      ],
+      "samples": [
+        {
+          "title": "Треска, филе (лойн), весовая",
+          "url": "https://lenta.com/catalog/ryba-ohlazhdennaya-1173/",
+          "cardPrice": 2099.99,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 2099.99,
+          "regularPricePerKg": 2526.4,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "3.0",
+            "Треска, филе (лойн), весовая 0.5 кг",
+            "2 099 99 ₽ за 1 кг",
+            "С Картой №1",
+            "1 049₽",
+            "1 263 20",
+            "-16%",
+            "до 14 кг"
+          ]
+        },
+        {
+          "title": "Треска Атлантическая FISH & MORE филе-кусок без кожи, 400г",
+          "url": "https://lenta.com/catalog/ryba-zamorozhennaya-1169/",
+          "cardPrice": 899.99,
+          "packGrams": 400,
+          "packQuantity": 400,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 2249.975,
+          "regularPricePerKg": 2973.725,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Треска Атлантическая FISH & MORE филе-кусок без кожи 400г",
+            "С Картой №1",
+            "899 99₽",
+            "1 189 49",
+            "-24%",
+            "до 33 шт"
+          ]
+        },
+        {
+          "title": "Треска замороженная BOREALIS филе без кожи и костей (спинка), 400г",
+          "url": "https://lenta.com/catalog/ryba-zamorozhennaya-1169/",
+          "cardPrice": 1199.99,
+          "packGrams": 400,
+          "packQuantity": 400,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 2999.975,
+          "regularPricePerKg": 3157.875,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Треска замороженная BOREALIS филе без кожи и костей (спинка) 400г",
+            "С Картой №1",
+            "1 199 99₽",
+            "1 263 15",
+            "до 35 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "pol": {
+      "price": 874.98,
+      "packGrams": 400,
+      "reference": {
+        "title": "Минтай замороженный ЛЕНТА филе порционное без кожи, 400г",
+        "url": "https://lenta.com/catalog/ryba-zamorozhennaya-1169/",
+        "cardPrice": 349.99,
+        "packGrams": 400,
+        "packQuantity": 400,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 874.975,
+        "regularPricePerKg": 1065.975,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв Наша марка",
+          "4.8",
+          "Минтай замороженный ЛЕНТА филе порционное без кожи 400г",
+          "С Картой №1",
+          "349 99₽",
+          "426 39",
+          "-17%",
+          "до 116 шт"
+        ]
+      },
+      "range": [
+        699.99,
+        916.63
+      ],
+      "samples": [
+        {
+          "title": "Минтай филе без кожи (из замороженного сырья) ЛЕНТА FRESH, весовой",
+          "url": "https://lenta.com/catalog/ryba-ohlazhdennaya-1173/",
+          "cardPrice": 699.99,
+          "packGrams": null,
+          "packQuantity": 0.3,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 699.99,
+          "regularPricePerKg": 842.1999999999999,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.4",
+            "Минтай филе без кожи (из замороженного сырья) ЛЕНТА FRESH, весовой 0.3 кг",
+            "699 99 ₽ за 1 кг",
+            "С Картой №1",
+            "209₽",
+            "252 66",
+            "-16%",
+            "до 14.1 кг"
+          ]
+        },
+        {
+          "title": "Минтай замороженный ЛЕНТА филе порционное без кожи, 400г",
+          "url": "https://lenta.com/catalog/ryba-zamorozhennaya-1169/",
+          "cardPrice": 349.99,
+          "packGrams": 400,
+          "packQuantity": 400,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 874.975,
+          "regularPricePerKg": 1065.975,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.8",
+            "Минтай замороженный ЛЕНТА филе порционное без кожи 400г",
+            "С Картой №1",
+            "349 99₽",
+            "426 39",
+            "-17%",
+            "до 116 шт"
+          ]
+        },
+        {
+          "title": "Минтай Тихоокеанский замороженный BOREALIS филе без кожи, 300г",
+          "url": "https://lenta.com/catalog/ryba-zamorozhennaya-1169/",
+          "cardPrice": 274.99,
+          "packGrams": 300,
+          "packQuantity": 300,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 916.6333333333334,
+          "regularPricePerKg": 964.9000000000001,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Минтай Тихоокеанский замороженный BOREALIS филе без кожи 300г",
+            "С Картой №1",
+            "274 99₽",
+            "289 47",
+            "до 61 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "til": {
+      "price": 599.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Тилапия филе (из замороженного сырья) Премиум ЛЕНТА FRESH, весовая",
+        "url": "https://lenta.com/catalog/ryba-ohlazhdennaya-1173/",
+        "cardPrice": 599.99,
+        "packGrams": null,
+        "packQuantity": 0.4,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 599.99,
+        "regularPricePerKg": 947.3999999999999,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Наша марка",
+          "4.7",
+          "Тилапия филе (из замороженного сырья) Премиум ЛЕНТА FRESH, весовая 0.4 кг",
+          "599 99 ₽ за 1 кг",
+          "С Картой №1",
+          "239₽",
+          "378 96",
+          "-36%",
+          "до 20 кг"
+        ]
+      },
+      "range": [
+        599.99,
+        599.99
+      ],
+      "samples": [
+        {
+          "title": "Тилапия филе (из замороженного сырья) Премиум ЛЕНТА FRESH, весовая",
+          "url": "https://lenta.com/catalog/ryba-ohlazhdennaya-1173/",
+          "cardPrice": 599.99,
+          "packGrams": null,
+          "packQuantity": 0.4,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 599.99,
+          "regularPricePerKg": 947.3999999999999,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Наша марка",
+            "4.7",
+            "Тилапия филе (из замороженного сырья) Премиум ЛЕНТА FRESH, весовая 0.4 кг",
+            "599 99 ₽ за 1 кг",
+            "С Картой №1",
+            "239₽",
+            "378 96",
+            "-36%",
+            "до 20 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "shr": {
+      "price": 1509.98,
+      "packGrams": 500,
+      "reference": {
+        "title": "Креветки свежемороженые PREMIUM CLUB очищенные 36/40, 500г",
+        "url": "https://lenta.com/catalog/moreprodukty-187/",
+        "cardPrice": 754.99,
+        "packGrams": 500,
+        "packQuantity": 500,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 1509.98,
+        "regularPricePerKg": 1831.58,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв Наша марка",
+          "4.8",
+          "Креветки свежемороженые PREMIUM CLUB очищенные 36/40 500г",
+          "С Картой №1",
+          "754 99₽",
+          "915 79",
+          "-17%",
+          "до 27 шт"
+        ]
+      },
+      "range": [
+        1509.98,
+        1509.98
+      ],
+      "samples": [
+        {
+          "title": "Креветки свежемороженые PREMIUM CLUB очищенные 36/40, 500г",
+          "url": "https://lenta.com/catalog/moreprodukty-187/",
+          "cardPrice": 754.99,
+          "packGrams": 500,
+          "packQuantity": 500,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 1509.98,
+          "regularPricePerKg": 1831.58,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.8",
+            "Креветки свежемороженые PREMIUM CLUB очищенные 36/40 500г",
+            "С Картой №1",
+            "754 99₽",
+            "915 79",
+            "-17%",
+            "до 27 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "sqd": {
+      "price": 999.98,
+      "packGrams": 500,
+      "reference": {
+        "title": "Кальмар замороженный очищенный, тушка с плавником без кожи, 500г",
+        "url": "https://lenta.com/catalog/moreprodukty-187/?filter.brand=prochie-tovary-10720665 ; rewritten summary of https://lenta.com/catalog/moreprodukty-187/?filter.brand-238=prochie-tovary-10720665",
+        "cardPrice": 499.99,
+        "packGrams": 500,
+        "packQuantity": 500,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 999.98,
+        "regularPricePerKg": 1252.78,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.2",
+          "Кальмар замороженный очищенный, тушка с плавником без кожи 500г",
+          "С Картой №1",
+          "499 99₽",
+          "626 39",
+          "-20%",
+          "до 22 шт"
+        ]
+      },
+      "range": [
+        999.98,
+        999.98
+      ],
+      "samples": [
+        {
+          "title": "Кальмар замороженный очищенный, тушка с плавником без кожи, 500г",
+          "url": "https://lenta.com/catalog/moreprodukty-187/?filter.brand=prochie-tovary-10720665 ; rewritten summary of https://lenta.com/catalog/moreprodukty-187/?filter.brand-238=prochie-tovary-10720665",
+          "cardPrice": 499.99,
+          "packGrams": 500,
+          "packQuantity": 500,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 999.98,
+          "regularPricePerKg": 1252.78,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.2",
+            "Кальмар замороженный очищенный, тушка с плавником без кожи 500г",
+            "С Картой №1",
+            "499 99₽",
+            "626 39",
+            "-20%",
+            "до 22 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "msl": {
+      "price": 787.48,
+      "packGrams": 400,
+      "reference": {
+        "title": "Мидии варено-мороженые ЛЕНТА, 400г",
+        "url": "https://lenta.com/catalog/moreprodukty-187/",
+        "cardPrice": 314.99,
+        "packGrams": 400,
+        "packQuantity": 400,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 787.475,
+        "regularPricePerKg": 828.9749999999999,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв Наша марка",
+          "4.6",
+          "Мидии варено-мороженые ЛЕНТА 400г",
+          "С Картой №1",
+          "314 99₽",
+          "331 59",
+          "до 21 шт"
+        ]
+      },
+      "range": [
+        787.48,
+        787.48
+      ],
+      "samples": [
+        {
+          "title": "Мидии варено-мороженые ЛЕНТА, 400г",
+          "url": "https://lenta.com/catalog/moreprodukty-187/",
+          "cardPrice": 314.99,
+          "packGrams": 400,
+          "packQuantity": 400,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 787.475,
+          "regularPricePerKg": 828.9749999999999,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.6",
+            "Мидии варено-мороженые ЛЕНТА 400г",
+            "С Картой №1",
+            "314 99₽",
+            "331 59",
+            "до 21 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "sal": {
+      "price": 2799.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Лосось Атлантический филе Премиум ЛЕНТА FRESH, весовой",
+        "url": "https://lenta.com/catalog/ryba-ohlazhdennaya-1173/",
+        "cardPrice": 2799.99,
+        "packGrams": null,
+        "packQuantity": 0.5,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 2799.99,
+        "regularPricePerKg": 3789.5,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв",
+          "4.6",
+          "Лосось Атлантический филе Премиум ЛЕНТА FRESH, весовой 0.5 кг",
+          "2 799 99 ₽ за 1 кг",
+          "С Картой №1",
+          "1 399₽",
+          "1 894 75",
+          "-26%",
+          "до 24 кг"
+        ]
+      },
+      "range": [
+        2799.99,
+        2799.99
+      ],
+      "samples": [
+        {
+          "title": "Лосось Атлантический филе Премиум ЛЕНТА FRESH, весовой",
+          "url": "https://lenta.com/catalog/ryba-ohlazhdennaya-1173/",
+          "cardPrice": 2799.99,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 2799.99,
+          "regularPricePerKg": 3789.5,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.6",
+            "Лосось Атлантический филе Премиум ЛЕНТА FRESH, весовой 0.5 кг",
+            "2 799 99 ₽ за 1 кг",
+            "С Картой №1",
+            "1 399₽",
+            "1 894 75",
+            "-26%",
+            "до 24 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "trt": {
+      "price": 1499.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Форель Радужная филе на коже, охлажденная ЛЕНТА FRESH, весовая",
+        "url": "https://lenta.com/catalog/ryba-ohlazhdennaya-1173/",
+        "cardPrice": 1499.99,
+        "packGrams": null,
+        "packQuantity": 0.7,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 1499.99,
+        "regularPricePerKg": 2368.4857142857145,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв",
+          "4.7",
+          "Форель Радужная филе на коже, охлажденная ЛЕНТА FRESH, весовая 0.7 кг",
+          "1 499 99 ₽ за 1 кг",
+          "С Картой №1",
+          "1 049₽",
+          "1 657 94",
+          "-36%",
+          "до 25.9 кг"
+        ]
+      },
+      "range": [
+        1499.99,
+        1599.99
+      ],
+      "samples": [
+        {
+          "title": "Форель Радужная филе на коже, охлажденная ЛЕНТА FRESH, весовая",
+          "url": "https://lenta.com/catalog/ryba-ohlazhdennaya-1173/",
+          "cardPrice": 1499.99,
+          "packGrams": null,
+          "packQuantity": 0.7,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 1499.99,
+          "regularPricePerKg": 2368.4857142857145,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.7",
+            "Форель Радужная филе на коже, охлажденная ЛЕНТА FRESH, весовая 0.7 кг",
+            "1 499 99 ₽ за 1 кг",
+            "С Картой №1",
+            "1 049₽",
+            "1 657 94",
+            "-36%",
+            "до 25.9 кг"
+          ]
+        },
+        {
+          "title": "Форель Радужная замороженная, филе с кожей, весовая",
+          "url": "https://lenta.com/catalog/ryba-zamorozhennaya-1169/",
+          "cardPrice": 1599.99,
+          "packGrams": null,
+          "packQuantity": 0.9,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 1599.99,
+          "regularPricePerKg": 1999.9888888888888,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.8",
+            "Форель Радужная замороженная, филе с кожей, весовая 0.9 кг",
+            "1 599 99 ₽ за 1 кг",
+            "С Картой №1",
+            "1 439₽",
+            "1 799 99",
+            "-20%",
+            "до 26.1 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "egg": {
+      "price": 194.53,
+      "packGrams": 550,
+      "reference": {
+        "title": "Яйцо куриное АТЕМАРСКАЯ ФЕРМА столовое С1, 10шт",
+        "url": "https://lenta.com/catalog/yajjca-135/",
+        "cardPrice": 106.99,
+        "packGrams": 550,
+        "packQuantity": 10,
+        "packUnit": "шт",
+        "weighted": false,
+        "pricePerKg": 194.5272727272727,
+        "regularPricePerKg": 204.8909090909091,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Яйцо куриное АТЕМАРСКАЯ ФЕРМА столовое С1 10шт",
+          "С Картой №1",
+          "106 99₽",
+          "112 69",
+          "до 27 шт"
+        ]
+      },
+      "range": [
+        163.62,
+        218.16
+      ],
+      "samples": [
+        {
+          "title": "Яйцо куриное NN С1, 10шт",
+          "url": "https://lenta.com/catalog/yajjca-135/",
+          "cardPrice": 89.99,
+          "packGrams": 550,
+          "packQuantity": 10,
+          "packUnit": "шт",
+          "weighted": false,
+          "pricePerKg": 163.6181818181818,
+          "regularPricePerKg": 229.8,
+          "limitKg": null,
+          "conditions": [
+            "Спец цена до 5 шт Баллы за отзыв"
+          ],
+          "evidence": [
+            "Спец цена до 5 шт Баллы за отзыв",
+            "4.9",
+            "Яйцо куриное NN С1 10шт",
+            "С Картой №1",
+            "89 99₽",
+            "126 39",
+            "-28%",
+            "до 5 шт"
+          ]
+        },
+        {
+          "title": "Яйцо куриное АТЕМАРСКАЯ ФЕРМА столовое С1, 10шт",
+          "url": "https://lenta.com/catalog/yajjca-135/",
+          "cardPrice": 106.99,
+          "packGrams": 550,
+          "packQuantity": 10,
+          "packUnit": "шт",
+          "weighted": false,
+          "pricePerKg": 194.5272727272727,
+          "regularPricePerKg": 204.8909090909091,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Яйцо куриное АТЕМАРСКАЯ ФЕРМА столовое С1 10шт",
+            "С Картой №1",
+            "106 99₽",
+            "112 69",
+            "до 27 шт"
+          ]
+        },
+        {
+          "title": "Яйцо куриное ОКСКОЕ С1, 10шт",
+          "url": "https://lenta.com/catalog/yajjca-135/",
+          "cardPrice": 119.99,
+          "packGrams": 550,
+          "packQuantity": 10,
+          "packUnit": "шт",
+          "weighted": false,
+          "pricePerKg": 218.16363636363636,
+          "regularPricePerKg": 229.8,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Яйцо куриное ОКСКОЕ С1 10шт",
+            "С Картой №1",
+            "119 99₽",
+            "126 39",
+            "до 496 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "cot": {
+      "price": 474.95,
+      "packGrams": 200,
+      "reference": {
+        "title": "Творог ПРОСТОКВАШИНО 2%, без змж, 200г",
+        "url": "https://lenta.com/catalog/tvorog-tvorozhnaya-massa-402/",
+        "cardPrice": 94.99,
+        "packGrams": 200,
+        "packQuantity": 200,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 474.95,
+        "regularPricePerKg": 605.45,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "+1 карта-сюрприз",
+          "5.0",
+          "Творог ПРОСТОКВАШИНО 2%, без змж 200г",
+          "С Картой №1",
+          "94 99₽",
+          "121 09",
+          "-21%",
+          "до 100 шт"
+        ]
+      },
+      "range": [
+        353.54,
+        488.83
+      ],
+      "samples": [
+        {
+          "title": "Творог рассыпчатый ЭКОМИЛК натуральный обезжиренный 0,5%, без змж, 280г",
+          "url": "https://lenta.com/catalog/tvorog-tvorozhnaya-massa-402/",
+          "cardPrice": 98.99,
+          "packGrams": 280,
+          "packQuantity": 280,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 353.5357142857143,
+          "regularPricePerKg": 563.8928571428571,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Творог рассыпчатый ЭКОМИЛК натуральный обезжиренный 0,5%, без змж 280г",
+            "С Картой №1",
+            "98 99₽",
+            "157 89",
+            "-37%",
+            "до 12 шт"
+          ]
+        },
+        {
+          "title": "Творог ПРОСТОКВАШИНО 2%, без змж, 200г",
+          "url": "https://lenta.com/catalog/tvorog-tvorozhnaya-massa-402/",
+          "cardPrice": 94.99,
+          "packGrams": 200,
+          "packQuantity": 200,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 474.95,
+          "regularPricePerKg": 605.45,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "+1 карта-сюрприз",
+            "5.0",
+            "Творог ПРОСТОКВАШИНО 2%, без змж 200г",
+            "С Картой №1",
+            "94 99₽",
+            "121 09",
+            "-21%",
+            "до 100 шт"
+          ]
+        },
+        {
+          "title": "Творог А.РОСТАГРОКОМПЛЕКС обезжиренный, без змж, 180г",
+          "url": "https://lenta.com/catalog/tvorog-tvorozhnaya-massa-402/",
+          "cardPrice": 87.99,
+          "packGrams": 180,
+          "packQuantity": 180,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 488.8333333333333,
+          "regularPricePerKg": 760.5,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.6",
+            "Творог А.РОСТАГРОКОМПЛЕКС обезжиренный, без змж 180г",
+            "С Картой №1",
+            "87 99₽",
+            "136 89",
+            "-35%",
+            "до 22 шт"
+          ]
+        }
+      ],
+      "note": "Ценовой аналог: творог 0–2%; жирность состава рецепта не меняется."
+    },
+    "yog": {
+      "price": 384.54,
+      "packGrams": 130,
+      "reference": {
+        "title": "Йогурт EPICA Греческий 2,5%, без змж, 130г",
+        "url": "https://lenta.com/catalog/gustye-jjogurty-i-tvorozhki-19407/",
+        "cardPrice": 49.99,
+        "packGrams": 130,
+        "packQuantity": 130,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 384.53846153846155,
+        "regularPricePerKg": 486.0769230769231,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Много белка",
+          "4.9",
+          "Йогурт EPICA Греческий 2,5%, без змж 130г",
+          "С Картой №1",
+          "49 99₽",
+          "63 19",
+          "-20%",
+          "до 126 шт"
+        ]
+      },
+      "range": [
+        384.54,
+        428.5
+      ],
+      "samples": [
+        {
+          "title": "Йогурт EPICA Греческий 2,5%, без змж, 130г",
+          "url": "https://lenta.com/catalog/gustye-jjogurty-i-tvorozhki-19407/",
+          "cardPrice": 49.99,
+          "packGrams": 130,
+          "packQuantity": 130,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 384.53846153846155,
+          "regularPricePerKg": 486.0769230769231,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Много белка",
+            "4.9",
+            "Йогурт EPICA Греческий 2,5%, без змж 130г",
+            "С Картой №1",
+            "49 99₽",
+            "63 19",
+            "-20%",
+            "до 126 шт"
+          ]
+        },
+        {
+          "title": "Йогурт TEOS Греческий 2%, без змж, 140г",
+          "url": "https://lenta.com/catalog/gustye-jjogurty-i-tvorozhki-19407/",
+          "cardPrice": 59.99,
+          "packGrams": 140,
+          "packQuantity": 140,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 428.5,
+          "regularPricePerKg": 451.35714285714283,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Сделано в Беларуси Много белка",
+            "5.0",
+            "Йогурт TEOS Греческий 2%, без змж 140г",
+            "С Картой №1",
+            "59 99₽",
+            "63 19",
+            "до 100 шт"
+          ]
+        }
+      ],
+      "note": "Ценовой аналог: натуральный греческий йогурт 2–2,5%; в рецептах остаётся справочный состав 0%."
+    },
+    "mlk": {
+      "price": 92.46,
+      "packGrams": 930,
+      "reference": {
+        "title": "Молоко пастеризованное ДОМИК В ДЕРЕВНЕ 2,5%, без змж, 930мл",
+        "url": "https://lenta.com/catalog/moloko-128/",
+        "cardPrice": 85.99,
+        "packGrams": 930,
+        "packQuantity": 930,
+        "packUnit": "мл",
+        "weighted": false,
+        "pricePerKg": 92.46236559139784,
+        "regularPricePerKg": 113.21505376344086,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Молоко пастеризованное ДОМИК В ДЕРЕВНЕ 2,5%, без змж 930мл",
+          "С Картой №1",
+          "85 99₽",
+          "105 29",
+          "-18%",
+          "до 32 шт"
+        ]
+      },
+      "range": [
+        85.54,
+        102.14
+      ],
+      "samples": [
+        {
+          "title": "Молоко пастеризованное ЛЕНТА 2,5%, без змж, 900мл",
+          "url": "https://lenta.com/catalog/moloko-128/",
+          "cardPrice": 76.99,
+          "packGrams": 900,
+          "packQuantity": 900,
+          "packUnit": "мл",
+          "weighted": false,
+          "pricePerKg": 85.54444444444444,
+          "regularPricePerKg": 101.76666666666667,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.9",
+            "Молоко пастеризованное ЛЕНТА 2,5%, без змж 900мл",
+            "С Картой №1",
+            "76 99₽",
+            "91 59",
+            "-15%",
+            "до 129 шт"
+          ]
+        },
+        {
+          "title": "Молоко пастеризованное ДОМИК В ДЕРЕВНЕ 2,5%, без змж, 930мл",
+          "url": "https://lenta.com/catalog/moloko-128/",
+          "cardPrice": 85.99,
+          "packGrams": 930,
+          "packQuantity": 930,
+          "packUnit": "мл",
+          "weighted": false,
+          "pricePerKg": 92.46236559139784,
+          "regularPricePerKg": 113.21505376344086,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Молоко пастеризованное ДОМИК В ДЕРЕВНЕ 2,5%, без змж 930мл",
+            "С Картой №1",
+            "85 99₽",
+            "105 29",
+            "-18%",
+            "до 32 шт"
+          ]
+        },
+        {
+          "title": "Молоко пастеризованное ПРОСТОКВАШИНО 2,5%, без змж, 930мл",
+          "url": "https://lenta.com/catalog/moloko-128/",
+          "cardPrice": 94.99,
+          "packGrams": 930,
+          "packQuantity": 930,
+          "packUnit": "мл",
+          "weighted": false,
+          "pricePerKg": 102.13978494623656,
+          "regularPricePerKg": 118.80645161290322,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "+1 карта-сюрприз",
+            "4.9",
+            "Молоко пастеризованное ПРОСТОКВАШИНО 2,5%, без змж 930мл",
+            "С Картой №1",
+            "94 99₽",
+            "110 49",
+            "-14%",
+            "до 124 шт"
+          ]
+        }
+      ],
+      "note": "Ценовой аналог молока 2,5%; в рецептах остаётся 2%. Миллилитры приближённо приравнены к граммам."
+    },
+    "fet": {
+      "price": 833.28,
+      "packGrams": 180,
+      "reference": {
+        "title": "Сыр рассольный ЭКОМИЛК Фетика Греческий 40%, без змж, вес сыра 180г, 225г",
+        "url": "https://lenta.com/catalog/rassolnye-25357/",
+        "cardPrice": 149.99,
+        "packGrams": 180,
+        "packQuantity": 180,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 833.2777777777778,
+        "regularPricePerKg": 1111.0555555555557,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.7",
+          "Сыр рассольный ЭКОМИЛК Фетика Греческий 40%, без змж, вес сыра 180г 225г",
+          "С Картой №1",
+          "149 99₽",
+          "199 99",
+          "-25%",
+          "до 15 шт"
+        ]
+      },
+      "range": [
+        614.95,
+        1199.92
+      ],
+      "samples": [
+        {
+          "title": "Сыр рассольный ЛЕНТА Фетос, без змж, 200г",
+          "url": "https://lenta.com/catalog/rassolnye-25357/",
+          "cardPrice": 122.99,
+          "packGrams": 200,
+          "packQuantity": 200,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 614.95,
+          "regularPricePerKg": 789.4499999999999,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.9",
+            "Сыр рассольный ЛЕНТА Фетос, без змж 200г",
+            "С Картой №1",
+            "122 99₽",
+            "157 89",
+            "-22%",
+            "до 9 шт"
+          ]
+        },
+        {
+          "title": "Сыр рассольный ЭКОМИЛК Фетика Греческий 40%, без змж, вес сыра 180г, 225г",
+          "url": "https://lenta.com/catalog/rassolnye-25357/",
+          "cardPrice": 149.99,
+          "packGrams": 180,
+          "packQuantity": 180,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 833.2777777777778,
+          "regularPricePerKg": 1111.0555555555557,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.7",
+            "Сыр рассольный ЭКОМИЛК Фетика Греческий 40%, без змж, вес сыра 180г 225г",
+            "С Картой №1",
+            "149 99₽",
+            "199 99",
+            "-25%",
+            "до 15 шт"
+          ]
+        },
+        {
+          "title": "Сыр BURENKA CLUB Фета стик, высокий протеин 25%, без змж, 125г",
+          "url": "https://lenta.com/catalog/rassolnye-25357/",
+          "cardPrice": 149.99,
+          "packGrams": 125,
+          "packQuantity": 125,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 1199.92,
+          "regularPricePerKg": 1389.52,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.2",
+            "Сыр BURENKA CLUB Фета стик, высокий протеин 25%, без змж 125г",
+            "С Картой №1",
+            "149 99₽",
+            "173 69",
+            "-13%",
+            "до 1 шт"
+          ]
+        }
+      ],
+      "note": "Ценовой аналог рассольного сыра; марка и жирность могут отличаться."
+    },
+    "moz": {
+      "price": 701.98,
+      "packGrams": 500,
+      "reference": {
+        "title": "Сыр DANKE PROFESSIONAL Моцарелла 40%, без змж, 500г",
+        "url": "https://lenta.com/catalog/rassolnye-25357/",
+        "cardPrice": 350.99,
+        "packGrams": 500,
+        "packQuantity": 500,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 701.98,
+        "regularPricePerKg": 1052.62,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "5.0",
+          "Сыр DANKE PROFESSIONAL Моцарелла 40%, без змж 500г",
+          "С Картой №1",
+          "350 99₽",
+          "526 31",
+          "-33%",
+          "до 19 шт"
+        ]
+      },
+      "range": [
+        699.98,
+        909.99
+      ],
+      "samples": [
+        {
+          "title": "Сыр BONVIDA Для пиццы Моцарелла, без змж, 400г",
+          "url": "https://lenta.com/catalog/rassolnye-25357/",
+          "cardPrice": 279.99,
+          "packGrams": 400,
+          "packQuantity": 400,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 699.975,
+          "regularPricePerKg": 868.4000000000001,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.9",
+            "Сыр BONVIDA Для пиццы Моцарелла, без змж 400г",
+            "С Картой №1",
+            "279 99₽",
+            "347 36",
+            "-19%",
+            "до 101 шт"
+          ]
+        },
+        {
+          "title": "Сыр DANKE PROFESSIONAL Моцарелла 40%, без змж, 500г",
+          "url": "https://lenta.com/catalog/rassolnye-25357/",
+          "cardPrice": 350.99,
+          "packGrams": 500,
+          "packQuantity": 500,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 701.98,
+          "regularPricePerKg": 1052.62,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "5.0",
+            "Сыр DANKE PROFESSIONAL Моцарелла 40%, без змж 500г",
+            "С Картой №1",
+            "350 99₽",
+            "526 31",
+            "-33%",
+            "до 19 шт"
+          ]
+        },
+        {
+          "title": "Сыр NATURA PRO Моцарелла Премиум 40%, без змж, весовой",
+          "url": "https://lenta.com/catalog/rassolnye-25357/",
+          "cardPrice": 909.99,
+          "packGrams": null,
+          "packQuantity": 0.3,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 909.99,
+          "regularPricePerKg": 957.9,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Новинка",
+            "5.0",
+            "Сыр NATURA PRO Моцарелла Премиум 40%, без змж, весовой 0.3 кг",
+            "909 99 ₽ за 1 кг",
+            "С Картой №1",
+            "272₽",
+            "287 37",
+            "до 11.1 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "par": {
+      "price": 1139.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Сыр МИР ВКУСА Пармезан 40%, без змж, весовой",
+        "url": "https://lenta.com/catalog/tverdye-25335/",
+        "cardPrice": 1139.99,
+        "packGrams": null,
+        "packQuantity": 0.2,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 1139.99,
+        "regularPricePerKg": 1379,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Сделано в Беларуси",
+          "4.5",
+          "Сыр МИР ВКУСА Пармезан 40%, без змж, весовой 0.2 кг",
+          "1 139 99 ₽ за 1 кг",
+          "С Картой №1",
+          "227₽",
+          "275 80",
+          "-17%",
+          "до 17.8 кг"
+        ]
+      },
+      "range": [
+        1129.99,
+        1249.94
+      ],
+      "samples": [
+        {
+          "title": "Сыр ЛЕНТА PREMIUM/PREMIUM CLUB Пармезан 45%, без змж, весовой",
+          "url": "https://lenta.com/catalog/tverdye-25335/",
+          "cardPrice": 1129.99,
+          "packGrams": null,
+          "packQuantity": 0.3,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 1129.99,
+          "regularPricePerKg": 1326.4,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.8",
+            "Сыр ЛЕНТА PREMIUM/PREMIUM CLUB Пармезан 45%, без змж, весовой 0.3 кг",
+            "1 129 99 ₽ за 1 кг",
+            "С Картой №1",
+            "338₽",
+            "397 92",
+            "-14%",
+            "до 51.9 кг"
+          ]
+        },
+        {
+          "title": "Сыр МИР ВКУСА Пармезан 40%, без змж, весовой",
+          "url": "https://lenta.com/catalog/tverdye-25335/",
+          "cardPrice": 1139.99,
+          "packGrams": null,
+          "packQuantity": 0.2,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 1139.99,
+          "regularPricePerKg": 1379,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Сделано в Беларуси",
+            "4.5",
+            "Сыр МИР ВКУСА Пармезан 40%, без змж, весовой 0.2 кг",
+            "1 139 99 ₽ за 1 кг",
+            "С Картой №1",
+            "227₽",
+            "275 80",
+            "-17%",
+            "до 17.8 кг"
+          ]
+        },
+        {
+          "title": "Сыр СЫРОБОГАТОВ Пармезан 40%, без змж, 180г",
+          "url": "https://lenta.com/catalog/tverdye-25335/",
+          "cardPrice": 224.99,
+          "packGrams": 180,
+          "packQuantity": 180,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 1249.9444444444446,
+          "regularPricePerKg": 1871.611111111111,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.7",
+            "Сыр СЫРОБОГАТОВ Пармезан 40%, без змж 180г",
+            "С Картой №1",
+            "224 99₽",
+            "336 89",
+            "-33%",
+            "до 32 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "onion": {
+      "price": 36.49,
+      "packGrams": null,
+      "reference": {
+        "title": "Лук репчатый, весовой",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 36.49,
+        "packGrams": null,
+        "packQuantity": 0.5,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 36.49,
+        "regularPricePerKg": 38.42,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.8",
+          "Лук репчатый, весовой 0.5 кг",
+          "36 49 ₽ за 1 кг",
+          "С Картой №1",
+          "18₽",
+          "19 21",
+          "до 794 кг"
+        ]
+      },
+      "range": [
+        36.49,
+        36.49
+      ],
+      "samples": [
+        {
+          "title": "Лук репчатый, весовой",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 36.49,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 36.49,
+          "regularPricePerKg": 38.42,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Лук репчатый, весовой 0.5 кг",
+            "36 49 ₽ за 1 кг",
+            "С Картой №1",
+            "18₽",
+            "19 21",
+            "до 794 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "gar": {
+      "price": 279.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Чеснок, весовой",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 279.99,
+        "packGrams": null,
+        "packQuantity": 0.1,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 279.99,
+        "regularPricePerKg": 326.3,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Чеснок, весовой 0.1 кг",
+          "279 99 ₽ за 1 кг",
+          "С Картой №1",
+          "27₽",
+          "32 63",
+          "-14%",
+          "до 106.4 кг"
+        ]
+      },
+      "range": [
+        279.99,
+        279.99
+      ],
+      "samples": [
+        {
+          "title": "Чеснок, весовой",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 279.99,
+          "packGrams": null,
+          "packQuantity": 0.1,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 279.99,
+          "regularPricePerKg": 326.3,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Чеснок, весовой 0.1 кг",
+            "279 99 ₽ за 1 кг",
+            "С Картой №1",
+            "27₽",
+            "32 63",
+            "-14%",
+            "до 106.4 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "carrot": {
+      "price": 26.49,
+      "packGrams": null,
+      "reference": {
+        "title": "Морковь, весовая",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 26.49,
+        "packGrams": null,
+        "packQuantity": 0.5,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 26.49,
+        "regularPricePerKg": 34.84,
+        "limitKg": 5,
+        "conditions": [
+          "Спец цена до 5 кг"
+        ],
+        "evidence": [
+          "Спец цена до 5 кг",
+          "4.8",
+          "Морковь, весовая 0.5 кг",
+          "26 49 ₽ за 1 кг",
+          "С Картой №1",
+          "13₽",
+          "17 42",
+          "-23%",
+          "до 355.5 кг"
+        ]
+      },
+      "range": [
+        26.49,
+        39.99
+      ],
+      "samples": [
+        {
+          "title": "Морковь, весовая",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 26.49,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 26.49,
+          "regularPricePerKg": 34.84,
+          "limitKg": 5,
+          "conditions": [
+            "Спец цена до 5 кг"
+          ],
+          "evidence": [
+            "Спец цена до 5 кг",
+            "4.8",
+            "Морковь, весовая 0.5 кг",
+            "26 49 ₽ за 1 кг",
+            "С Картой №1",
+            "13₽",
+            "17 42",
+            "-23%",
+            "до 355.5 кг"
+          ]
+        },
+        {
+          "title": "Морковь фасованная, весовая",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 39.99,
+          "packGrams": null,
+          "packQuantity": null,
+          "packUnit": null,
+          "weighted": true,
+          "pricePerKg": 39.99,
+          "regularPricePerKg": 42.19,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.2",
+            "Морковь фасованная, весовая",
+            "Цена за 1 кг",
+            "С Картой №1",
+            "39 99₽",
+            "42 19",
+            "до 397 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "cab": {
+      "price": 26.49,
+      "packGrams": null,
+      "reference": {
+        "title": "Капуста белокочанная, весовая",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 26.49,
+        "packGrams": null,
+        "packQuantity": null,
+        "packUnit": null,
+        "weighted": true,
+        "pricePerKg": 26.49,
+        "regularPricePerKg": 34.84,
+        "limitKg": 5,
+        "conditions": [
+          "Спец цена до 5 кг"
+        ],
+        "evidence": [
+          "Спец цена до 5 кг",
+          "4.8",
+          "Капуста белокочанная, весовая",
+          "Цена за 1 кг",
+          "С Картой №1",
+          "26 49₽",
+          "34 84",
+          "-23%",
+          "до 1017.5 кг"
+        ]
+      },
+      "range": [
+        26.49,
+        26.49
+      ],
+      "samples": [
+        {
+          "title": "Капуста белокочанная, весовая",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 26.49,
+          "packGrams": null,
+          "packQuantity": null,
+          "packUnit": null,
+          "weighted": true,
+          "pricePerKg": 26.49,
+          "regularPricePerKg": 34.84,
+          "limitKg": 5,
+          "conditions": [
+            "Спец цена до 5 кг"
+          ],
+          "evidence": [
+            "Спец цена до 5 кг",
+            "4.8",
+            "Капуста белокочанная, весовая",
+            "Цена за 1 кг",
+            "С Картой №1",
+            "26 49₽",
+            "34 84",
+            "-23%",
+            "до 1017.5 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "beet": {
+      "price": 29.59,
+      "packGrams": null,
+      "reference": {
+        "title": "Свекла весовая",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 29.59,
+        "packGrams": null,
+        "packQuantity": 0.5,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 29.59,
+        "regularPricePerKg": 38.94,
+        "limitKg": 5,
+        "conditions": [
+          "Спец цена до 5 кг"
+        ],
+        "evidence": [
+          "Спец цена до 5 кг",
+          "4.8",
+          "Свекла весовая 0.5 кг",
+          "29 59 ₽ за 1 кг",
+          "С Картой №1",
+          "14₽",
+          "19 47",
+          "-24%",
+          "до 217 кг"
+        ]
+      },
+      "range": [
+        29.59,
+        29.59
+      ],
+      "samples": [
+        {
+          "title": "Свекла весовая",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 29.59,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 29.59,
+          "regularPricePerKg": 38.94,
+          "limitKg": 5,
+          "conditions": [
+            "Спец цена до 5 кг"
+          ],
+          "evidence": [
+            "Спец цена до 5 кг",
+            "4.8",
+            "Свекла весовая 0.5 кг",
+            "29 59 ₽ за 1 кг",
+            "С Картой №1",
+            "14₽",
+            "19 47",
+            "-24%",
+            "до 217 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "bro": {
+      "price": 309.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Капуста брокколи, весовая",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 309.99,
+        "packGrams": null,
+        "packQuantity": 0.8,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 309.99,
+        "regularPricePerKg": 326.3125,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.6",
+          "Капуста брокколи, весовая 0.8 кг",
+          "309 99 ₽ за 1 кг",
+          "С Картой №1",
+          "247₽",
+          "261 05",
+          "до 87.2 кг"
+        ]
+      },
+      "range": [
+        287.47,
+        324.98
+      ],
+      "samples": [
+        {
+          "title": "Капуста брокколи замороженная МОРОЗКО GREEN, 400г",
+          "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+          "cardPrice": 114.99,
+          "packGrams": 400,
+          "packQuantity": 400,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 287.47499999999997,
+          "regularPricePerKg": 773.725,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Капуста брокколи замороженная МОРОЗКО GREEN 400г",
+            "С Картой №1",
+            "114 99₽",
+            "309 49",
+            "-62%",
+            "до 60 шт"
+          ]
+        },
+        {
+          "title": "Капуста брокколи, весовая",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 309.99,
+          "packGrams": null,
+          "packQuantity": 0.8,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 309.99,
+          "regularPricePerKg": 326.3125,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.6",
+            "Капуста брокколи, весовая 0.8 кг",
+            "309 99 ₽ за 1 кг",
+            "С Картой №1",
+            "247₽",
+            "261 05",
+            "до 87.2 кг"
+          ]
+        },
+        {
+          "title": "Капуста брокколи замороженная ЛЕНТА, 400г",
+          "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+          "cardPrice": 129.99,
+          "packGrams": 400,
+          "packQuantity": 400,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 324.975,
+          "regularPricePerKg": 394.72499999999997,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.8",
+            "Капуста брокколи замороженная ЛЕНТА 400г",
+            "С Картой №1",
+            "129 99₽",
+            "157 89",
+            "-17%",
+            "до 23 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "pum": {
+      "price": 89.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Тыква Баттернат новый урожай, весовая",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 89.99,
+        "packGrams": null,
+        "packQuantity": null,
+        "packUnit": null,
+        "weighted": true,
+        "pricePerKg": 89.99,
+        "regularPricePerKg": 94.79,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Тыква Баттернат новый урожай, весовая",
+          "Цена за 1 кг",
+          "С Картой №1",
+          "89 99₽",
+          "94 79",
+          "до 170 кг"
+        ]
+      },
+      "range": [
+        89.99,
+        89.99
+      ],
+      "samples": [
+        {
+          "title": "Тыква Баттернат новый урожай, весовая",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 89.99,
+          "packGrams": null,
+          "packQuantity": null,
+          "packUnit": null,
+          "weighted": true,
+          "pricePerKg": 89.99,
+          "regularPricePerKg": 94.79,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Тыква Баттернат новый урожай, весовая",
+            "Цена за 1 кг",
+            "С Картой №1",
+            "89 99₽",
+            "94 79",
+            "до 170 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "cuc": {
+      "price": 233.32,
+      "packGrams": 600,
+      "reference": {
+        "title": "Огурцы тепличные гладкие среднеплодные, 600г",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 139.99,
+        "packGrams": 600,
+        "packQuantity": 600,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 233.31666666666666,
+        "regularPricePerKg": 245.60000000000002,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв",
+          "4.9",
+          "Огурцы тепличные гладкие среднеплодные 600г",
+          "С Картой №1",
+          "139 99₽",
+          "147 36",
+          "до 73 шт"
+        ]
+      },
+      "range": [
+        119.99,
+        299.99
+      ],
+      "samples": [
+        {
+          "title": "Огурцы среднеплодные гладкие, весовые",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 119.99,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 119.99,
+          "regularPricePerKg": 168.42,
+          "limitKg": 3,
+          "conditions": [
+            "Спец цена до 3 кг"
+          ],
+          "evidence": [
+            "Спец цена до 3 кг",
+            "4.8",
+            "Огурцы среднеплодные гладкие, весовые 0.5 кг",
+            "119 99 ₽ за 1 кг",
+            "С Картой №1",
+            "59₽",
+            "84 21",
+            "-28%",
+            "до 5 кг"
+          ]
+        },
+        {
+          "title": "Огурцы тепличные гладкие среднеплодные, 600г",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 139.99,
+          "packGrams": 600,
+          "packQuantity": 600,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 233.31666666666666,
+          "regularPricePerKg": 245.60000000000002,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.9",
+            "Огурцы тепличные гладкие среднеплодные 600г",
+            "С Картой №1",
+            "139 99₽",
+            "147 36",
+            "до 73 шт"
+          ]
+        },
+        {
+          "title": "Огурцы короткоплодные колючие, весовые",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 299.99,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 299.99,
+          "regularPricePerKg": 357.9,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.6",
+            "Огурцы короткоплодные колючие, весовые 0.5 кг",
+            "299 99 ₽ за 1 кг",
+            "С Картой №1",
+            "149₽",
+            "178 95",
+            "-16%",
+            "до 46 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "tom": {
+      "price": 244.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Томаты тепличные, весовые",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 244.99,
+        "packGrams": null,
+        "packQuantity": 0.5,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 244.99,
+        "regularPricePerKg": 257.9,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.8",
+          "Томаты тепличные, весовые 0.5 кг",
+          "244 99 ₽ за 1 кг",
+          "С Картой №1",
+          "122₽",
+          "128 95",
+          "до 430 кг"
+        ]
+      },
+      "range": [
+        244.99,
+        371.41
+      ],
+      "samples": [
+        {
+          "title": "Томаты тепличные, весовые",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 244.99,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 244.99,
+          "regularPricePerKg": 257.9,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Томаты тепличные, весовые 0.5 кг",
+            "244 99 ₽ за 1 кг",
+            "С Картой №1",
+            "122₽",
+            "128 95",
+            "до 430 кг"
+          ]
+        },
+        {
+          "title": "Томаты розовые, 700г",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 259.99,
+          "packGrams": 700,
+          "packQuantity": 700,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 371.41428571428577,
+          "regularPricePerKg": 390.9714285714286,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.4",
+            "Томаты розовые 700г",
+            "С Картой №1",
+            "259 99₽",
+            "273 68",
+            "до 52 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "pep": {
+      "price": 309.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Перец красный, весовой",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 309.99,
+        "packGrams": null,
+        "packQuantity": 0.35,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 309.99,
+        "regularPricePerKg": 326.31428571428575,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Перец красный, весовой 0.35 кг",
+          "309 99 ₽ за 1 кг",
+          "С Картой №1",
+          "108₽",
+          "114 21",
+          "до 230.3 кг"
+        ]
+      },
+      "range": [
+        309.99,
+        309.99
+      ],
+      "samples": [
+        {
+          "title": "Перец красный, весовой",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 309.99,
+          "packGrams": null,
+          "packQuantity": 0.35,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 309.99,
+          "regularPricePerKg": 326.31428571428575,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Перец красный, весовой 0.35 кг",
+            "309 99 ₽ за 1 кг",
+            "С Картой №1",
+            "108₽",
+            "114 21",
+            "до 230.3 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "egp": {
+      "price": 229.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Баклажаны, весовые",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 229.99,
+        "packGrams": null,
+        "packQuantity": 0.5,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 229.99,
+        "regularPricePerKg": 242.2,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.8",
+          "Баклажаны, весовые 0.5 кг",
+          "229 99 ₽ за 1 кг",
+          "С Картой №1",
+          "114₽",
+          "121 10",
+          "до 43 кг"
+        ]
+      },
+      "range": [
+        229.99,
+        229.99
+      ],
+      "samples": [
+        {
+          "title": "Баклажаны, весовые",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 229.99,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 229.99,
+          "regularPricePerKg": 242.2,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Баклажаны, весовые 0.5 кг",
+            "229 99 ₽ за 1 кг",
+            "С Картой №1",
+            "114₽",
+            "121 10",
+            "до 43 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "gin": {
+      "price": 479.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Имбирь свежий, весовой",
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "cardPrice": 479.99,
+        "packGrams": null,
+        "packQuantity": 0.25,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 479.99,
+        "regularPricePerKg": 505.28,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.8",
+          "Имбирь свежий, весовой 0.25 кг",
+          "479 99 ₽ за 1 кг",
+          "С Картой №1",
+          "119₽",
+          "126 32",
+          "до 37 кг"
+        ]
+      },
+      "range": [
+        479.99,
+        479.99
+      ],
+      "samples": [
+        {
+          "title": "Имбирь свежий, весовой",
+          "url": "https://lenta.com/catalog/ovoshchi-146/",
+          "cardPrice": 479.99,
+          "packGrams": null,
+          "packQuantity": 0.25,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 479.99,
+          "regularPricePerKg": 505.28,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Имбирь свежий, весовой 0.25 кг",
+            "479 99 ₽ за 1 кг",
+            "С Картой №1",
+            "119₽",
+            "126 32",
+            "до 37 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "mush": {
+      "price": 374.98,
+      "packGrams": 400,
+      "reference": {
+        "title": "Шампиньоны ЛЕНТА FRESH, 400г",
+        "url": "https://lenta.com/catalog/griby-375/",
+        "cardPrice": 149.99,
+        "packGrams": 400,
+        "packQuantity": 400,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 374.975,
+        "regularPricePerKg": 447.475,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв Наша марка",
+          "4.9",
+          "Шампиньоны ЛЕНТА FRESH 400г",
+          "С Картой №1",
+          "149 99₽",
+          "178 99",
+          "-16%",
+          "до 19 шт"
+        ]
+      },
+      "range": [
+        374.98,
+        374.98
+      ],
+      "samples": [
+        {
+          "title": "Шампиньоны ЛЕНТА FRESH, 400г",
+          "url": "https://lenta.com/catalog/griby-375/",
+          "cardPrice": 149.99,
+          "packGrams": 400,
+          "packQuantity": 400,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 374.975,
+          "regularPricePerKg": 447.475,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.9",
+            "Шампиньоны ЛЕНТА FRESH 400г",
+            "С Картой №1",
+            "149 99₽",
+            "178 99",
+            "-16%",
+            "до 19 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "gb": {
+      "price": 204.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Фасоль стручковая замороженная, резаная, весовая",
+        "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+        "cardPrice": 204.99,
+        "packGrams": null,
+        "packQuantity": 0.5,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 204.99,
+        "regularPricePerKg": 252.6,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв Наша марка",
+          "4.9",
+          "Фасоль стручковая замороженная, резаная, весовая 0.5 кг",
+          "204 99 ₽ за 1 кг",
+          "С Картой №1",
+          "102₽",
+          "126 30",
+          "-18%",
+          "до 50 кг"
+        ]
+      },
+      "range": [
+        204.99,
+        212.48
+      ],
+      "samples": [
+        {
+          "title": "Фасоль стручковая замороженная, резаная, весовая",
+          "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+          "cardPrice": 204.99,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 204.99,
+          "regularPricePerKg": 252.6,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.9",
+            "Фасоль стручковая замороженная, резаная, весовая 0.5 кг",
+            "204 99 ₽ за 1 кг",
+            "С Картой №1",
+            "102₽",
+            "126 30",
+            "-18%",
+            "до 50 кг"
+          ]
+        },
+        {
+          "title": "Фасоль стручковая замороженная 365 ДНЕЙ, 400г",
+          "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+          "cardPrice": 84.99,
+          "packGrams": 400,
+          "packQuantity": 400,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 212.475,
+          "regularPricePerKg": 223.72499999999997,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.9",
+            "Фасоль стручковая замороженная 365 ДНЕЙ 400г",
+            "С Картой №1",
+            "84 99₽",
+            "89 49",
+            "до 100 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "pea": {
+      "price": 312.48,
+      "packGrams": 400,
+      "reference": {
+        "title": "Горошек зеленый замороженный 4 СЕЗОНА, 400г",
+        "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+        "cardPrice": 124.99,
+        "packGrams": 400,
+        "packQuantity": 400,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 312.475,
+        "regularPricePerKg": 421.225,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Горошек зеленый замороженный 4 СЕЗОНА 400г",
+          "С Картой №1",
+          "124 99₽",
+          "168 49",
+          "-25%",
+          "до 104 шт"
+        ]
+      },
+      "range": [
+        312.48,
+        312.48
+      ],
+      "samples": [
+        {
+          "title": "Горошек зеленый замороженный 4 СЕЗОНА, 400г",
+          "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+          "cardPrice": 124.99,
+          "packGrams": 400,
+          "packQuantity": 400,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 312.475,
+          "regularPricePerKg": 421.225,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Горошек зеленый замороженный 4 СЕЗОНА 400г",
+            "С Картой №1",
+            "124 99₽",
+            "168 49",
+            "-25%",
+            "до 104 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "ban": {
+      "price": 140.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Бананы, весовые",
+        "url": "https://lenta.com/catalog/frukty-153/",
+        "cardPrice": 140.99,
+        "packGrams": null,
+        "packQuantity": null,
+        "packUnit": null,
+        "weighted": true,
+        "pricePerKg": 140.99,
+        "regularPricePerKg": 148.42,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв",
+          "4.9",
+          "Бананы, весовые",
+          "Цена за 1 кг",
+          "С Картой №1",
+          "140 99₽",
+          "148 42",
+          "до 5 кг"
+        ]
+      },
+      "range": [
+        140.99,
+        140.99
+      ],
+      "samples": [
+        {
+          "title": "Бананы, весовые",
+          "url": "https://lenta.com/catalog/frukty-153/",
+          "cardPrice": 140.99,
+          "packGrams": null,
+          "packQuantity": null,
+          "packUnit": null,
+          "weighted": true,
+          "pricePerKg": 140.99,
+          "regularPricePerKg": 148.42,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.9",
+            "Бананы, весовые",
+            "Цена за 1 кг",
+            "С Картой №1",
+            "140 99₽",
+            "148 42",
+            "до 5 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "lem": {
+      "price": 179.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Лимоны, весовые",
+        "url": "https://lenta.com/catalog/frukty-153/",
+        "cardPrice": 179.99,
+        "packGrams": null,
+        "packQuantity": 0.2,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 179.99,
+        "regularPricePerKg": 236.84999999999997,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.8",
+          "Лимоны, весовые 0.2 кг",
+          "179 99 ₽ за 1 кг",
+          "С Картой №1",
+          "35₽",
+          "47 37",
+          "-24%",
+          "до 276.6 кг"
+        ]
+      },
+      "range": [
+        179.99,
+        179.99
+      ],
+      "samples": [
+        {
+          "title": "Лимоны, весовые",
+          "url": "https://lenta.com/catalog/frukty-153/",
+          "cardPrice": 179.99,
+          "packGrams": null,
+          "packQuantity": 0.2,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 179.99,
+          "regularPricePerKg": 236.84999999999997,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Лимоны, весовые 0.2 кг",
+            "179 99 ₽ за 1 кг",
+            "С Картой №1",
+            "35₽",
+            "47 37",
+            "-24%",
+            "до 276.6 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "alm": {
+      "price": 1733.27,
+      "packGrams": 150,
+      "reference": {
+        "title": "Миндаль DOLCE ALBERO жареный, 150г",
+        "url": "https://lenta.com/catalog/orehi-21956/",
+        "cardPrice": 259.99,
+        "packGrams": 150,
+        "packQuantity": 150,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 1733.2666666666667,
+        "regularPricePerKg": 2105.2,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв Наша марка",
+          "4.8",
+          "Миндаль DOLCE ALBERO жареный 150г",
+          "С Картой №1",
+          "259 99₽",
+          "315 78",
+          "-17%",
+          "до 17 шт"
+        ]
+      },
+      "range": [
+        1733.27,
+        2419.96
+      ],
+      "samples": [
+        {
+          "title": "Миндаль DOLCE ALBERO жареный, 150г",
+          "url": "https://lenta.com/catalog/orehi-21956/",
+          "cardPrice": 259.99,
+          "packGrams": 150,
+          "packQuantity": 150,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 1733.2666666666667,
+          "regularPricePerKg": 2105.2,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.8",
+            "Миндаль DOLCE ALBERO жареный 150г",
+            "С Картой №1",
+            "259 99₽",
+            "315 78",
+            "-17%",
+            "до 17 шт"
+          ]
+        },
+        {
+          "title": "Миндаль СЕМУШКА жареный, 250г",
+          "url": "https://lenta.com/catalog/orehi-21956/",
+          "cardPrice": 604.99,
+          "packGrams": 250,
+          "packQuantity": 250,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 2419.96,
+          "regularPricePerKg": 2711.56,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Миндаль СЕМУШКА жареный 250г",
+            "С Картой №1",
+            "604 99₽",
+            "677 89",
+            "-10%",
+            "до 12 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "wal": {
+      "price": 1079.96,
+      "packGrams": 250,
+      "reference": {
+        "title": "Орех грецкий ВЫБОР СЕМЬИ, 250г",
+        "url": "https://lenta.com/catalog/orehi-21956/",
+        "cardPrice": 269.99,
+        "packGrams": 250,
+        "packQuantity": 250,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 1079.96,
+        "regularPricePerKg": 1473.68,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.7",
+          "Орех грецкий ВЫБОР СЕМЬИ 250г",
+          "С Картой №1",
+          "269 99₽",
+          "368 42",
+          "-26%",
+          "до 20 шт"
+        ]
+      },
+      "range": [
+        999.96,
+        1133.27
+      ],
+      "samples": [
+        {
+          "title": "Грецкий орех ОРЕХОВАЯ ДОЛИНА, 250г",
+          "url": "https://lenta.com/catalog/orehi-21956/",
+          "cardPrice": 249.99,
+          "packGrams": 250,
+          "packQuantity": 250,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 999.96,
+          "regularPricePerKg": 1263.12,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.3",
+            "Грецкий орех ОРЕХОВАЯ ДОЛИНА 250г",
+            "С Картой №1",
+            "249 99₽",
+            "315 78",
+            "-20%",
+            "до 17 шт"
+          ]
+        },
+        {
+          "title": "Орех грецкий ВЫБОР СЕМЬИ, 250г",
+          "url": "https://lenta.com/catalog/orehi-21956/",
+          "cardPrice": 269.99,
+          "packGrams": 250,
+          "packQuantity": 250,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 1079.96,
+          "regularPricePerKg": 1473.68,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.7",
+            "Орех грецкий ВЫБОР СЕМЬИ 250г",
+            "С Картой №1",
+            "269 99₽",
+            "368 42",
+            "-26%",
+            "до 20 шт"
+          ]
+        },
+        {
+          "title": "Орех грецкий ЛЕНТА, 150г",
+          "url": "https://lenta.com/catalog/orehi-21956/",
+          "cardPrice": 169.99,
+          "packGrams": 150,
+          "packQuantity": 150,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 1133.2666666666667,
+          "regularPricePerKg": 1403.4666666666667,
+          "limitKg": null,
+          "conditions": [
+            "Доп.скидка 10% Баллы за отзыв"
+          ],
+          "evidence": [
+            "Доп.скидка 10% Баллы за отзыв",
+            "4.9",
+            "Орех грецкий ЛЕНТА 150г",
+            "С Картой №1",
+            "169 99₽",
+            "210 52",
+            "-19%",
+            "до 28 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "oo": {
+      "price": 1582.4,
+      "packGrams": 455,
+      "reference": {
+        "title": "Масло оливковое MONINI Delicato, Extra Vergine, 500мл",
+        "url": "https://lenta.com/catalog/maslo-20826/",
+        "cardPrice": 719.99,
+        "packGrams": 455,
+        "packQuantity": 500,
+        "packUnit": "мл",
+        "weighted": false,
+        "pricePerKg": 1582.3956043956046,
+        "regularPricePerKg": 2706.7912087912086,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.3",
+          "Масло оливковое MONINI Delicato, Extra Vergine 500мл",
+          "С Картой №1",
+          "719 99₽",
+          "1 231 59",
+          "-41%",
+          "до 4 шт"
+        ]
+      },
+      "range": [
+        1376.68,
+        1736.24
+      ],
+      "samples": [
+        {
+          "title": "Масло оливковое AGROLIVE Extra Virgin, 500мл",
+          "url": "https://lenta.com/catalog/maslo-20826/",
+          "cardPrice": 626.39,
+          "packGrams": 455,
+          "packQuantity": 500,
+          "packUnit": "мл",
+          "weighted": false,
+          "pricePerKg": 1376.6813186813188,
+          "regularPricePerKg": 1619.5384615384617,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "2.6",
+            "Масло оливковое AGROLIVE Extra Virgin 500мл",
+            "С Картой №1",
+            "626 39₽",
+            "736 89",
+            "-14%",
+            "Image",
+            "до 9 шт"
+          ]
+        },
+        {
+          "title": "Масло оливковое MONINI Delicato, Extra Vergine, 500мл",
+          "url": "https://lenta.com/catalog/maslo-20826/",
+          "cardPrice": 719.99,
+          "packGrams": 455,
+          "packQuantity": 500,
+          "packUnit": "мл",
+          "weighted": false,
+          "pricePerKg": 1582.3956043956046,
+          "regularPricePerKg": 2706.7912087912086,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.3",
+            "Масло оливковое MONINI Delicato, Extra Vergine 500мл",
+            "С Картой №1",
+            "719 99₽",
+            "1 231 59",
+            "-41%",
+            "до 4 шт"
+          ]
+        },
+        {
+          "title": "Масло оливковое FILIPPO BERIO Organic Extra virgin нерафинированное, 500мл",
+          "url": "https://lenta.com/catalog/maslo-20826/",
+          "cardPrice": 789.99,
+          "packGrams": 455,
+          "packQuantity": 500,
+          "packUnit": "мл",
+          "weighted": false,
+          "pricePerKg": 1736.2417582417581,
+          "regularPricePerKg": 2660.6373626373625,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.3",
+            "Масло оливковое FILIPPO BERIO Organic Extra virgin нерафинированное 500мл",
+            "С Картой №1",
+            "789 99₽",
+            "1 210 59",
+            "-34%",
+            "до 4 шт"
+          ]
+        }
+      ],
+      "note": "Для перевода миллилитров масла в граммы принята приблизительная плотность 0,91 г/мл."
+    },
+    "soy": {
+      "price": 299.96,
+      "packGrams": 250,
+      "reference": {
+        "title": "Соус соевый SEN SOY Original Классический, 250г",
+        "url": "https://lenta.com/catalog/sousy-zapravki-marinady-20847/",
+        "cardPrice": 74.99,
+        "packGrams": 250,
+        "packQuantity": 250,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 299.96,
+        "regularPricePerKg": 463.16,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Соус соевый SEN SOY Original Классический 250г",
+          "С Картой №1",
+          "74 99₽",
+          "115 79",
+          "-35%",
+          "до 62 шт"
+        ]
+      },
+      "range": [
+        299.96,
+        299.96
+      ],
+      "samples": [
+        {
+          "title": "Соус соевый SEN SOY Original Классический, 250г",
+          "url": "https://lenta.com/catalog/sousy-zapravki-marinady-20847/",
+          "cardPrice": 74.99,
+          "packGrams": 250,
+          "packQuantity": 250,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 299.96,
+          "regularPricePerKg": 463.16,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Соус соевый SEN SOY Original Классический 250г",
+            "С Картой №1",
+            "74 99₽",
+            "115 79",
+            "-35%",
+            "до 62 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "tpa": {
+      "price": 479.96,
+      "packGrams": 250,
+      "reference": {
+        "title": "Томатная паста EMETIS, 250г",
+        "url": "https://lenta.com/catalog/ketchup-tomatnaya-pasta-20835/",
+        "cardPrice": 119.99,
+        "packGrams": 250,
+        "packQuantity": 250,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 479.96,
+        "regularPricePerKg": 505.56,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Томатная паста EMETIS 250г",
+          "С Картой №1",
+          "119 99₽",
+          "126 39",
+          "до 12 шт"
+        ]
+      },
+      "range": [
+        479.96,
+        479.96
+      ],
+      "samples": [
+        {
+          "title": "Томатная паста EMETIS, 250г",
+          "url": "https://lenta.com/catalog/ketchup-tomatnaya-pasta-20835/",
+          "cardPrice": 119.99,
+          "packGrams": 250,
+          "packQuantity": 250,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 479.96,
+          "regularPricePerKg": 505.56,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Томатная паста EMETIS 250г",
+            "С Картой №1",
+            "119 99₽",
+            "126 39",
+            "до 12 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "mst": {
+      "price": 249.95,
+      "packGrams": 200,
+      "reference": {
+        "title": "Горчица ЛЕНТА Русская, 200г",
+        "url": "https://lenta.com/catalog/gorchica-hren-adzhika-20853/",
+        "cardPrice": 49.99,
+        "packGrams": 200,
+        "packQuantity": 200,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 249.95000000000002,
+        "regularPricePerKg": 315.95,
+        "limitKg": null,
+        "conditions": [
+          "Доп.скидка 10% Наша марка"
+        ],
+        "evidence": [
+          "Доп.скидка 10% Наша марка",
+          "4.8",
+          "Горчица ЛЕНТА Русская 200г",
+          "С Картой №1",
+          "49 99₽",
+          "63 19",
+          "-20%",
+          "до 34 шт"
+        ]
+      },
+      "range": [
+        235.64,
+        335.64
+      ],
+      "samples": [
+        {
+          "title": "Горчица МАХЕЕВЪ Русская, 140г",
+          "url": "https://lenta.com/catalog/gorchica-hren-adzhika-20853/",
+          "cardPrice": 32.99,
+          "packGrams": 140,
+          "packQuantity": 140,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 235.64285714285717,
+          "regularPricePerKg": 301.35714285714283,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Горчица МАХЕЕВЪ Русская 140г",
+            "С Картой №1",
+            "32 99₽",
+            "42 19",
+            "-21%",
+            "до 46 шт"
+          ]
+        },
+        {
+          "title": "Горчица ЛЕНТА Русская, 200г",
+          "url": "https://lenta.com/catalog/gorchica-hren-adzhika-20853/",
+          "cardPrice": 49.99,
+          "packGrams": 200,
+          "packQuantity": 200,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 249.95000000000002,
+          "regularPricePerKg": 315.95,
+          "limitKg": null,
+          "conditions": [
+            "Доп.скидка 10% Наша марка"
+          ],
+          "evidence": [
+            "Доп.скидка 10% Наша марка",
+            "4.8",
+            "Горчица ЛЕНТА Русская 200г",
+            "С Картой №1",
+            "49 99₽",
+            "63 19",
+            "-20%",
+            "до 34 шт"
+          ]
+        },
+        {
+          "title": "Горчица МАХЕЕВЪ Мягкая, 140г",
+          "url": "https://lenta.com/catalog/gorchica-hren-adzhika-20853/",
+          "cardPrice": 46.99,
+          "packGrams": 140,
+          "packQuantity": 140,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 335.6428571428571,
+          "regularPricePerKg": 451.35714285714283,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.7",
+            "Горчица МАХЕЕВЪ Мягкая 140г",
+            "С Картой №1",
+            "46 99₽",
+            "63 19",
+            "-25%",
+            "до 23 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "ses": {
+      "price": 909.05,
+      "packGrams": 220,
+      "reference": {
+        "title": "Кунжут семена BONVIDA, 220г",
+        "url": "https://lenta.com/product/priprava-kunzhut-semena-rossiya-220g-496341/",
+        "cardPrice": 199.99,
+        "packGrams": 220,
+        "packQuantity": 220,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 909.0454545454546,
+        "regularPricePerKg": null,
+        "limitKg": null,
+        "conditions": [
+          "【39†Только в Ленте】 【220†Масло, майонез, соусы, специи】 【228†Специи, приправы】 Моно специи Товары до 99 рублей Бакалея Масло, приправы, соусы, майонез"
+        ],
+        "evidence": [
+          "Баллы за отзыв",
+          "Наша марка",
+          "# Кунжут семена BONVIDA, 220г",
+          "4.9",
+          "784 отзыва",
+          "05 октября 2026",
+          "Неплохой кунжут. Удобная упаковка",
+          "05 октября 2026",
+          "Кунжут как кунжут. Объем хороший",
+          "05 октября 2026",
+          "Хороший, вкусный кунжут😋 Хватает на долго!",
+          "05 октября 2026",
+          "Отличный кунжут, вкусный",
+          "04 октября 2026",
+          "Беру в салаты и на выпечку.",
+          "Вы можете оставить отзыв после покупки",
+          "В наличии 852 шт",
+          "【39†Масло, майонез, соусы, специи Категория】 BONVIDA Бренд",
+          "На 100г продукта",
+          "Белки – 19,4г, жиры – 48,7г, углеводы – 12,2г",
+          "Кунжут.",
+          "Бренд BONVIDA",
+          "Форма выпуска Бакалея Семена",
+          "Полное название товара Кунжут семена BONVIDA, 220г",
+          "Назначение Для придания вкуса и аромата блюдам, для выпечки и десертов",
+          "Энергетическая ценность 565 кКал/2366 кДж",
+          "Вид бакалейного изделия Кунжут",
+          "Производитель ООО «Стандарт»",
+          "Как приготовить - советы производителя Кунжутом посыпают готовые изделия — хлеб, печенья и булочки. Кунжутные семена добавляют во фруктовые и овощные салаты, макароны, салатные заправки.",
+          "Способ обработки Сушеный",
+          "Стандарт качества ТУ",
+          "Условия хранения В чистых, сухих, не зараженных насекомыми-вредителями складских помещениях, при температуре от нуля до +25 и относительной влажности воздуха не более 75%.",
+          "Вид упаковки Пластиковая банка",
+          "Тип продукта Приправа",
+          "Кухни мира Русская",
+          "Страна Россия",
+          "Артикул 496341",
+          "Кунжут семена BONVIDA – отличное дополнение для салатов и выпечки. Кроме того, семена кунжута обладают массой полезных свойств: они содержат витамины В, С, Е, минералы (кальций, магний, цинк, железо, фосфор). Также в кунжуте большое содержание растительной клетчатки и органических кислот, которые предотвращают заболевания пищеварительной системы.",
+          "Предложение не является публичной офертой",
+          "【39†Только в Ленте】 【220†Масло, майонез, соусы, специи】 【228†Специи, приправы】 Моно специи Товары до 99 рублей Бакалея Масло, приправы, соусы, майонез",
+          "С Картой №1",
+          "199,99 ₽ / шт",
+          "268,42 ₽ -25%",
+          "В корзину",
+          "Главная",
+          "Каталог",
+          "Карта №1",
+          "Корзина",
+          "Войти",
+          "Image",
+          "Стабильно низкие цены с Картой №1",
+          "Image",
+          "Удобная доставка",
+          "и самовывоз",
+          "Image",
+          "Всё под рукой",
+          "в приложении «Лента»"
+        ]
+      },
+      "range": [
+        909.05,
+        909.05
+      ],
+      "samples": [
+        {
+          "title": "Кунжут семена BONVIDA, 220г",
+          "url": "https://lenta.com/product/priprava-kunzhut-semena-rossiya-220g-496341/",
+          "cardPrice": 199.99,
+          "packGrams": 220,
+          "packQuantity": 220,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 909.0454545454546,
+          "regularPricePerKg": null,
+          "limitKg": null,
+          "conditions": [
+            "【39†Только в Ленте】 【220†Масло, майонез, соусы, специи】 【228†Специи, приправы】 Моно специи Товары до 99 рублей Бакалея Масло, приправы, соусы, майонез"
+          ],
+          "evidence": [
+            "Баллы за отзыв",
+            "Наша марка",
+            "# Кунжут семена BONVIDA, 220г",
+            "4.9",
+            "784 отзыва",
+            "05 октября 2026",
+            "Неплохой кунжут. Удобная упаковка",
+            "05 октября 2026",
+            "Кунжут как кунжут. Объем хороший",
+            "05 октября 2026",
+            "Хороший, вкусный кунжут😋 Хватает на долго!",
+            "05 октября 2026",
+            "Отличный кунжут, вкусный",
+            "04 октября 2026",
+            "Беру в салаты и на выпечку.",
+            "Вы можете оставить отзыв после покупки",
+            "В наличии 852 шт",
+            "【39†Масло, майонез, соусы, специи Категория】 BONVIDA Бренд",
+            "На 100г продукта",
+            "Белки – 19,4г, жиры – 48,7г, углеводы – 12,2г",
+            "Кунжут.",
+            "Бренд BONVIDA",
+            "Форма выпуска Бакалея Семена",
+            "Полное название товара Кунжут семена BONVIDA, 220г",
+            "Назначение Для придания вкуса и аромата блюдам, для выпечки и десертов",
+            "Энергетическая ценность 565 кКал/2366 кДж",
+            "Вид бакалейного изделия Кунжут",
+            "Производитель ООО «Стандарт»",
+            "Как приготовить - советы производителя Кунжутом посыпают готовые изделия — хлеб, печенья и булочки. Кунжутные семена добавляют во фруктовые и овощные салаты, макароны, салатные заправки.",
+            "Способ обработки Сушеный",
+            "Стандарт качества ТУ",
+            "Условия хранения В чистых, сухих, не зараженных насекомыми-вредителями складских помещениях, при температуре от нуля до +25 и относительной влажности воздуха не более 75%.",
+            "Вид упаковки Пластиковая банка",
+            "Тип продукта Приправа",
+            "Кухни мира Русская",
+            "Страна Россия",
+            "Артикул 496341",
+            "Кунжут семена BONVIDA – отличное дополнение для салатов и выпечки. Кроме того, семена кунжута обладают массой полезных свойств: они содержат витамины В, С, Е, минералы (кальций, магний, цинк, железо, фосфор). Также в кунжуте большое содержание растительной клетчатки и органических кислот, которые предотвращают заболевания пищеварительной системы.",
+            "Предложение не является публичной офертой",
+            "【39†Только в Ленте】 【220†Масло, майонез, соусы, специи】 【228†Специи, приправы】 Моно специи Товары до 99 рублей Бакалея Масло, приправы, соусы, майонез",
+            "С Картой №1",
+            "199,99 ₽ / шт",
+            "268,42 ₽ -25%",
+            "В корзину",
+            "Главная",
+            "Каталог",
+            "Карта №1",
+            "Корзина",
+            "Войти",
+            "Image",
+            "Стабильно низкие цены с Картой №1",
+            "Image",
+            "Удобная доставка",
+            "и самовывоз",
+            "Image",
+            "Всё под рукой",
+            "в приложении «Лента»"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "hon": {
+      "price": 399.98,
+      "packGrams": 500,
+      "reference": {
+        "title": "Мед натуральный РАЗНОТРАВИЕ, 500г",
+        "url": "https://lenta.com/catalog/med-21464/",
+        "cardPrice": 199.99,
+        "packGrams": 500,
+        "packQuantity": 500,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 399.98,
+        "regularPricePerKg": 505.37999999999994,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.5",
+          "Мед натуральный РАЗНОТРАВИЕ 500г",
+          "С Картой №1",
+          "199 99₽",
+          "252 69",
+          "-20%"
+        ]
+      },
+      "range": [
+        299.98,
+        437.13
+      ],
+      "samples": [
+        {
+          "title": "Мед натуральный цветочный Майский, 500г",
+          "url": "https://lenta.com/catalog/med-21464/",
+          "cardPrice": 149.99,
+          "packGrams": 500,
+          "packQuantity": 500,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 299.98,
+          "regularPricePerKg": 421.18,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.8",
+            "Мед натуральный цветочный Майский 500г",
+            "С Картой №1",
+            "149 99₽",
+            "210 59",
+            "-28%"
+          ]
+        },
+        {
+          "title": "Мед натуральный РАЗНОТРАВИЕ, 500г",
+          "url": "https://lenta.com/catalog/med-21464/",
+          "cardPrice": 199.99,
+          "packGrams": 500,
+          "packQuantity": 500,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 399.98,
+          "regularPricePerKg": 505.37999999999994,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.5",
+            "Мед натуральный РАЗНОТРАВИЕ 500г",
+            "С Картой №1",
+            "199 99₽",
+            "252 69",
+            "-20%"
+          ]
+        },
+        {
+          "title": "Мед натуральный ЛЕСНЫЕ УГОДЬЯ разнотравье, с гречихой, 700г",
+          "url": "https://lenta.com/catalog/med-21464/",
+          "cardPrice": 305.99,
+          "packGrams": 700,
+          "packQuantity": 700,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 437.12857142857143,
+          "regularPricePerKg": 526.4142857142857,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.7",
+            "Мед натуральный ЛЕСНЫЕ УГОДЬЯ разнотравье, с гречихой 700г",
+            "С Картой №1",
+            "305 99₽",
+            "368 49",
+            "-16%"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "koh": {
+      "price": 299.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Капуста кольраби, весовая",
+        "url": "https://lenta.com/catalog/ovoshchi-frukty-144/?filter.naimenovanie-318=kapusta-7821316",
+        "cardPrice": 299.99,
+        "packGrams": null,
+        "packQuantity": 0.5,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 299.99,
+        "regularPricePerKg": null,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.7",
+          "Капуста кольраби, весовая 0.5 кг",
+          "299,99 ₽ за 1 кг",
+          "С Картой №1",
+          "150,00 ₽",
+          "157,90 ₽",
+          "365 ДНЕЙБЕЛОРУЧКАПрочие ТоварыЛЕНТАФЭГБЕЛАЯ ДАЧАТРАДИЦИИ ВКУСАСВОЙ УРОЖАЙ0400450500300350365630650700790900КапустаАрахисСмесьЯблокиКартофельСмесь овощнаяМиндальГрибыКешьюМорковьТоматыВиноградФисташкиЦукатыИзюмЛукОгурцыСалатПерецАвокадоКивиМалинаФиникиФруктовый десертЧеснокЯблокоГолубикаКурагаМангоФундукГрушаКлубникаКоктейльГрецкий орехИмбирьКапуста квашенаяКукурузаОрех грецкийПетрушкаЧерносливЧурчхелаАпельсиныАрбузБазиликБрусникаВишняКинзаОблепихаУкропФасольХурмаАджикаАнанасАссортиБананыИнжирКлюкваКрем-супМаракуйяНабор овощейПомелоРедисСвеклаХренодерЧипсы кокосовыеГранадиллаГранатыДыняКапуста цветнаяКокосКумкватЛимоныЛонганЛук зеленыйМятаНаборНапитокОгурцы соленыеОрех макадамияОрехи кедровыеПапайяСливаСмесь компотнаяСмесь орехов и сухофруктовСмесь ореховаяСмородинаСоусСпаржаТыкваЧайЧерникаЧипсыАбрикосАбрикосыАвокадо ХассАйваАссорти овощноеБаклажаныБататБразильский орехБрокколиГорошекГранатГрейпфрутыГрибГруздиГруша ХрустальнаяГрушиДжекфрутЕжевикаИзюм темныйКабачкиКабачки грунтовыеКапуста брокколиКейлКинза/кориандрКольца апельсиновыеКрем-суп овощнойКрем-суп тыквенныйЛаймЛаймыЛимон-ИмбирьЛобиМанго сушеноеМандаринМандариныМаракуяМиксМорсМорская капустаНабор зелениНабор овощей и травНабор свежей зелениОвощиОрехиОрехи грецкиеОснова для коктейляОснова для напиткаПитахайяПрованский миксРамбутанРедькаРозмаринСалатный миксСмесь грибнаяСмесь из овощейСмесь салатнаяСмесь сладкаяСмесь фруктоваяСмесь фруктово-ореховаяСмесь ягоднаяСотэСтебель сельдереяСтики сельдереяСупСуп томатныйСуп-пюреТоматФейхоаЦукаты сушеныеЧерешняЧипсы банановыеШпинатЯгодный миксЯгодный мини миксЯдра фисташкиПластиковая упаковкаПластиковая банкаМягкая упаковкаПакет-пленкаПакет-подушкаПластиковый контейнерФлоу-пакРоссияИмпорт",
+          "Главная",
+          "Каталог",
+          "Карта №1",
+          "Корзина",
+          "Войти",
+          "Image",
+          "Стабильно низкие цены с Картой №1",
+          "Image",
+          "Удобная доставка",
+          "и самовывоз",
+          "Image",
+          "Всё под рукой",
+          "в приложении «Лента»"
+        ]
+      },
+      "range": [
+        299.99,
+        299.99
+      ],
+      "samples": [
+        {
+          "title": "Капуста кольраби, весовая",
+          "url": "https://lenta.com/catalog/ovoshchi-frukty-144/?filter.naimenovanie-318=kapusta-7821316",
+          "cardPrice": 299.99,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 299.99,
+          "regularPricePerKg": null,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.7",
+            "Капуста кольраби, весовая 0.5 кг",
+            "299,99 ₽ за 1 кг",
+            "С Картой №1",
+            "150,00 ₽",
+            "157,90 ₽",
+            "365 ДНЕЙБЕЛОРУЧКАПрочие ТоварыЛЕНТАФЭГБЕЛАЯ ДАЧАТРАДИЦИИ ВКУСАСВОЙ УРОЖАЙ0400450500300350365630650700790900КапустаАрахисСмесьЯблокиКартофельСмесь овощнаяМиндальГрибыКешьюМорковьТоматыВиноградФисташкиЦукатыИзюмЛукОгурцыСалатПерецАвокадоКивиМалинаФиникиФруктовый десертЧеснокЯблокоГолубикаКурагаМангоФундукГрушаКлубникаКоктейльГрецкий орехИмбирьКапуста квашенаяКукурузаОрех грецкийПетрушкаЧерносливЧурчхелаАпельсиныАрбузБазиликБрусникаВишняКинзаОблепихаУкропФасольХурмаАджикаАнанасАссортиБананыИнжирКлюкваКрем-супМаракуйяНабор овощейПомелоРедисСвеклаХренодерЧипсы кокосовыеГранадиллаГранатыДыняКапуста цветнаяКокосКумкватЛимоныЛонганЛук зеленыйМятаНаборНапитокОгурцы соленыеОрех макадамияОрехи кедровыеПапайяСливаСмесь компотнаяСмесь орехов и сухофруктовСмесь ореховаяСмородинаСоусСпаржаТыкваЧайЧерникаЧипсыАбрикосАбрикосыАвокадо ХассАйваАссорти овощноеБаклажаныБататБразильский орехБрокколиГорошекГранатГрейпфрутыГрибГруздиГруша ХрустальнаяГрушиДжекфрутЕжевикаИзюм темныйКабачкиКабачки грунтовыеКапуста брокколиКейлКинза/кориандрКольца апельсиновыеКрем-суп овощнойКрем-суп тыквенныйЛаймЛаймыЛимон-ИмбирьЛобиМанго сушеноеМандаринМандариныМаракуяМиксМорсМорская капустаНабор зелениНабор овощей и травНабор свежей зелениОвощиОрехиОрехи грецкиеОснова для коктейляОснова для напиткаПитахайяПрованский миксРамбутанРедькаРозмаринСалатный миксСмесь грибнаяСмесь из овощейСмесь салатнаяСмесь сладкаяСмесь фруктоваяСмесь фруктово-ореховаяСмесь ягоднаяСотэСтебель сельдереяСтики сельдереяСупСуп томатныйСуп-пюреТоматФейхоаЦукаты сушеныеЧерешняЧипсы банановыеШпинатЯгодный миксЯгодный мини миксЯдра фисташкиПластиковая упаковкаПластиковая банкаМягкая упаковкаПакет-пленкаПакет-подушкаПластиковый контейнерФлоу-пакРоссияИмпорт",
+            "Главная",
+            "Каталог",
+            "Карта №1",
+            "Корзина",
+            "Войти",
+            "Image",
+            "Стабильно низкие цены с Картой №1",
+            "Image",
+            "Удобная доставка",
+            "и самовывоз",
+            "Image",
+            "Всё под рукой",
+            "в приложении «Лента»"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "cil": {
+      "price": 1699.9,
+      "packGrams": 100,
+      "reference": {
+        "title": "Кинза свежая, 100г",
+        "url": "https://lenta.com/catalog/zelen-i-salaty-897/?filter.vesobem-303=-7769190",
+        "cardPrice": 169.99,
+        "packGrams": 100,
+        "packQuantity": 100,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 1699.9,
+        "regularPricePerKg": 1999.9,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв",
+          "4.8",
+          "Кинза свежая 100г",
+          "С Картой №1",
+          "169 99₽",
+          "199 99",
+          "-15%",
+          "до 37 шт"
+        ]
+      },
+      "range": [
+        1699.9,
+        1699.9
+      ],
+      "samples": [
+        {
+          "title": "Кинза свежая, 100г",
+          "url": "https://lenta.com/catalog/zelen-i-salaty-897/?filter.vesobem-303=-7769190",
+          "cardPrice": 169.99,
+          "packGrams": 100,
+          "packQuantity": 100,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 1699.9,
+          "regularPricePerKg": 1999.9,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.8",
+            "Кинза свежая 100г",
+            "С Картой №1",
+            "169 99₽",
+            "199 99",
+            "-15%",
+            "до 37 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "buck": {
+      "price": 99.99,
+      "packGrams": 900,
+      "reference": {
+        "title": "Крупа гречневая АГРО-АЛЬЯНС Экстра Элитная высший сорт, 900г",
+        "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+        "cardPrice": 89.99,
+        "packGrams": 900,
+        "packQuantity": 900,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 99.98888888888888,
+        "regularPricePerKg": 152.04444444444445,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Крупа гречневая АГРО-АЛЬЯНС Экстра Элитная высший сорт 900г",
+          "С Картой №1",
+          "89 99₽",
+          "136 84",
+          "-34%",
+          "до 102 шт"
+        ]
+      },
+      "range": [
+        69.99,
+        155.54
+      ],
+      "samples": [
+        {
+          "title": "Крупа гречневая ЛЕНТА, 1кг",
+          "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+          "cardPrice": 69.99,
+          "packGrams": 1000,
+          "packQuantity": 1,
+          "packUnit": "кг",
+          "weighted": false,
+          "pricePerKg": 69.99,
+          "regularPricePerKg": 89.47,
+          "limitKg": null,
+          "conditions": [
+            "Доп.скидка 10% Баллы за отзыв"
+          ],
+          "evidence": [
+            "Доп.скидка 10% Баллы за отзыв",
+            "4.9",
+            "Крупа гречневая ЛЕНТА 1000г",
+            "С Картой №1",
+            "69 99₽",
+            "89 47",
+            "-21%",
+            "до 253 шт"
+          ]
+        },
+        {
+          "title": "Крупа гречневая АГРО-АЛЬЯНС Экстра Элитная высший сорт, 900г",
+          "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+          "cardPrice": 89.99,
+          "packGrams": 900,
+          "packQuantity": 900,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 99.98888888888888,
+          "regularPricePerKg": 152.04444444444445,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Крупа гречневая АГРО-АЛЬЯНС Экстра Элитная высший сорт 900г",
+            "С Картой №1",
+            "89 99₽",
+            "136 84",
+            "-34%",
+            "до 102 шт"
+          ]
+        },
+        {
+          "title": "Крупа гречневая МИСТРАЛЬ ядрица высший сорт, 900г",
+          "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+          "cardPrice": 139.99,
+          "packGrams": 900,
+          "packQuantity": 900,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 155.54444444444445,
+          "regularPricePerKg": 163.76666666666665,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Крупа гречневая МИСТРАЛЬ ядрица высший сорт 900г",
+            "С Картой №1",
+            "139 99₽",
+            "147 39",
+            "до 259 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "rice": {
+      "price": 107.77,
+      "packGrams": 900,
+      "reference": {
+        "title": "Рис для плова АГРО-АЛЬЯНС Экстра, 900г",
+        "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+        "cardPrice": 96.99,
+        "packGrams": 900,
+        "packQuantity": 900,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 107.76666666666667,
+        "regularPricePerKg": 187.13333333333333,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Рис для плова АГРО-АЛЬЯНС Экстра 900г",
+          "С Картой №1",
+          "96 99₽",
+          "168 42",
+          "-42%",
+          "до 156 шт"
+        ]
+      },
+      "range": [
+        107.77,
+        199.99
+      ],
+      "samples": [
+        {
+          "title": "Рис для плова АГРО-АЛЬЯНС Экстра, 900г",
+          "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+          "cardPrice": 96.99,
+          "packGrams": 900,
+          "packQuantity": 900,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 107.76666666666667,
+          "regularPricePerKg": 187.13333333333333,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Рис для плова АГРО-АЛЬЯНС Экстра 900г",
+            "С Картой №1",
+            "96 99₽",
+            "168 42",
+            "-42%",
+            "до 156 шт"
+          ]
+        },
+        {
+          "title": "Рис НАЦИОНАЛЬ Азиатский 1-й сорт, 900г",
+          "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+          "cardPrice": 179.99,
+          "packGrams": 900,
+          "packQuantity": 900,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 199.9888888888889,
+          "regularPricePerKg": 269,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.7",
+            "Рис НАЦИОНАЛЬ Азиатский 1-й сорт 900г",
+            "С Картой №1",
+            "179 99₽",
+            "242 10",
+            "-25%",
+            "до 18 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "brr": {
+      "price": 446.79,
+      "packGrams": 470,
+      "reference": {
+        "title": "Рис TAMASHAE MIADI PREMIUM Бурый, 470г",
+        "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+        "cardPrice": 209.99,
+        "packGrams": 470,
+        "packQuantity": 470,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 446.7872340425532,
+        "regularPricePerKg": 671.8723404255319,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.6",
+          "Рис TAMASHAE MIADI PREMIUM Бурый 470г",
+          "С Картой №1",
+          "209 99₽",
+          "315 78",
+          "-33%",
+          "до 16 шт"
+        ]
+      },
+      "range": [
+        446.79,
+        446.79
+      ],
+      "samples": [
+        {
+          "title": "Рис TAMASHAE MIADI PREMIUM Бурый, 470г",
+          "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+          "cardPrice": 209.99,
+          "packGrams": 470,
+          "packQuantity": 470,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 446.7872340425532,
+          "regularPricePerKg": 671.8723404255319,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.6",
+            "Рис TAMASHAE MIADI PREMIUM Бурый 470г",
+            "С Картой №1",
+            "209 99₽",
+            "315 78",
+            "-33%",
+            "до 16 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "cus": {
+      "price": 222.2,
+      "packGrams": 450,
+      "reference": {
+        "title": "Крупа пшеничная PREMIUM CLUB Кускус, 450г",
+        "url": "https://lenta.com/catalog/drugie-krupy-21255 ; rewritten summary of https://lenta.com/catalog/drugie-krupy-21255/",
+        "cardPrice": 99.99,
+        "packGrams": 450,
+        "packQuantity": 450,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 222.2,
+        "regularPricePerKg": null,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв Наша марка",
+          "5.0",
+          "Крупа пшеничная PREMIUM CLUB Кускус 450г",
+          "Цена за 1 шт",
+          "С Картой №1",
+          "99,99 ₽",
+          "126,31 ₽ -20%"
+        ]
+      },
+      "range": [
+        222.2,
+        355.53
+      ],
+      "samples": [
+        {
+          "title": "Крупа пшеничная PREMIUM CLUB Кускус, 450г",
+          "url": "https://lenta.com/catalog/drugie-krupy-21255 ; rewritten summary of https://lenta.com/catalog/drugie-krupy-21255/",
+          "cardPrice": 99.99,
+          "packGrams": 450,
+          "packQuantity": 450,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 222.2,
+          "regularPricePerKg": null,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "5.0",
+            "Крупа пшеничная PREMIUM CLUB Кускус 450г",
+            "Цена за 1 шт",
+            "С Картой №1",
+            "99,99 ₽",
+            "126,31 ₽ -20%"
+          ]
+        },
+        {
+          "title": "Кускус АГРО-АЛЬЯНС Экстра, 450г",
+          "url": "https://lenta.com/catalog/drugie-krupy-21255 ; rewritten summary of https://lenta.com/catalog/drugie-krupy-21255/",
+          "cardPrice": 159.99,
+          "packGrams": 450,
+          "packQuantity": 450,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 355.53333333333336,
+          "regularPricePerKg": null,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Кускус АГРО-АЛЬЯНС Экстра 450г",
+            "Цена за 1 шт",
+            "С Картой №1",
+            "159,99 ₽",
+            "178,94 ₽ -10%"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "bul": {
+      "price": 166.64,
+      "packGrams": 450,
+      "reference": {
+        "title": "Крупа пшеничная PREMIUM CLUB Булгур, 450г",
+        "url": "https://lenta.com/catalog/drugie-krupy-21255 ; rewritten summary of https://lenta.com/catalog/drugie-krupy-21255/",
+        "cardPrice": 74.99,
+        "packGrams": 450,
+        "packQuantity": 450,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 166.64444444444442,
+        "regularPricePerKg": null,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв Наша марка",
+          "5.0",
+          "Крупа пшеничная PREMIUM CLUB Булгур 450г",
+          "Цена за 1 шт",
+          "С Картой №1",
+          "74,99 ₽",
+          "105,29 ₽ -28%"
+        ]
+      },
+      "range": [
+        166.64,
+        222.2
+      ],
+      "samples": [
+        {
+          "title": "Крупа пшеничная PREMIUM CLUB Булгур, 450г",
+          "url": "https://lenta.com/catalog/drugie-krupy-21255 ; rewritten summary of https://lenta.com/catalog/drugie-krupy-21255/",
+          "cardPrice": 74.99,
+          "packGrams": 450,
+          "packQuantity": 450,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 166.64444444444442,
+          "regularPricePerKg": null,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "5.0",
+            "Крупа пшеничная PREMIUM CLUB Булгур 450г",
+            "Цена за 1 шт",
+            "С Картой №1",
+            "74,99 ₽",
+            "105,29 ₽ -28%"
+          ]
+        },
+        {
+          "title": "Булгур НАЦИОНАЛЬ, 450г",
+          "url": "https://lenta.com/catalog/drugie-krupy-21255 ; rewritten summary of https://lenta.com/catalog/drugie-krupy-21255/",
+          "cardPrice": 99.99,
+          "packGrams": 450,
+          "packQuantity": 450,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 222.2,
+          "regularPricePerKg": null,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Булгур НАЦИОНАЛЬ 450г",
+            "Цена за 1 шт",
+            "С Картой №1",
+            "99,99 ₽",
+            "115,79 ₽ -13%"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "oat": {
+      "price": 244.42,
+      "packGrams": 450,
+      "reference": {
+        "title": "Хлопья овсяные АНГСТРЕМ Геркулес, 450г",
+        "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+        "cardPrice": 109.99,
+        "packGrams": 450,
+        "packQuantity": 450,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 244.42222222222222,
+        "regularPricePerKg": 304.0888888888889,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Хлопья овсяные АНГСТРЕМ Геркулес 450г",
+          "С Картой №1",
+          "109 99₽",
+          "136 84",
+          "-19%",
+          "до 18 шт"
+        ]
+      },
+      "range": [
+        244.42,
+        377.76
+      ],
+      "samples": [
+        {
+          "title": "Хлопья овсяные АНГСТРЕМ Геркулес, 450г",
+          "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+          "cardPrice": 109.99,
+          "packGrams": 450,
+          "packQuantity": 450,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 244.42222222222222,
+          "regularPricePerKg": 304.0888888888889,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Хлопья овсяные АНГСТРЕМ Геркулес 450г",
+            "С Картой №1",
+            "109 99₽",
+            "136 84",
+            "-19%",
+            "до 18 шт"
+          ]
+        },
+        {
+          "title": "Хлопья овсяные FITERGY цельнозерновые, 450г",
+          "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+          "cardPrice": 169.99,
+          "packGrams": 450,
+          "packQuantity": 450,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 377.7555555555556,
+          "regularPricePerKg": 466.64444444444445,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "5.0",
+            "Хлопья овсяные FITERGY цельнозерновые 450г",
+            "С Картой №1",
+            "169 99₽",
+            "209 99",
+            "-19%",
+            "до 17 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "qui": {
+      "price": 374.98,
+      "packGrams": 400,
+      "reference": {
+        "title": "Киноа бежевая PREMIUM CLUB, 400г",
+        "url": "https://lenta.com/catalog/drugie-krupy-21255 ; rewritten summary of https://lenta.com/catalog/drugie-krupy-21255/",
+        "cardPrice": 149.99,
+        "packGrams": 400,
+        "packQuantity": 400,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 374.975,
+        "regularPricePerKg": null,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Много белка Баллы за отзыв",
+          "4.7",
+          "Киноа бежевая PREMIUM CLUB 400г",
+          "Цена за 1 шт",
+          "С Картой №1",
+          "149,99 ₽",
+          "210,52 ₽ -28%"
+        ]
+      },
+      "range": [
+        374.98,
+        411.09
+      ],
+      "samples": [
+        {
+          "title": "Киноа бежевая PREMIUM CLUB, 400г",
+          "url": "https://lenta.com/catalog/drugie-krupy-21255 ; rewritten summary of https://lenta.com/catalog/drugie-krupy-21255/",
+          "cardPrice": 149.99,
+          "packGrams": 400,
+          "packQuantity": 400,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 374.975,
+          "regularPricePerKg": null,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Много белка Баллы за отзыв",
+            "4.7",
+            "Киноа бежевая PREMIUM CLUB 400г",
+            "Цена за 1 шт",
+            "С Картой №1",
+            "149,99 ₽",
+            "210,52 ₽ -28%"
+          ]
+        },
+        {
+          "title": "Киноа АГРО-АЛЬЯНС Экстра, 450г",
+          "url": "https://lenta.com/catalog/drugie-krupy-21255 ; rewritten summary of https://lenta.com/catalog/drugie-krupy-21255/",
+          "cardPrice": 184.99,
+          "packGrams": 450,
+          "packQuantity": 450,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 411.0888888888889,
+          "regularPricePerKg": null,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Много белка",
+            "4.7",
+            "Киноа АГРО-АЛЬЯНС Экстра 450г",
+            "Цена за 1 шт",
+            "С Картой №1",
+            "184,99 ₽",
+            "263,19 ₽ -29%"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "apple": {
+      "price": 124.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Яблоки Гренни Смит, весовые",
+        "url": "https://lenta.com/catalog/yabloki-ajjva-18244/",
+        "cardPrice": 124.99,
+        "packGrams": null,
+        "packQuantity": 0.7,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 124.99,
+        "regularPricePerKg": 184.2,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.8",
+          "Яблоки Гренни Смит, весовые 0.7 кг",
+          "124 99 ₽ за 1 кг",
+          "С Картой №1",
+          "87₽",
+          "128 94",
+          "-32%",
+          "до 47.6 кг"
+        ]
+      },
+      "range": [
+        109.99,
+        129.99
+      ],
+      "samples": [
+        {
+          "title": "Яблоки Гольден, весовые",
+          "url": "https://lenta.com/catalog/yabloki-ajjva-18244/",
+          "cardPrice": 109.99,
+          "packGrams": null,
+          "packQuantity": 0.7,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 109.99,
+          "regularPricePerKg": 168.4142857142857,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Яблоки Гольден, весовые 0.7 кг",
+            "109 99 ₽ за 1 кг",
+            "С Картой №1",
+            "76₽",
+            "117 89",
+            "-34%",
+            "до 3.5 кг"
+          ]
+        },
+        {
+          "title": "Яблоки Гренни Смит, весовые",
+          "url": "https://lenta.com/catalog/yabloki-ajjva-18244/",
+          "cardPrice": 124.99,
+          "packGrams": null,
+          "packQuantity": 0.7,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 124.99,
+          "regularPricePerKg": 184.2,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Яблоки Гренни Смит, весовые 0.7 кг",
+            "124 99 ₽ за 1 кг",
+            "С Картой №1",
+            "87₽",
+            "128 94",
+            "-32%",
+            "до 47.6 кг"
+          ]
+        },
+        {
+          "title": "Яблоки Гала, весовые",
+          "url": "https://lenta.com/catalog/yabloki-ajjva-18244/",
+          "cardPrice": 129.99,
+          "packGrams": null,
+          "packQuantity": 0.7,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 129.99,
+          "regularPricePerKg": 157.88571428571427,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Яблоки Гала, весовые 0.7 кг",
+            "129 99 ₽ за 1 кг",
+            "С Картой №1",
+            "90₽",
+            "110 52",
+            "-17%",
+            "до 410.2 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "ora": {
+      "price": 139.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Апельсины, весовые",
+        "url": "https://lenta.com/catalog/frukty-153/?filter.sort-221=1-jj-sort-6747458",
+        "cardPrice": 139.99,
+        "packGrams": null,
+        "packQuantity": 0.7,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 139.99,
+        "regularPricePerKg": 189.47142857142856,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.7",
+          "Апельсины, весовые 0.7 кг",
+          "139 99 ₽ за 1 кг",
+          "С Картой №1",
+          "97₽",
+          "132 63",
+          "-26%",
+          "до 156.1 кг"
+        ]
+      },
+      "range": [
+        139.99,
+        179.99
+      ],
+      "samples": [
+        {
+          "title": "Апельсины, весовые",
+          "url": "https://lenta.com/catalog/frukty-153/?filter.sort-221=1-jj-sort-6747458",
+          "cardPrice": 139.99,
+          "packGrams": null,
+          "packQuantity": 0.7,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 139.99,
+          "regularPricePerKg": 189.47142857142856,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.7",
+            "Апельсины, весовые 0.7 кг",
+            "139 99 ₽ за 1 кг",
+            "С Картой №1",
+            "97₽",
+            "132 63",
+            "-26%",
+            "до 156.1 кг"
+          ]
+        },
+        {
+          "title": "Апельсины отборные Навел, весовые",
+          "url": "https://lenta.com/catalog/frukty-153/?filter.sort-221=1-jj-sort-6747458",
+          "cardPrice": 179.99,
+          "packGrams": null,
+          "packQuantity": 0.7,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 179.99,
+          "regularPricePerKg": 210.5857142857143,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "ВАУ-находка",
+            "4.5",
+            "Апельсины отборные Навел, весовые 0.7 кг",
+            "179 99 ₽ за 1 кг",
+            "С Картой №1",
+            "125₽",
+            "147 41",
+            "-14%",
+            "до 70 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "grf": {
+      "price": 154.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Грейпфруты, весовые",
+        "url": "https://lenta.com/catalog/frukty-153/?filter.sort-221=1-jj-sort-6747458",
+        "cardPrice": 154.99,
+        "packGrams": null,
+        "packQuantity": 0.8,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 154.99,
+        "regularPricePerKg": 231.575,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.8",
+          "Грейпфруты, весовые 0.8 кг",
+          "154 99 ₽ за 1 кг",
+          "С Картой №1",
+          "123₽",
+          "185 26",
+          "-33%",
+          "до 4 кг"
+        ]
+      },
+      "range": [
+        154.99,
+        154.99
+      ],
+      "samples": [
+        {
+          "title": "Грейпфруты, весовые",
+          "url": "https://lenta.com/catalog/frukty-153/?filter.sort-221=1-jj-sort-6747458",
+          "cardPrice": 154.99,
+          "packGrams": null,
+          "packQuantity": 0.8,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 154.99,
+          "regularPricePerKg": 231.575,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.8",
+            "Грейпфруты, весовые 0.8 кг",
+            "154 99 ₽ за 1 кг",
+            "С Картой №1",
+            "123₽",
+            "185 26",
+            "-33%",
+            "до 4 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "pear": {
+      "price": 154.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Груши Пакхам, весовые",
+        "url": "https://lenta.com/catalog/frukty-153/?filter.sort-221=1-jj-sort-6747458",
+        "cardPrice": 154.99,
+        "packGrams": null,
+        "packQuantity": 0.5,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 154.99,
+        "regularPricePerKg": 242.2,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.7",
+          "Груши Пакхам, весовые 0.5 кг",
+          "154 99 ₽ за 1 кг",
+          "С Картой №1",
+          "77₽",
+          "121 10",
+          "-36%",
+          "до 130 кг"
+        ]
+      },
+      "range": [
+        154.99,
+        154.99
+      ],
+      "samples": [
+        {
+          "title": "Груши Пакхам, весовые",
+          "url": "https://lenta.com/catalog/frukty-153/?filter.sort-221=1-jj-sort-6747458",
+          "cardPrice": 154.99,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 154.99,
+          "regularPricePerKg": 242.2,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.7",
+            "Груши Пакхам, весовые 0.5 кг",
+            "154 99 ₽ за 1 кг",
+            "С Картой №1",
+            "77₽",
+            "121 10",
+            "-36%",
+            "до 130 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "lime": {
+      "price": 539.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Лайм, весовой",
+        "url": "https://lenta.com/catalog/frukty-153/?filter.sort-221=1-jj-sort-6747458",
+        "cardPrice": 539.99,
+        "packGrams": null,
+        "packQuantity": 0.15,
+        "packUnit": "кг",
+        "weighted": true,
+        "pricePerKg": 539.99,
+        "regularPricePerKg": 568.4,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.9",
+          "Лайм, весовой 0.15 кг",
+          "539 99 ₽ за 1 кг",
+          "С Картой №1",
+          "80₽",
+          "85 26",
+          "до 7.2 кг"
+        ]
+      },
+      "range": [
+        539.99,
+        539.99
+      ],
+      "samples": [
+        {
+          "title": "Лайм, весовой",
+          "url": "https://lenta.com/catalog/frukty-153/?filter.sort-221=1-jj-sort-6747458",
+          "cardPrice": 539.99,
+          "packGrams": null,
+          "packQuantity": 0.15,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 539.99,
+          "regularPricePerKg": 568.4,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.9",
+            "Лайм, весовой 0.15 кг",
+            "539 99 ₽ за 1 кг",
+            "С Картой №1",
+            "80₽",
+            "85 26",
+            "до 7.2 кг"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "prs": {
+      "price": 1099.9,
+      "packGrams": 100,
+      "reference": {
+        "title": "Петрушка ЛЕНТА свежая, 100г",
+        "url": "https://lenta.com/catalog/zelen-i-salaty-897/?filter.vesobem-303=-7769190",
+        "cardPrice": 109.99,
+        "packGrams": 100,
+        "packQuantity": 100,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 1099.8999999999999,
+        "regularPricePerKg": 1473.8999999999999,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв",
+          "4.9",
+          "Петрушка ЛЕНТА свежая 100г",
+          "С Картой №1",
+          "109 99₽",
+          "147 39",
+          "-25%",
+          "до 35 шт"
+        ]
+      },
+      "range": [
+        1099.9,
+        1399.8
+      ],
+      "samples": [
+        {
+          "title": "Петрушка ЛЕНТА свежая, 100г",
+          "url": "https://lenta.com/catalog/zelen-i-salaty-897/?filter.vesobem-303=-7769190",
+          "cardPrice": 109.99,
+          "packGrams": 100,
+          "packQuantity": 100,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 1099.8999999999999,
+          "regularPricePerKg": 1473.8999999999999,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.9",
+            "Петрушка ЛЕНТА свежая 100г",
+            "С Картой №1",
+            "109 99₽",
+            "147 39",
+            "-25%",
+            "до 35 шт"
+          ]
+        },
+        {
+          "title": "Петрушка ЛЕНТА свежая, 50г",
+          "url": "https://lenta.com/catalog/petrushka-18267/",
+          "cardPrice": 69.99,
+          "packGrams": 50,
+          "packQuantity": 50,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 1399.8,
+          "regularPricePerKg": null,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.8",
+            "Петрушка ЛЕНТА свежая 50г",
+            "Цена за 1 шт",
+            "С Картой №1",
+            "69,99 ₽",
+            "89,49 ₽ -21%"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "dil": {
+      "price": 1099.9,
+      "packGrams": 100,
+      "reference": {
+        "title": "Укроп ЛЕНТА свежий, 100г",
+        "url": "https://lenta.com/catalog/zelen-i-salaty-897/?filter.vesobem-303=-7769190",
+        "cardPrice": 109.99,
+        "packGrams": 100,
+        "packQuantity": 100,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 1099.8999999999999,
+        "regularPricePerKg": 1473.8999999999999,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Баллы за отзыв",
+          "4.9",
+          "Укроп ЛЕНТА свежий 100г",
+          "С Картой №1",
+          "109 99₽",
+          "147 39",
+          "-25%",
+          "до 118 шт"
+        ]
+      },
+      "range": [
+        1099.9,
+        1099.9
+      ],
+      "samples": [
+        {
+          "title": "Укроп ЛЕНТА свежий, 100г",
+          "url": "https://lenta.com/catalog/zelen-i-salaty-897/?filter.vesobem-303=-7769190",
+          "cardPrice": 109.99,
+          "packGrams": 100,
+          "packQuantity": 100,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 1099.8999999999999,
+          "regularPricePerKg": 1473.8999999999999,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.9",
+            "Укроп ЛЕНТА свежий 100г",
+            "С Картой №1",
+            "109 99₽",
+            "147 39",
+            "-25%",
+            "до 118 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "nap": {
+      "price": 109.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Капуста китайская/пекинская, весовая",
+        "url": "https://lenta.com/catalog/ovoshchi-frukty-144/?filter.naimenovanie-318=kapusta-7821316",
+        "cardPrice": 109.99,
+        "packGrams": null,
+        "packQuantity": null,
+        "packUnit": null,
+        "weighted": true,
+        "pricePerKg": 109.99,
+        "regularPricePerKg": null,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "4.7",
+          "Капуста китайская/пекинская, весовая",
+          "Цена за 1 кг",
+          "С Картой №1",
+          "109,99 ₽",
+          "178,99 ₽ -38%"
+        ]
+      },
+      "range": [
+        109.99,
+        109.99
+      ],
+      "samples": [
+        {
+          "title": "Капуста китайская/пекинская, весовая",
+          "url": "https://lenta.com/catalog/ovoshchi-frukty-144/?filter.naimenovanie-318=kapusta-7821316",
+          "cardPrice": 109.99,
+          "packGrams": null,
+          "packQuantity": null,
+          "packUnit": null,
+          "weighted": true,
+          "pricePerKg": 109.99,
+          "regularPricePerKg": null,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "4.7",
+            "Капуста китайская/пекинская, весовая",
+            "Цена за 1 кг",
+            "С Картой №1",
+            "109,99 ₽",
+            "178,99 ₽ -38%"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "beef": {
+      "price": 3266.63,
+      "packGrams": 300,
+      "reference": {
+        "title": "Стейк из мраморной говядины PRIMEBEEF Топ-Сирлойн, 300г",
+        "url": "https://lenta.com/catalog/govyadina-418/",
+        "cardPrice": 979.99,
+        "packGrams": 300,
+        "packQuantity": 300,
+        "packUnit": "г",
+        "weighted": false,
+        "pricePerKg": 3266.6333333333337,
+        "regularPricePerKg": 4207.033333333334,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "Стейк из мраморной говядины PRIMEBEEF Топ-Сирлойн 300г",
+          "С Картой №1",
+          "979 99₽",
+          "1 262 11",
+          "-22%",
+          "до 1 шт"
+        ]
+      },
+      "range": [
+        3266.63,
+        3266.63
+      ],
+      "samples": [
+        {
+          "title": "Стейк из мраморной говядины PRIMEBEEF Топ-Сирлойн, 300г",
+          "url": "https://lenta.com/catalog/govyadina-418/",
+          "cardPrice": 979.99,
+          "packGrams": 300,
+          "packQuantity": 300,
+          "packUnit": "г",
+          "weighted": false,
+          "pricePerKg": 3266.6333333333337,
+          "regularPricePerKg": 4207.033333333334,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Стейк из мраморной говядины PRIMEBEEF Топ-Сирлойн 300г",
+            "С Картой №1",
+            "979 99₽",
+            "1 262 11",
+            "-22%",
+            "до 1 шт"
+          ]
+        }
+      ],
+      "note": null
+    },
+    "pork": {
+      "price": 529.99,
+      "packGrams": null,
+      "reference": {
+        "title": "Вырезка из свинины ОСТАНКИНО категории А, бескостная, весовая",
+        "url": "https://lenta.com/catalog/svinina-419/",
+        "cardPrice": 529.99,
+        "packGrams": null,
+        "packQuantity": null,
+        "packUnit": null,
+        "weighted": true,
+        "pricePerKg": 529.99,
+        "regularPricePerKg": 663.15,
+        "limitKg": null,
+        "conditions": [],
+        "evidence": [
+          "3.8",
+          "Вырезка из свинины ОСТАНКИНО категории А, бескостная, весовая",
+          "Цена за 1 кг",
+          "С Картой №1",
+          "529 99₽",
+          "663 15",
+          "-20%",
+          "до 7.8 кг"
+        ]
+      },
+      "range": [
+        519.99,
+        569.99
+      ],
+      "samples": [
+        {
+          "title": "Вырезка свиная ЛЕНТА FRESH, весовая",
+          "url": "https://lenta.com/catalog/svinina-419/",
+          "cardPrice": 519.99,
+          "packGrams": null,
+          "packQuantity": 0.6,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 519.99,
+          "regularPricePerKg": 657.8833333333333,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв",
+            "4.9",
+            "Вырезка свиная ЛЕНТА FRESH, весовая 0.6 кг",
+            "519 99 ₽ за 1 кг",
+            "С Картой №1",
+            "311₽",
+            "394 73",
+            "-20%",
+            "до 28.2 кг"
+          ]
+        },
+        {
+          "title": "Вырезка из свинины ОСТАНКИНО категории А, бескостная, весовая",
+          "url": "https://lenta.com/catalog/svinina-419/",
+          "cardPrice": 529.99,
+          "packGrams": null,
+          "packQuantity": null,
+          "packUnit": null,
+          "weighted": true,
+          "pricePerKg": 529.99,
+          "regularPricePerKg": 663.15,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "3.8",
+            "Вырезка из свинины ОСТАНКИНО категории А, бескостная, весовая",
+            "Цена за 1 кг",
+            "С Картой №1",
+            "529 99₽",
+            "663 15",
+            "-20%",
+            "до 7.8 кг"
+          ]
+        },
+        {
+          "title": "Вырезка свиная PREMIUM CLUB категория А, весовая",
+          "url": "https://lenta.com/catalog/svinina-419/",
+          "cardPrice": 569.99,
+          "packGrams": null,
+          "packQuantity": 0.5,
+          "packUnit": "кг",
+          "weighted": true,
+          "pricePerKg": 569.99,
+          "regularPricePerKg": 663.2,
+          "limitKg": null,
+          "conditions": [],
+          "evidence": [
+            "Баллы за отзыв Наша марка",
+            "4.9",
+            "Вырезка свиная PREMIUM CLUB категория А, весовая 0.5 кг",
+            "569 99 ₽ за 1 кг",
+            "С Картой №1",
+            "284₽",
+            "331 60",
+            "-14%",
+            "до 10.5 кг"
+          ]
+        }
+      ],
+      "note": null
+    }
+  },
+  "unmatched": [
+    {
+      "key": "bass",
+      "name": "Сибас (филе)",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "mac",
+      "name": "Скумбрия, филе без костей",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "per",
+      "name": "Морской окунь (филе)",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "hal",
+      "name": "Палтус (филе)",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "pink",
+      "name": "Горбуша (филе)",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "scl",
+      "name": "Гребешки",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "kal",
+      "name": "Кале",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "fen",
+      "name": "Фенхель",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "len",
+      "name": "Чечевица",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "chk",
+      "name": "Нут консервированный",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "kid",
+      "name": "Красная фасоль консервированная",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "cor",
+      "name": "Кукуруза консервированная",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "olv",
+      "name": "Маслины",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "tmc",
+      "name": "Томаты в собственном соку",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "zuc",
+      "name": "Кабачок",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "spi",
+      "name": "Шпинат",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "aru",
+      "name": "Руккола",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "rom",
+      "name": "Салат ромэн",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "rad",
+      "name": "Редис",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "swp",
+      "name": "Батат",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "cel",
+      "name": "Сельдерей стебли",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "avo",
+      "name": "Авокадо",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "asp",
+      "name": "Спаржа",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "lek",
+      "name": "Лук-порей",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "kiw",
+      "name": "Киви",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "pom",
+      "name": "Гранат",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "man",
+      "name": "Манго",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "blu",
+      "name": "Черника",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "psd",
+      "name": "Тыквенные семечки",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    },
+    {
+      "key": "tah",
+      "name": "Тахини",
+      "reason": "Сопоставимый товар с надёжно прочитанной ценой и единицей измерения не подтверждён. Прежняя оценка остаётся непроверенной."
+    }
+  ]
+}
