@@ -12,9 +12,10 @@ for(const match of html.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g)){
 
 const z=sandbox.__z,s=z.gs(),t=sandbox.__test,guide=z.PRICE_GUIDE;
 const snapshot=JSON.parse(fs.readFileSync(root+'/data/lenta-prices-2026-11-19.json','utf8'));
+Object.assign(snapshot.entries,JSON.parse(fs.readFileSync(root+'/data/lenta-expansion-prices-2026-11-19.json','utf8')).entries);
 let checks=0;const check=(x,msg)=>{assert(x,msg);checks++};
 check(guide.autoUpdate===false,'no automatic updates');check(guide.card==='Карта №1','loyalty card prices');check(guide.store===null,'store not falsely assigned');
-check(Object.keys(guide.items).length===64,'64 confirmed ingredient prices');
+check(Object.keys(guide.items).length===76,'76 confirmed ingredient prices');
 check(snapshot.unmatched.length===30,'unconfirmed ingredients explicit');
 s.home={};s.price={};
 for(const [key,item] of Object.entries(guide.items)){
