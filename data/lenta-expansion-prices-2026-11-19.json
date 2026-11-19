@@ -1,0 +1,480 @@
+{
+  "date": "2026-11-19",
+  "store": null,
+  "card": "Карта №1",
+  "autoUpdate": false,
+  "entries": {
+    "straw": {
+      "price": 189.99,
+      "pack": null,
+      "title": "Клубника свежемороженая, весовая",
+      "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+      "cardPrice": 189.99,
+      "packQuantity": null,
+      "packUnit": null,
+      "weighted": true,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": null,
+      "reference": {
+        "regularPrice": 150.55,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 562,
+        "name": "Клубника свежемороженая, весовая",
+        "price": 189.99,
+        "qty": 0.5,
+        "unit": "кг",
+        "grams": 500,
+        "weight": true,
+        "perKg": 189.99,
+        "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+        "conditions": [
+          "до 50 кг"
+        ],
+        "raw": [
+          "Баллы за отзыв Наша марка",
+          "4.9",
+          "Клубника свежемороженая, весовая 0.5 кг",
+          "189 99 ₽ за 1 кг",
+          "С Картой №1",
+          "94₽",
+          "150 55",
+          "-36%",
+          "до 50 кг"
+        ]
+      }
+    },
+    "sour": {
+      "price": 559.99,
+      "pack": null,
+      "title": "Вишня свежемороженая без косточки, весовая",
+      "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+      "cardPrice": 559.99,
+      "packQuantity": null,
+      "packUnit": null,
+      "weighted": true,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": null,
+      "reference": {
+        "regularPrice": 442.1,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 567,
+        "name": "Вишня свежемороженая без косточки, весовая",
+        "price": 559.99,
+        "qty": 0.5,
+        "unit": "кг",
+        "grams": 500,
+        "weight": true,
+        "perKg": 559.99,
+        "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+        "conditions": [
+          "до 50 кг"
+        ],
+        "raw": [
+          "Баллы за отзыв Наша марка",
+          "4.7",
+          "Вишня свежемороженая без косточки, весовая 0.5 кг",
+          "559 99 ₽ за 1 кг",
+          "С Картой №1",
+          "279₽",
+          "442 10",
+          "-36%",
+          "до 50 кг"
+        ]
+      }
+    },
+    "curr": {
+      "price": 639.99,
+      "pack": null,
+      "title": "Смородина черная замороженная, весовая",
+      "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+      "cardPrice": 639.99,
+      "packQuantity": null,
+      "packUnit": null,
+      "weighted": true,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": "Пищевая ценность: справочный аналог свежей чёрной смородины.",
+      "reference": {
+        "regularPrice": 389.5,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 581,
+        "name": "Смородина черная замороженная, весовая",
+        "price": 639.99,
+        "qty": 0.5,
+        "unit": "кг",
+        "grams": 500,
+        "weight": true,
+        "perKg": 639.99,
+        "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+        "conditions": [
+          "до 40.5 кг"
+        ],
+        "raw": [
+          "Баллы за отзыв Наша марка",
+          "4.9",
+          "Смородина черная замороженная, весовая 0.5 кг",
+          "639 99 ₽ за 1 кг",
+          "С Картой №1",
+          "319₽",
+          "389 50",
+          "-17%",
+          "до 40.5 кг"
+        ]
+      }
+    },
+    "rasp": {
+      "price": 1133.3,
+      "pack": 300,
+      "title": "Малина быстрозамороженная PREMIUM CLUB, 300г",
+      "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+      "cardPrice": 339.99,
+      "packQuantity": 300,
+      "packUnit": "г",
+      "weighted": false,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": null,
+      "reference": {
+        "regularPrice": 452.59,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 583,
+        "name": "Малина быстрозамороженная PREMIUM CLUB, 300г",
+        "price": 339.99,
+        "qty": 300,
+        "unit": "г",
+        "grams": 300,
+        "weight": false,
+        "perKg": 1133.3,
+        "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+        "conditions": [
+          "до 33 шт"
+        ],
+        "raw": [
+          "Баллы за отзыв Наша марка",
+          "4.7",
+          "Малина быстрозамороженная PREMIUM CLUB 300г",
+          "С Картой №1",
+          "339 99₽",
+          "452 59",
+          "-24%",
+          "до 33 шт"
+        ]
+      }
+    },
+    "haz": {
+      "price": 1999.98,
+      "pack": 500,
+      "title": "Фундук BONVIDA жареный, 500г",
+      "url": "https://lenta.com/catalog/orehi-21956/",
+      "cardPrice": 999.99,
+      "packQuantity": 500,
+      "packUnit": "г",
+      "weighted": false,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": "Ценовой ориентир для жареных орехов; выбирайте вариант без соли и глазури.",
+      "reference": {
+        "regularPrice": 1263.19,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 541,
+        "name": "Фундук BONVIDA жареный, 500г",
+        "price": 999.99,
+        "qty": 500,
+        "unit": "г",
+        "grams": 500,
+        "weight": false,
+        "perKg": 1999.98,
+        "url": "https://lenta.com/catalog/orehi-21956/",
+        "conditions": [
+          "до 2 шт"
+        ],
+        "raw": [
+          "Выгодная упаковка Баллы за отзыв",
+          "4.2",
+          "Фундук BONVIDA жареный 500г",
+          "С Картой №1",
+          "999 99₽",
+          "1 263 19",
+          "-20%",
+          "до 2 шт"
+        ]
+      }
+    },
+    "cash": {
+      "price": 1066.6,
+      "pack": 150,
+      "title": "Кешью 365 ДНЕЙ жареный, 150г",
+      "url": "https://lenta.com/catalog/orehi-21956/",
+      "cardPrice": 159.99,
+      "packQuantity": 150,
+      "packUnit": "г",
+      "weighted": false,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": "Ценовой ориентир для жареных орехов; выбирайте вариант без соли и глазури.",
+      "reference": {
+        "regularPrice": 168.49,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 542,
+        "name": "Кешью 365 ДНЕЙ жареный, 150г",
+        "price": 159.99,
+        "qty": 150,
+        "unit": "г",
+        "grams": 150,
+        "weight": false,
+        "perKg": 1066.6,
+        "url": "https://lenta.com/catalog/orehi-21956/",
+        "conditions": [
+          "до 27 шт"
+        ],
+        "raw": [
+          "Баллы за отзыв Наша марка",
+          "4.5",
+          "Кешью 365 ДНЕЙ жареный 150г",
+          "С Картой №1",
+          "159 99₽",
+          "168 49",
+          "до 27 шт"
+        ]
+      }
+    },
+    "mill": {
+      "price": 169.98,
+      "pack": 500,
+      "title": "Пшено PROSTO высший сорт, в пакетиках, 8х62,5г",
+      "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+      "cardPrice": 84.99,
+      "packQuantity": 500,
+      "packUnit": "г",
+      "weighted": false,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": null,
+      "reference": {
+        "regularPrice": 110.59,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 51,
+        "name": "Пшено PROSTO высший сорт, в пакетиках, 8х62,5г",
+        "price": 84.99,
+        "qty": 500,
+        "unit": "г",
+        "grams": 500,
+        "weight": false,
+        "perKg": 169.98,
+        "url": "https://lenta.com/catalog/krupy-bobovye-27/",
+        "conditions": [
+          "до 16 шт"
+        ],
+        "raw": [
+          "4.9",
+          "Пшено PROSTO высший сорт, в пакетиках, 8х62 500г",
+          "С Картой №1",
+          "84 99₽",
+          "110 59",
+          "-23%",
+          "до 16 шт"
+        ]
+      }
+    },
+    "barl": {
+      "price": 99.9875,
+      "pack": 800,
+      "title": "Крупа перловая ПАССИМ Жемчужная №1, 800г",
+      "url": "https://lenta.com/catalog/drugie-krupy-21255",
+      "cardPrice": 79.99,
+      "packQuantity": 800,
+      "packUnit": "г",
+      "weighted": false,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": null,
+      "reference": {
+        "regularPrice": null,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 879,
+        "name": "Крупа перловая ПАССИМ Жемчужная №1, 800г",
+        "price": 79.99,
+        "qty": 800,
+        "unit": "г",
+        "grams": 800,
+        "weight": false,
+        "perKg": 99.9875,
+        "url": "https://lenta.com/catalog/drugie-krupy-21255 ; rewritten summary of https://lenta.com/catalog/drugie-krupy-21255/",
+        "conditions": [],
+        "raw": [
+          "4.9",
+          "Крупа перловая ПАССИМ Жемчужная №1 800г",
+          "Цена за 1 шт",
+          "С Картой №1",
+          "79,99 ₽",
+          "94,73 ₽ -15%"
+        ]
+      }
+    },
+    "cau": {
+      "price": 262.475,
+      "pack": 400,
+      "title": "Капуста цветная замороженная 365 ДНЕЙ, 400г",
+      "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+      "cardPrice": 104.99,
+      "packQuantity": 400,
+      "packUnit": "г",
+      "weighted": false,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": null,
+      "reference": {
+        "regularPrice": 110.59,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 576,
+        "name": "Капуста цветная замороженная 365 ДНЕЙ, 400г",
+        "price": 104.99,
+        "qty": 400,
+        "unit": "г",
+        "grams": 400,
+        "weight": false,
+        "perKg": 262.475,
+        "url": "https://lenta.com/catalog/zamorozhennye-ovoshchi-i-yagody-18261/",
+        "conditions": [
+          "до 50 шт"
+        ],
+        "raw": [
+          "Баллы за отзыв Наша марка",
+          "4.9",
+          "Капуста цветная замороженная 365 ДНЕЙ 400г",
+          "С Картой №1",
+          "104 99₽",
+          "110 59",
+          "до 50 шт"
+        ]
+      }
+    },
+    "bru": {
+      "price": 312.475,
+      "pack": 400,
+      "title": "Капуста брюссельская замороженная ЛЕНТА, 400г",
+      "url": "https://lenta.com/catalog/ovoshchi-frukty-144/?filter.naimenovanie-318=kapusta-7821316",
+      "cardPrice": 124.99,
+      "packQuantity": 400,
+      "packUnit": "г",
+      "weighted": false,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": null,
+      "reference": {
+        "regularPrice": null,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 903,
+        "name": "Капуста брюссельская замороженная ЛЕНТА, 400г",
+        "price": 124.99,
+        "qty": 400,
+        "unit": "г",
+        "grams": 400,
+        "weight": false,
+        "perKg": 312.475,
+        "url": "https://lenta.com/catalog/ovoshchi-frukty-144/?filter.naimenovanie-318=kapusta-7821316",
+        "conditions": [],
+        "raw": [
+          "Баллы за отзыв Наша марка",
+          "4.8",
+          "Капуста брюссельская замороженная ЛЕНТА 400г",
+          "Цена за 1 шт",
+          "С Картой №1",
+          "124,99 ₽",
+          "152,59 ₽ -18%"
+        ]
+      }
+    },
+    "scallion": {
+      "price": 1099.8999999999999,
+      "pack": 100,
+      "title": "Лук зеленый ЛЕНТА свежий, 100г",
+      "url": "https://lenta.com/catalog/zelen-i-salaty-897/",
+      "cardPrice": 109.99,
+      "packQuantity": 100,
+      "packUnit": "г",
+      "weighted": false,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": null,
+      "reference": {
+        "regularPrice": 147.39,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 110,
+        "name": "Лук зеленый ЛЕНТА свежий, 100г",
+        "price": 109.99,
+        "qty": 100,
+        "unit": "г",
+        "grams": 100,
+        "weight": false,
+        "perKg": 1099.8999999999999,
+        "url": "https://lenta.com/catalog/zelen-i-salaty-897/",
+        "conditions": [
+          "до 71 шт"
+        ],
+        "raw": [
+          "Баллы за отзыв",
+          "4.9",
+          "Лук зеленый ЛЕНТА свежий 100г",
+          "С Картой №1",
+          "109 99₽",
+          "147 39",
+          "-25%",
+          "до 71 шт"
+        ]
+      }
+    },
+    "pot": {
+      "price": 38.59,
+      "pack": null,
+      "title": "Картофель, весовой",
+      "url": "https://lenta.com/catalog/ovoshchi-146/",
+      "cardPrice": 38.59,
+      "packQuantity": null,
+      "packUnit": null,
+      "weighted": true,
+      "limitKg": null,
+      "regularPrice": null,
+      "note": null,
+      "reference": {
+        "regularPrice": 40.63,
+        "cardLimitKg": null,
+        "multiBuy": false,
+        "id": 1,
+        "name": "Картофель, весовой",
+        "price": 38.59,
+        "qty": null,
+        "unit": null,
+        "grams": null,
+        "weight": true,
+        "perKg": 38.59,
+        "url": "https://lenta.com/catalog/ovoshchi-146/",
+        "conditions": [
+          "до 5 кг"
+        ],
+        "raw": [
+          "4.6",
+          "Картофель, весовой",
+          "Цена за 1 кг",
+          "С Картой №1",
+          "38 59₽",
+          "40 63",
+          "до 5 кг"
+        ]
+      }
+    }
+  }
+}
