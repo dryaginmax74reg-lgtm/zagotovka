@@ -1,0 +1,96 @@
+{
+  "pot": {
+    "url": "https://fooddb.mext.go.jp/details/details.pl?ITEM_NO=2_02017_7",
+    "values": {
+      "b7": 0.4,
+      "i": 1,
+      "cr": 4,
+      "mo": 3
+    },
+    "note": "Табличные значения MEXT на 100 г съедобного сырого продукта."
+  },
+  "mill": {
+    "url": "https://fooddb.mext.go.jp/details/details.pl?ITEM_NO=1_01011_7",
+    "values": {
+      "b7": 7.9,
+      "i": 0,
+      "cr": 1,
+      "mo": 16
+    },
+    "note": "Табличные значения MEXT на 100 г съедобного сырого продукта."
+  },
+  "oyst": {
+    "url": "https://fooddb.mext.go.jp/details/details.pl?ITEM_NO=8_08026_7",
+    "values": {
+      "b7": 12,
+      "i": 0,
+      "cr": 1,
+      "mo": 1
+    },
+    "note": "Табличные значения MEXT на 100 г съедобного сырого продукта."
+  },
+  "bru": {
+    "url": "https://www.matvaretabellen.no/en/brussel-sprouts-frozen/",
+    "values": {
+      "i": 0
+    },
+    "note": "Значение на 100 г из норвежской таблицы. Ноль указан с точностью источника."
+  },
+  "cau": {
+    "url": "https://www.matvaretabellen.no/en/cauliflower-imported-frozen/",
+    "values": {
+      "i": 0
+    },
+    "note": "Значение на 100 г из норвежской таблицы. Ноль указан с точностью источника."
+  },
+  "rasp": {
+    "url": "https://www.matvaretabellen.no/en/raspberries-frozen/",
+    "values": {
+      "i": 0
+    },
+    "note": "Значение на 100 г из норвежской таблицы. Ноль указан с точностью источника."
+  },
+  "straw": {
+    "url": "https://www.matvaretabellen.no/en/strawberries-frozen/",
+    "values": {
+      "i": 0
+    },
+    "note": "Значение на 100 г из норвежской таблицы. Ноль указан с точностью источника."
+  },
+  "barl": {
+    "url": "https://www.matvaretabellen.no/en/pearled-barley/",
+    "values": {
+      "i": 0
+    },
+    "note": "Значение на 100 г из норвежской таблицы. Ноль указан с точностью источника."
+  },
+  "flax": {
+    "url": "https://www.matvaretabellen.no/en/linseeds-flax-seeds-crushed/",
+    "values": {
+      "i": 0
+    },
+    "note": "Значение на 100 г из норвежской таблицы. Ноль указан с точностью источника."
+  },
+  "scallion": {
+    "url": "https://www.matvaretabellen.no/en/scallion-spring-onion-raw/",
+    "values": {
+      "i": 2
+    },
+    "note": "Значение на 100 г из норвежской таблицы. Ноль указан с точностью источника."
+  },
+  "pasta": {
+    "url": "https://www.matvaretabellen.no/en/pasta-whole-grain-uncooked/",
+    "values": {
+      "i": 1
+    },
+    "note": "Значение на 100 г из норвежской таблицы. Ноль указан с точностью источника."
+  },
+  "curr": {
+    "url": "https://www.matvaretabellen.no/en/blackcurrants-raw/",
+    "values": {
+      "i": 0
+    },
+    "note": "Свежая чёрная смородина как аналог замороженной без сахара.",
+    "fiber": 5
+  }
+}

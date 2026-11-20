@@ -13,16 +13,23 @@ for(const match of html.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g)){
 const z=sandbox.__z,s=z.gs(),t=sandbox.__test,guide=z.PRICE_GUIDE;
 const snapshot=JSON.parse(fs.readFileSync(root+'/data/lenta-prices-2026-11-19.json','utf8'));
 Object.assign(snapshot.entries,JSON.parse(fs.readFileSync(root+'/data/lenta-expansion-prices-2026-11-19.json','utf8')).entries);
+const fallback=JSON.parse(fs.readFileSync(root+'/data/retail-prices-2026-11-20.json','utf8')).entries;
+assert.deepEqual(Object.keys(fallback).sort(),snapshot.unmatched.map(({key})=>key).sort());
+Object.assign(fallback,JSON.parse(fs.readFileSync(root+"/data/menu-additions.json")).entries);
 let checks=0;const check=(x,msg)=>{assert(x,msg);checks++};
 check(guide.autoUpdate===false,'no automatic updates');check(guide.card==='Карта №1','loyalty card prices');check(guide.store===null,'store not falsely assigned');
-check(Object.keys(guide.items).length===76,'76 confirmed ingredient prices');
+check(Object.keys(guide.items).length===112,'all ingredients have catalog references');
 check(snapshot.unmatched.length===30,'unconfirmed ingredients explicit');
 s.home={};s.price={};
 for(const [key,item] of Object.entries(guide.items)){
  check(z.ING[key],'known ingredient '+key);check(Number.isFinite(item.price)&&item.price>0,'finite price '+key);
- check(item.url.startsWith('https://lenta.com/'),'retailer evidence '+key);
- check(snapshot.entries[key].price===item.price,'snapshot matches application '+key);
- check(!snapshot.entries[key].reference.multiBuy,'no multi-buy discount silently applied '+key);
+ const reference=fallback[key]||snapshot.entries[key];
+ check(item.url.startsWith(fallback[key]?'https://':'https://lenta.com/'),'retailer evidence '+key);
+ check(reference.price===item.price,'snapshot matches application '+key);
+ if(fallback[key]){
+  assert.deepEqual(JSON.parse(JSON.stringify(item)),fallback[key]);
+  check(z.priceSourceHtml(key).includes(item.retailer),'retailer displayed '+key);
+ }else check(!reference.reference.multiBuy,'no multi-buy discount silently applied '+key);
  if(item.pack){
   check(t.purchaseOf(key,1)===item.pack,'small quantity needs whole pack '+key);
   check(Math.abs(z.pricedCost(key,item.pack)-item.cardPrice)<1e-8,'pack price exact '+key);
@@ -37,8 +44,8 @@ check(Math.abs(z.packOf('oo')-455)<1e-8,'oil 500ml converted using documented de
 check(z.packOf('fet')===180,'cheese uses 180g net mass, not 225g brine mass');
 s.price.yog=700;check(t.priceOf('yog')===700,'personal price has priority');check(z.packOf('yog')===0,'personal price does not imply store packaging');check(z.pricedCost('yog',100)===70,'personal cost');s.price={};
 const cov=z.priceCoverage();check(cov.checked+cov.missing.length===cov.total,'complete provenance coverage');
-check(z.priceSourceHtml('kal').includes('не сверена'),'unverified price visible');
+check(z.priceSourceHtml('kal').includes('ВкусВилл'),'alternate retailer visible');
 check(z.priceSourceHtml('yog').includes('2,5%'),'pricing analogy disclosed');
 for(const key of ['egg','oo','fet','kal','yog']){t.shopOpenSet(key);const html=t.shopItems();check(!/NaN|undefined|Infinity/.test(html),'valid grocery HTML '+key);}
 check(t.viewShop().includes('без автообновления'),'snapshot label in shopping');
-console.log(JSON.stringify({checks,confirmed:Object.keys(guide.items).length,unconfirmed:snapshot.unmatched.length,coverage:cov,status:'passed'},null,2));
+console.log(JSON.stringify({checks,confirmed:Object.keys(guide.items).length,otherRetailers:Object.keys(fallback).length,coverage:cov,status:'passed'},null,2));

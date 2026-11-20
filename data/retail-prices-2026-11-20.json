@@ -1,0 +1,285 @@
+{
+  "observedAt": "2026-11-20",
+  "method": "Публичные каталоги и их индексированные копии. Цена и наличие по адресу не подтверждены.",
+  "entries": {
+    "bass": {
+      "title": "Сибас филе на коже",
+      "retailer": "Перекрёсток",
+      "price": 2399,
+      "pack": null,
+      "cardPrice": 2399,
+      "weighted": true,
+      "url": "https://www.perekrestok.ru/catalog/sibas--268C46511"
+    },
+    "mac": {
+      "title": "Скумбрия Vici, филе на коже",
+      "retailer": "Перекрёсток",
+      "price": 597.5,
+      "pack": 400,
+      "cardPrice": 239,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/tags/skumbriya-zamorozhennaya",
+      "note": "Проверьте остаточные кости."
+    },
+    "per": {
+      "title": "Морской окунь, филе без кожи",
+      "retailer": "ВкусВилл",
+      "price": 1330,
+      "pack": null,
+      "cardPrice": 1330,
+      "weighted": true,
+      "url": "https://vkusvill.ru/goods/okun-morskoy-file-bez-kozhi-zam-111874/"
+    },
+    "hal": {
+      "title": "Палтус Agama, филе",
+      "retailer": "Перекрёсток",
+      "price": 2499.98,
+      "pack": 400,
+      "cardPrice": 999.99,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/catalog/paltus--268C46519"
+    },
+    "pink": {
+      "title": "Горбуша Polar, филе",
+      "retailer": "Перекрёсток",
+      "price": 1224.98,
+      "pack": 400,
+      "cardPrice": 489.99,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/catalog/gorbusha--268C46513"
+    },
+    "scl": {
+      "title": "Гребешок Арктик, филе",
+      "retailer": "Перекрёсток",
+      "price": 4282.86,
+      "pack": 350,
+      "cardPrice": 1499,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/tags/grebeshok"
+    },
+    "kal": {
+      "title": "Кейл листовой",
+      "retailer": "ВкусВилл",
+      "price": 1615.38,
+      "pack": 65,
+      "cardPrice": 105,
+      "weighted": false,
+      "url": "https://vkusvill.ru/goods/ovoshchi-svezhie-listovye-rezanye-keyl-121663/"
+    },
+    "fen": {
+      "title": "Фенхель",
+      "retailer": "Арисан СПб",
+      "price": 825,
+      "pack": null,
+      "cardPrice": 825,
+      "weighted": true,
+      "url": "https://arisanspb.ru/magazin/product/fenhel"
+    },
+    "len": {
+      "title": "Чечевица красная Мистраль",
+      "retailer": "Деликатеска",
+      "price": 508.89,
+      "pack": 450,
+      "cardPrice": 229,
+      "weighted": false,
+      "url": "https://www.delikateska.ru/catalog/chechevitsa"
+    },
+    "chk": {
+      "title": "Нут ВкусВилл, банка 375 г",
+      "retailer": "ВкусВилл",
+      "price": 822.22,
+      "pack": 225,
+      "cardPrice": 185,
+      "weighted": false,
+      "url": "https://vkusvill.ru/goods/nut-naturalnyy-konservirovannyy-84673/",
+      "note": "225 г без заливки по карточке аналога ВкусВилл. Проверьте этикетку.",
+      "weightSource": "https://kuper.ru/products/194551-nut-vkusvill-natural-nyy-konservirovannyy-375-g-2286077"
+    },
+    "kid": {
+      "title": "Фасоль красная Бондюэль, банка 400 г",
+      "retailer": "ТД Петровский",
+      "price": 612.42,
+      "pack": 240,
+      "cardPrice": 146.98,
+      "weighted": false,
+      "url": "https://m.petrovsky.ru/catalog/konservatsiya/ovoshchnaya/fasol-bondyuel-krasnaya-400g/",
+      "note": "240 г после слива."
+    },
+    "cor": {
+      "title": "Кукуруза Бондюэль, банка 170 г",
+      "retailer": "ТД Петровский",
+      "price": 749.86,
+      "pack": 140,
+      "cardPrice": 104.98,
+      "weighted": false,
+      "url": "https://m.petrovsky.ru/catalog/konservatsiya/ovoshchnaya/kukuruza-bondyuel-170g/",
+      "note": "140 г после слива. Цена из более ранней копии каталога."
+    },
+    "olv": {
+      "title": "Маслины Бондюэль без косточек с морской солью",
+      "retailer": "Перекрёсток",
+      "price": 2557.14,
+      "pack": 70,
+      "cardPrice": 179,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/catalog/masliny--268C46608?page=2",
+      "note": "Упаковка с маслом, без рассола."
+    },
+    "tmc": {
+      "title": "Томаты Помидорка в собственном соку",
+      "retailer": "Перекрёсток",
+      "price": 261.25,
+      "pack": 800,
+      "cardPrice": 209,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/catalog/tomaty--268C62147"
+    },
+    "zuc": {
+      "title": "Кабачки",
+      "retailer": "Перекрёсток",
+      "price": 239.99,
+      "pack": null,
+      "cardPrice": 239.99,
+      "weighted": true,
+      "url": "https://www.perekrestok.ru/catalog/kabachki--268C61990"
+    },
+    "spi": {
+      "title": "Шпинат крупнолистовой",
+      "retailer": "ВкусВилл",
+      "price": 1750,
+      "pack": 100,
+      "cardPrice": 175,
+      "weighted": false,
+      "url": "https://vkusvill.ru/goods/shpinat-krupnolistovoy-113869/"
+    },
+    "aru": {
+      "title": "Рукола",
+      "retailer": "ВкусВилл",
+      "price": 3600,
+      "pack": 50,
+      "cardPrice": 180,
+      "weighted": false,
+      "url": "https://vkusvill.ru/goods/salat-rukola-1334/"
+    },
+    "rom": {
+      "title": "Салат романо листовой",
+      "retailer": "Перекрёсток",
+      "price": 2666.53,
+      "pack": 75,
+      "cardPrice": 199.99,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/product/salat-romano-listovoy-75g--4459849"
+    },
+    "rad": {
+      "title": "Редис с зеленью",
+      "retailer": "Перекрёсток",
+      "price": 749.95,
+      "pack": 200,
+      "cardPrice": 149.99,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/catalog/redis--268C62051",
+      "note": "Вес пучка по каталогу."
+    },
+    "swp": {
+      "title": "Батат",
+      "retailer": "ВкусВилл",
+      "price": 355,
+      "pack": null,
+      "cardPrice": 355,
+      "weighted": true,
+      "url": "https://vkusvill.ru/goods/batat-22937/"
+    },
+    "cel": {
+      "title": "Сельдерей стеблевой",
+      "retailer": "Перекрёсток",
+      "price": 406.98,
+      "pack": 430,
+      "cardPrice": 175,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/catalog/selderey--268C62050"
+    },
+    "avo": {
+      "title": "Авокадо весовой",
+      "retailer": "Перекрёсток",
+      "price": 399.99,
+      "pack": null,
+      "cardPrice": 399.99,
+      "weighted": true,
+      "url": "https://www.perekrestok.ru/catalog/avokado--268C62054",
+      "note": "Цена за целый плод. Выход мякоти зависит от размера косточки."
+    },
+    "asp": {
+      "title": "Спаржа зелёная",
+      "retailer": "Fruitonline СПб",
+      "price": 4816,
+      "pack": null,
+      "cardPrice": 4816,
+      "weighted": true,
+      "url": "https://spb.fruitonline.ru/vegetables/ovoschi-v-assortimente"
+    },
+    "lek": {
+      "title": "Лук-порей",
+      "retailer": "Перекрёсток",
+      "price": 329.99,
+      "pack": null,
+      "cardPrice": 329.99,
+      "weighted": true,
+      "url": "https://www.perekrestok.ru/tags/luk"
+    },
+    "kiw": {
+      "title": "Киви фасованные",
+      "retailer": "Перекрёсток",
+      "price": 299.98,
+      "pack": 500,
+      "cardPrice": 149.99,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/catalog/kivi--268C62070"
+    },
+    "pom": {
+      "title": "Гранат, зёрна",
+      "retailer": "Перекрёсток",
+      "price": 1083.25,
+      "pack": 120,
+      "cardPrice": 129.99,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/brands/bez-brenda--2021/granat--268C62080"
+    },
+    "man": {
+      "title": "Манго жёлтое",
+      "retailer": "Перекрёсток",
+      "price": 429.99,
+      "pack": null,
+      "cardPrice": 429.99,
+      "weighted": true,
+      "url": "https://www.perekrestok.ru/catalog/mango--268C62072",
+      "note": "Цена за целый плод. Выход мякоти зависит от размера косточки."
+    },
+    "blu": {
+      "title": "Черника замороженная Зелёная Линия",
+      "retailer": "Перекрёсток",
+      "price": 999.97,
+      "pack": 300,
+      "cardPrice": 299.99,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/tags/chernika"
+    },
+    "psd": {
+      "title": "Тыквенные семена Семушка очищенные",
+      "retailer": "Перекрёсток",
+      "price": 999.33,
+      "pack": 150,
+      "cardPrice": 149.9,
+      "weighted": false,
+      "url": "https://www.perekrestok.ru/brands/semushka--1487/semechki--268C62103"
+    },
+    "tah": {
+      "title": "Тахини из белого кунжута",
+      "retailer": "ВкусВилл",
+      "price": 1544.44,
+      "pack": 180,
+      "cardPrice": 278,
+      "weighted": false,
+      "url": "https://vkusvill.ru/goods/pasta-iz-belogo-kunzhuta-takhini-102279/"
+    }
+  }
+}

@@ -13,8 +13,18 @@ for(const match of html.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g)){
 
 const z=sandbox.__z,s=z.gs(),t=sandbox.__test;
 const data=JSON.parse(fs.readFileSync(root+'/data/menu-expansion-2026-11-19.json','utf8'));
+const supplements=JSON.parse(fs.readFileSync(root+'/data/micronutrient-supplement.json'));
+for(const [key,extra] of Object.entries(supplements)){
+ const baseline=data.foods[key];
+ for(const [name,value] of Object.entries(extra.values)){
+  const index=t.MICRO_DATA.find(m=>m.key===name).index;
+  assert.equal(t.MICRO_FOOD[key][index],value);
+  if(baseline){assert.equal(baseline.micros[index],null);baseline.micros[index]=value;}
+ }
+ if(baseline&&extra.fiber)baseline.fiber=extra.fiber;
+}
 let checks=0;const check=(v,msg)=>{assert(v,msg);checks++};
-check(Object.keys(z.ING).length===106,'106 ingredients');check(z.REC.length===436,'436 recipes');
+check(Object.keys(z.ING).length===112,'112 ingredients');check(z.REC.length===444,'444 recipes');
 check(Object.keys(data.foods).length===12&&data.recipes.length===24,'expansion dimensions');
 for(const [key,food] of Object.entries(data.foods)){
  check(z.REC.slice(412).some(r=>r.i.some(([k])=>k===key)),'new ingredient used '+key);
@@ -24,13 +34,13 @@ for(const [key,food] of Object.entries(data.foods)){
  check(t.FIBER[key]===food.fiber,'source fiber '+key);
  check(z.PRICE_GUIDE.items[key]?.price>0,'sourced new price '+key);
  check(z.PRICE_GUIDE.items[key].url.startsWith('https://lenta.com/'),'price source '+key);
- check(t.MICRO_FOOD[key][24]===null,'iodine unknown not invented '+key);
+ check(t.MICRO_FOOD[key][24]===(supplements[key]?.values.i??null),'iodine unknown not invented '+key);
 }
 check(!t.PRODUCE.has('pot'),'starchy potato not non-starchy produce');
 check(!t.WHOLE_GRAIN.has('barl'),'pearled barley not whole grain');
 const names=new Set(z.REC.slice(0,412).map(r=>r.n));
 s.people=2;s.scale=false;s.home={};s.price={};s.microAdd={};
-for(const [offset,raw] of data.recipes.entries()){
+for(const [offset,raw] of [...data.recipes,...JSON.parse(fs.readFileSync(root+"/data/menu-additions.json")).recipes].entries()){
  const id=412+offset,r=z.REC[id];check(r.n===raw.name,'stable appended id '+id);
  check(!names.has(r.n),'unique new recipe '+r.n);names.add(r.n);
  check(t.allowed(id),'new recipe eligible '+r.n);
@@ -45,5 +55,5 @@ for(const [offset,raw] of data.recipes.entries()){
  s.cook=saved.cook;s.bf=saved.bf;
 }
 t.setSheet({kind:'nutrition'});const rendered=t.sheetHtml();
-check(!rendered.includes('2623 из 2726'),'coverage not stale');check(rendered.includes('из 106'),'coverage includes new foods');
+check(!rendered.includes('2623 из 2726'),'coverage not stale');check(rendered.includes('из 112'),'coverage includes new foods');
 console.log(JSON.stringify({checks,ingredients:Object.keys(z.ING).length,recipes:z.REC.length,status:'passed'},null,2));
