@@ -148,7 +148,7 @@ input[type=text],input[type=search],input[type=number]{width:100%;height:46px;bo
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 .tile{position:relative;text-align:left;animation:rise 460ms var(--ease) both}
 .tile .im{aspect-ratio:1;border-radius:28px;display:grid;place-items:center;overflow:hidden}
-.tile .im .pt{width:84%;height:84%;transition:transform 500ms var(--spring);filter:drop-shadow(0 10px 10px rgba(16,38,26,.22))}
+.tile .im.photo{background-repeat:no-repeat!important;background-size:200% 200%!important;box-shadow:inset 0 0 0 1px rgba(16,38,26,.05)}\n.tile .im .pt{width:84%;height:84%;transition:transform 500ms var(--spring);filter:drop-shadow(0 10px 10px rgba(16,38,26,.22))}
 .tile:hover .im .pt{transform:rotate(14deg) scale(1.04)}
 .tile .n{font-weight:700;font-size:14px;line-height:1.22;margin-top:8px}
 .tile .m{font-size:12px;color:var(--mut);margin-top:2px}
@@ -1970,6 +1970,20 @@ function shopItems(rows=shopList()){
   if(ah.length)h+='<div class="sechd"><i style="background:var(--mut)"></i>Уже есть дома</div><div class="sg"><div class="si" style="font-size:14px;color:var(--mut);line-height:1.5">'+ah.map(r=>esc(r.n)).join(', ')+'</div></div>';
   if(!q)h+='<div class="act-row"><button class="btn alt" data-act="uncheck">Снять отметки</button></div>';
   return h;
+}
+const RECIPE_PHOTOS={
+'Куриные рулетики с брокколи и фетой':[1,0],'Куриные фрикадельки с цукини и пармезаном':[1,1],'Курица тикка в йогурте':[1,2],'Куриные котлеты с шампиньонами и сыром':[1,3],
+'Куриное филе в кунжуте и соевой глазури':[2,0],'Куриные медальоны с горчицей и лимоном':[2,1],'Куриные шашлычки в томатном маринаде':[2,2],'Куриные рулетики со шпинатом и моцареллой':[2,3],
+'Гречка с луком и зеленью':[3,0],'Гречка с шампиньонами':[3,1],'Рис с морковью и зеленью':[3,2],'Кус-кус с запечёнными овощами':[3,3],
+'Греческий':[4,0],'Капуста с яблоком и морковью':[4,1],'Руккола с апельсином и грецким орехом':[4,2],'Свёкла сырая с фетой и орехами':[4,3],
+'Овсянка overnight с бананом и грецким орехом':[5,0],'Овсянка overnight с яблоком и миндалём':[5,1],'Овсянка overnight с черникой и йогуртом':[5,2],'Овсянка overnight с манго и тыквенными семечками':[5,3],
+'Сырники из творога':[6,0],'Творожная запеканка с грушей':[6,1],'Омлетные маффины со шпинатом и фетой':[6,2],'Фриттата с овощами и пармезаном':[6,3]
+};
+function recipeThumb(r,i){
+ const photo=RECIPE_PHOTOS[r.n];
+ if(!photo)return ''+recipeThumb(r,i)+'';
+ const positions=[['0%','0%'],['100%','0%'],['0%','100%'],['100%','100%']],pos=positions[photo[1]];
+ return '<div class="im photo" role="img" aria-label="'+esc(r.n)+'" style="background-image:url(assets/recipe-sprite-0'+photo[0]+'.png);background-position:'+pos[0]+' '+pos[1]+'"></div>';
 }
 function viewBook(){
   const L=S.lib,types=['Основное','Гарнир','Салат','Завтрак'];
