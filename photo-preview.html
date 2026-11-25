@@ -282,6 +282,7 @@ html[data-dir="b"]::view-transition-old(root){animation-name:vtOutR}html[data-di
 </style>
 
 <style>
+.detail-photo{width:100%;max-width:400px;aspect-ratio:1;margin:0 auto 16px;border-radius:20px;overflow:hidden}
 .preview-photo{display:block;width:100%;height:100%;border-radius:inherit;background-repeat:no-repeat}
 .stage button.pt{overflow:hidden;border-radius:24%}
 .row .th .pt,.gp .pt,.dc .pl .pt{border-radius:22%}
@@ -1792,14 +1793,14 @@ function ring(p,col){const C=2*Math.PI*21;return '<svg class="ring" viewBox="0 0
 const cnt=(id,v,suf)=>'<span data-count="'+Math.round(v)+'" data-id="'+id+'">'+fmt(prevNum[id]!==undefined?prevNum[id]:0)+'</span>'+(suf||'');
 
 /* ---------- экраны ---------- */
-function previewPhoto(i){
+function previewPhoto(i, label){
   const photo=RECIPE_PHOTOS[REC[i]?.n];
   if(!photo) return PAINT_ART.art(i,REC);
   const [file,cell,columns=2]=photo;
   const x=(cell%columns)*100/(columns-1);
   const y=Math.floor(cell/columns)*100/(columns-1);
   const size=columns*100;
-  return '<span class="preview-photo" aria-hidden="true" style="background-image:url(assets/recipe-sprite-'+String(file).padStart(2,'0')+'.png);background-size:'+size+'% '+size+'%;background-position:'+x+'% '+y+'%"></span>';
+  return '<span class="preview-photo" '+(label?'role="img" aria-label="'+esc(label)+'"':'aria-hidden="true"')+' style="background-image:url(assets/recipe-sprite-'+String(file).padStart(2,'0')+'.png);background-size:'+size+'% '+size+'%;background-position:'+x+'% '+y+'%"></span>';
 }
 function previewPlate(i){
   return '<span class="pt">'+previewPhoto(i)+'</span>';
@@ -2625,6 +2626,7 @@ function sheetHtml(){
   if(sheet.kind==='detail'){
     const i=sheet.id,r=REC[i],isB=r.t==='Завтрак',days=isB?[1,2,3,4,5]:[0,1,2,3,4];
     let h=head(r.t+' · '+r.c,r.n)+'<div class="bd">';
+    if(RECIPE_PHOTOS[r.n])h+='<div class="detail-photo">'+previewPhoto(i,r.n)+'</div>';
     h+='<div class="sec">Продукты на весь рецепт</div><table class="ing">'+r.i.map(([k,g])=>'<tr><td>'+esc(ing(k).n)+'</td><td>'+ingredientAmount(k,q5(g,r))+'</td></tr>').join('')+'</table><p class="small mut">Крупы и сухую чечевицу взвешивайте до варки. Для яиц учитывается вес без скорлупы, для консервов — без жидкости.</p>';
     h+='<div class="kv"><div><b>'+Math.round(r.k)+'</b>ккал</div><div><b>'+Math.round(r.P)+'</b>белки, г</div><div><b>'+Math.round(r.F)+'</b>жиры, г</div><div><b>'+Math.round(r.C)+'</b>углев., г</div></div>';
     h+='<p class="small mut" style="line-height:1.45">Пищевая ценность выше — на базовую порцию. Закладка: '+(peopleCount()*(isB?1:2))+' порций'+(isB?' на завтрак':' на ужин и обед')+'. '+(r.bt?'Заготовка в воскресенье ≈ '+r.pr+' мин, затем в морозилку. Вечером из морозилки в духовку: '+r.ov[0]+' °C, '+r.ov[1]+' мин.':(r.pr?'Заготовка '+r.pr+' мин. ':'')+'Вечером '+r.ev+' мин.')+'</p>';
