@@ -1128,6 +1128,7 @@ REC.forEach((r,id)=>{
     const has=k=>r.i.some(([id])=>id===k);
     for(const k of ['gar','gin'])if(has(k)&&!r.bs.some(([,tx])=>new RegExp('(?:натр[^.]*\\{'+k+'\\}|\\{'+k+'\\}[^.]*натр)').test(tx)))r.bs.unshift(['v','Мелко натрите '+recipeRef(k)+'.']);
     // Reserve cutlet oil for cooking instead of freezing it into the mix.
+    if(r.bt==='roll'&&has('oo'))r.st[1]=r.st[1].replace('маслом','маслом ({oo})');
     if(r.bt==='cut'&&has('oo')){
       r.st[1]+=' Смажьте котлеты маслом ({oo}) перед запеканием.';
     }
@@ -1138,8 +1139,8 @@ REC.forEach((r,id)=>{
     // A can of chickpeas must be drained, never diced like a raw vegetable.
     if(['ragu','bake'].includes(r.bt))r.bs=r.bs.map(([stage,text])=>{
       if(stage!=='v')return [stage,text];
-      const keys=[...text.matchAll(/\{(\w+)\}/g)].map(m=>m[1]);
-      return [stage,keys.map(k=>recipeRef(k)+' — '+(['chk','kid','cor'].includes(k)?'слейте жидкость и промойте':SALAD_CUT[k]||'нарежьте кусочками около 1,5 см')).join('; ')+'.'];
+      const keys=[...text.matchAll(/\{(\w+)\}/g)].map(m=>m[1]).filter(k=>!eveningKeys(r).includes(k));
+      return [stage,keys.map(k=>recipeRef(k)+' — '+(['chk','kid','cor'].includes(k)?'слейте жидкость и промойте':['gar','gin'].includes(k)?'мелко натрите':SALAD_CUT[k]||'нарежьте кусочками около 1,5 см')).join('; ')+'.'];
     });
   }
   r.st=r.st.map(text=>text.replace('Свёкла обычно готовится дольше остальных.',r.i.some(([k])=>k==='beet')?'Свёклу при необходимости допеките отдельно.':'')
@@ -1521,7 +1522,7 @@ function needsOf(ids){
   const people=profiles(),g={};
   for(const i of ids){
     const r=REC[i],factor=sf(r,people);
-    for(const [k,gr] of r.i)g[k]=(g[k]||0)+Math.round(gr*factor*10);
+    for(const [k,gr] of r.i)g[k]=(g[k]||0)+Math.round(cookingGrams(k,gr*factor)*10);
   }
   for(const person of people)for(const [key,grams] of microExtras(person.key)){
     g[key]=(g[key]||0)+grams*10*FULL_DAYS.length;
@@ -1574,9 +1575,44 @@ const EGG_GRAMS=55;
 const PIECES={egg:[EGG_GRAMS,'яйцо'],gar:[35,'головка'],lem:[80,'лимон'],lime:[55,'лайм'],avo:[140,'авокадо']};
 const inputAmount=(key,grams)=>key==='egg'?Math.round(grams/EGG_GRAMS*100)/100:grams;
 const fromInputAmount=(key,amount)=>key==='egg'?Math.round(amount*EGG_GRAMS*10)/10:amount;
-const ingredientAmount=(key,grams)=>x1(inputAmount(key,grams))+(key==='egg'?' шт.':' г');
+// Edible weights keep shopping and cooking on the same scale.
+const COOK_UNITS={egg:[EGG_GRAMS,'шт.'],gar:[5,'зубч.'],lem:[40,'половинки'],lime:[27.5,'половинки'],avo:[70,'половинки'],pep:[140,'шт.'],apple:[75,'половинки'],pear:[80,'половинки'],ban:[60,'половинки']};
+const JAR_KEYS=new Set(['chk','kid','cor','sard','wbean','tmc']);
+function cookingGrams(key,grams){
+  if(grams<=0)return 0;
+  const unit=COOK_UNITS[key]?.[0],pack=PRICE_GUIDE.items[key]?.pack;
+  if(unit)return Math.max(1,Math.round(grams/unit))*unit;
+  if(JAR_KEYS.has(key)&&pack){
+    const portion=Math.round(grams/(pack/4))*pack/4;
+    if(portion>0&&Math.abs(portion-grams)<=grams*.1)return portion;
+  }
+  const step=grams>=100?25:grams>=25?5:grams>=5?1:.5;
+  return Math.max(step,Math.round(grams/step)*step);
+}
+function ingredientAmount(key,grams){
+  const unit=COOK_UNITS[key];
+  if(unit){
+    const n=Math.round(grams/unit[0]);
+    if(grams<=0)return '0 '+(unit[1]==='половинки'?'шт.':unit[1]);
+    if(n===0)return 'меньше '+(unit[1]==='половинки'?'½ шт.':'1 '+unit[1]);
+    if(unit[1]==='половинки')return (n%2?(n===1?'½':Math.floor(n/2)+'½'):n/2)+' шт.';
+    return n+' '+unit[1];
+  }
+  return x1(grams)+' г';
+}
+function recipeAmount(key,grams){
+  const pack=PRICE_GUIDE.items[key]?.pack;
+  if(JAR_KEYS.has(key)&&pack){
+    const quarters=grams/pack*4;
+    if(quarters>=1&&Number.isInteger(quarters)){
+      const whole=Math.floor(quarters/4),part=['','¼','½','¾'][quarters%4];
+      return (whole||'')+part+(quarters===4?' банка':' банки')+' ('+ingredientAmount(key,grams)+')';
+    }
+  }
+  return ingredientAmount(key,grams);
+}
 function purchaseOf(k,total){
-  const unit=packOf(k)||PIECES[k]?.[0]||10;
+  const unit=packOf(k)||PIECES[k]?.[0]||(COOK_UNITS[k]?.[1]==='половинки'?COOK_UNITS[k][0]*2:COOK_UNITS[k]?.[0])||10;
   return Math.ceil(Math.max(0,total-homeOf(k)-1e-8)/unit)*unit;
 }
 function costOf(ids){const g=needsOf(ids);return Object.keys(g).reduce((c,k)=>c+pricedCost(k,purchaseOf(k,g[k])),0);}
@@ -1591,8 +1627,8 @@ function carryover(){
 }
 const carryoverStamp=rows=>JSON.stringify([S.wk,S.cook,S.bf,rows]);
 const stockMatches=ids=>shopList().filter(r=>r.home>0&&ids.some(i=>REC[i].i.some(([k])=>k===r.k)));
-const q5=(g,r)=>Math.round(g*sf(r)*10)/10;
-function fq(t,r){return t.replace(/\{water:(\d+)\}/g,(_,ml)=>x1(q5(Number(ml),r))+' мл воды').replace(/\{(\w+)\}/g,(m,k)=>{const z=r.i.find(x=>x[0]===k);return z?ingredientAmount(k,q5(z[1],r)):'';}).replace(/Две порции/g,'Обеденные порции').replace(/ужин и обед на двоих/gi,'ужин и обед для '+peopleCount()+' чел.');}
+const batchAmount=(key,g,r)=>cookingGrams(key,g*sf(r));
+function fq(t,r){return t.replace(/\{water:(\d+)\}/g,(_,ml)=>x1(Math.max(10,Math.round(Number(ml)*sf(r)/10)*10))+' мл воды').replace(/\{(\w+)\}/g,(m,k)=>{const z=r.i.find(x=>x[0]===k);return z?recipeAmount(k,batchAmount(k,z[1],r)):'';}).replace(/Две порции/g,'Обеденные порции').replace(/ужин и обед на двоих/gi,'ужин и обед для '+peopleCount()+' чел.');}
 const plu=(n,a)=>a[n%10===1&&n%100!==11?0:(n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?1:2];
 const SOLIDK=new Set(['onion','pep','carrot','mush','pum','zuc','egp','lek','chk','kid','cor','pea','len','rice','bul']),HERBK=new Set(['prs','dil','cil']),FILLK=new Set(['moz','fet','par','spi','bro','tom','olv','gb']),GRAIN=new Set(['rice','bul']);
 const blanksOf=()=>{const a=[];S.cook.forEach((c,d)=>{const r=REC[c.m];if(r&&r.bt)a.push({d,id:c.m,r});});return a;};
@@ -1610,7 +1646,7 @@ const freshSetup={
 };
 function recipeSteps(r,mode){
   if(!r.bt)return r.st;
-  if(mode!=='fresh')return r.st.flatMap(s=>{
+  if(mode!=='fresh'&&mode!=='prepared')return r.st.flatMap(s=>{
     const split=/^Запекайте (\d+) минут, затем снимите фольгу и (?:готовьте ещё|добавьте ещё) (\d+) минут\.$/.exec(s);
     return split?['Запекайте под фольгой '+split[1]+' мин.','Снимите фольгу и запекайте ещё '+split[2]+' мин.']:[s];
   });
@@ -1624,7 +1660,7 @@ function recipeSteps(r,mode){
     .replace('Разлейте в отдельный пакет.','Отставьте соус до запекания.').replace('в миске или zip-пакете','в миске').replace(/ \(деревянные шпажки замочите на 30 минут\)/g,''));
 
   const soak=r.bs.some(([,text])=>text.includes('деревянные шпажки замочите'))?['Если используете деревянные шпажки, замочите их в воде на 30 минут перед сборкой.']:[];
-  return [r.st[0],...soak,...prep,freshSetup[r.bt]+(r.bt==='cut'&&r.i.some(([k])=>k==='oo')?' Смажьте котлеты маслом ({oo}).':''),
+  return [r.st[0],...(mode==='prepared'?[]:[...soak,...prep]),freshSetup[r.bt]+(['cut','roll'].includes(r.bt)&&r.i.some(([k])=>k==='oo')?' Масло для смазывания: {oo}.':''),
     'Запекайте '+check+' мин, затем начните проверять готовность.',
     ...uncover,
     ...finish.map(s=>s.replace('За 10 минут до конца добавьте:','Когда блюдо почти готово, добавьте:')),
@@ -1638,8 +1674,6 @@ function sideReadyMin(r){
 }
 function mpDone(){if(!S.mp||S.mp.w!==S.wk)S.mp={w:S.wk,done:{}};return S.mp.done;}
 const kgf=g=>g>=1000?(g/1000).toLocaleString('ru-RU',{maximumFractionDigits:2})+' кг':Math.round(g)+' г';
-const am=(k,g)=>q5(g,MAIN_BATCH);
-const MAIN_BATCH={t:'Основное'};
 const fa=ingredientAmount;
 const dn=b=>b.r.n+', '+DS[b.d];
 function vegMethod(bt,k){
@@ -1658,9 +1692,13 @@ function vegMethod(bt,k){
   if(k==='fet')return 'раскрошить';
   return 'мелко нарезать (можно в комбайне)';
 }
+function eveningKeys(r){
+  return r.st.filter(step=>step.startsWith('За 10 минут')).flatMap(step=>[...step.matchAll(/\{(\w+)\}/g)].map(match=>match[1]));
+}
 function vegKeys(r){
   const bt=r.bt,ks=r.i.slice(1).map(z=>z[0]);
   return ks.filter(k=>{
+    if(eveningKeys(r).includes(k))return false;
     if(k==='gar'||k==='gin')return true;
     if(bt==='cut'||bt==='cuts'||bt==='roll')return SOLIDK.has(k)||HERBK.has(k)||FILLK.has(k)||(bt==='roll'&&k==='gar');
     if(bt==='stuff')return k==='onion'||k==='rice'||k==='pep';
@@ -1676,7 +1714,7 @@ function masterPlan(){
   const start=[],vegetables=new Map(),grains=new Map();
   for(const b of bl){
     for(const key of vegKeys(b.r)){
-      const grams=am(key,b.r.i.find(([k])=>k===key)[1]);
+      const grams=batchAmount(key,b.r.i.find(([k])=>k===key)[1],b.r);
       const grouped=GRAIN.has(key)?grains:vegetables;
       if(!grouped.has(key))grouped.set(key,[]);
       grouped.get(key).push({b,grams,method:vegMethod(b.r.bt,key)});
@@ -1704,12 +1742,12 @@ function masterPlan(){
   });
   if(vegetablesToCut.length)st.push({k:'v',t:'Нарежьте овощи и зелень',min:mins('v'),items:vegetablesToCut});
   // фарш
-  {const items=[],m={},rd={};bl.forEach(b=>{const k=b.r.i[0][0],g=am(k,b.r.i[0][1]);if(k==='tkg')(rd[k]=rd[k]||[]).push([b,g]);else if(b.r.bt==='cut'||b.r.bt==='cuts')(m[k]=m[k]||[]).push([b,g]);});
+  {const items=[],m={},rd={};bl.forEach(b=>{const k=b.r.i[0][0],g=batchAmount(k,b.r.i[0][1],b.r);if(k==='tkg')(rd[k]=rd[k]||[]).push([b,g]);else if(b.r.bt==='cut'||b.r.bt==='cuts')(m[k]=m[k]||[]).push([b,g]);});
    Object.keys(m).forEach(k=>items.push({key:'g_'+k,t:ing(k).n+': всего '+kgf(m[k].reduce((a,x)=>a+x[1],0))+' в фарш',tx:'Пропустите через мясорубку или измельчите в комбайне. Готовый фарш разделите:',subs:m[k].map(x=>kgf(x[1])+' — '+dn(x[0]))}));
    Object.keys(rd).forEach(k=>items.push({key:'gr_'+k,t:ing(k).n+': всего '+kgf(rd[k].reduce((a,x)=>a+x[1],0)),tx:'Отмерьте готовый фарш:',subs:rd[k].map(x=>kgf(x[1])+' — '+dn(x[0]))}));
    if(items.length)st.push({k:'g',t:'Фарш',min:mins('g'),items});}
   // нарезка мяса
-  {const m={},ord=[];bl.forEach(b=>{const bt=b.r.bt,k=b.r.i[0][0];if(k==='tkg'||bt==='cut'||bt==='cuts'||bt==='stuff')return;if(!m[k]){m[k]=[];ord.push(k);}m[k].push([b,am(k,b.r.i[0][1])]);});
+  {const m={},ord=[];bl.forEach(b=>{const bt=b.r.bt,k=b.r.i[0][0];if(k==='tkg'||bt==='cut'||bt==='cuts'||bt==='stuff')return;if(!m[k]){m[k]=[];ord.push(k);}m[k].push([b,batchAmount(k,b.r.i[0][1],b.r)]);});
    const items=ord.map(k=>({key:'c_'+k,t:ing(k).n+': всего '+kgf(m[k].reduce((a,x)=>a+x[1],0)),subs:m[k].map(x=>kgf(x[1])+' — '+CUTTXT[x[0].r.bt]+(x[0].r.bt==='marin'&&(k==='cht'||k==='tkt')?', срезать лишний жир':'')+' ('+dn(x[0])+')')}));
    if(items.length)st.push({k:'c',t:'Нарезка мяса',min:mins('c'),items});}
   // маринады и соусы
@@ -1729,7 +1767,7 @@ function masterPlan(){
         finish.push({...task,tx:'Когда заготовки затвердеют: '+last[0].toLowerCase()+last.slice(1)});
       }else assembly.push(task);
     });
-    if(b.d===0)assembly.push({key:'fresh_'+b.id,dish:b.r.n,d:0,tx:'Уберите собранную партию в холодильник до ужина.'});
+    if(b.d===0)assembly.push({key:'fresh_'+b.id,dish:b.r.n,d:0,tx:(b.r.bt==='stuff'?'Переложите перцы в форму, залейте приготовленным соусом и накройте. ':'')+'Уберите собранную партию в холодильник до ужина.'});
     return {day:b.d,assembly,start,finish};
   });
   batches.sort((a,b)=>Number(!!b.start.length)-Number(!!a.start.length)||a.day-b.day);
@@ -1741,10 +1779,11 @@ function masterPlan(){
     const r=REC[day.m];
     return r.bt?[]:[{d,id:day.m,title:r.n,active:r.ev,total:r.total}];
   });
-  return {stages:st,total:sundayPrep(),n:bl.length,fresh};
+  const evening=bl.flatMap(b=>eveningKeys(b.r).map(k=>dn(b)+' · '+ing(k).n+' — '+recipeAmount(k,batchAmount(k,b.r.i.find(([id])=>id===k)[1],b.r))));
+  return {stages:st,total:sundayPrep(),n:bl.length,fresh,evening};
 }
 function usageOf(k){
-  const m={};const add=(id,tag)=>{const r=REC[id],z=r.i.find(x=>x[0]===k);if(!z)return;(m[id]=m[id]||{id,tags:[],g:0});m[id].tags.push(tag);m[id].g+=q5(z[1],r);};
+  const m={};const add=(id,tag)=>{const r=REC[id],z=r.i.find(x=>x[0]===k);if(!z)return;(m[id]=m[id]||{id,tags:[],g:0});m[id].tags.push(tag);m[id].g+=batchAmount(k,z[1],r);};
   S.cook.forEach((c,d)=>{const t=d<=4?'ужин '+DS[d]+(d<4?' и обед '+DS[d+1]:' и обед '+DS[5]):'';[c.m,c.s,c.l].forEach(id=>add(id,t));});
   S.bf.forEach((id,j)=>add(id,'завтрак '+DS[j+1]));
   return Object.values(m);
@@ -1930,7 +1969,7 @@ function viewDay(){
   if(ids.length&&slot==='Ужин'){const c2=S.cook[d],x=REC[c2.m],stp=[];
     const side=REC[c2.s],sideMin=sideReadyMin(side);
     if(sideMin>=(x.ov&&d>0?x.ov[1]:x.ev))stp.push('Заранее начните гарнир «'+side.n+'»: ориентир '+sideMin+' мин до готовности.');
-    if(x.ov){stp.push('«'+x.n+'»: откройте '+(d===0?'«Готовлю сразу» после сборки.':'«Готовлю из морозилки».'));stp.push('Разогрейте духовку до '+x.ov[0]+' °C. Проверяйте птицу термометром до 74 °C в центре.');}
+    if(x.ov){stp.push('«'+x.n+'»: откройте '+(d===0?'«Заготовка из холодильника» после сборки.':'«Готовлю из морозилки».'));stp.push('Разогрейте духовку до '+x.ov[0]+' °C. Проверяйте птицу термометром до 74 °C в центре.');}
     else{stp.push('Если филе или морепродукты замороженные, утром переложите их в холодильник.');stp.push('«'+x.n+'»: у плиты ≈ '+x.ev+' мин.');}
     stp.push('Гарнир «'+side.n+'»: активная работа ≈ '+side.ev+' мин. Соберите салат «'+REC[c2.l].n+'». Если для двух блюд нужна одна духовка с разной температурой, запекайте их по очереди.');
     if(d<=4)stp.push('Половину каждого готового блюда разложите на '+peopleCount()+' порций для завтрашнего обеда.');
@@ -1967,9 +2006,9 @@ function shopItems(rows=shopList()){
     h+='<div class="sechd"><i style="background:'+CATC[cat]+'"></i>'+cat+'<span class="mut small" style="font-family:var(--body);font-weight:600">'+items.length+'</span></div><div class="sg">';
     items.forEach(r=>{
       const on=purchased(r),open=shopOpen===r.k,p=ing(r.k),ic=PAINT_ART.icon(r.k,34,p.g);
-      const unit=PIECES[r.k];
+      const unit=PIECES[r.k]||COOK_UNITS[r.k];
       const pack=packOf(r.k);
-      const qty=pack?Math.round(r.buy/pack)+' уп. · '+ingredientAmount(r.k,r.buy):r.k==='egg'?ingredientAmount(r.k,r.buy):unit?r.buy/unit[0]+' шт. ('+unit[1]+') · нужно '+x1(r.total-r.home)+' г':kgf(r.buy);
+      const qty=pack?Math.round(r.buy/pack)+' уп. · '+ingredientAmount(r.k,r.buy):r.k==='egg'?ingredientAmount(r.k,r.buy):unit?PIECES[r.k]?r.buy/unit[0]+' шт. ('+unit[1]+')':ingredientAmount(r.k,r.buy):kgf(r.buy);
       h+='<div><div class="si '+(on?'done':'')+'"><div class="ico" style="background:'+CATC[cat]+'55">'+(ic||esc(r.n[0]))+'</div><button class="t" data-act="shopopen" data-v="'+r.k+'" aria-expanded="'+open+'"><div class="a">'+esc(S.sub[r.k]?S.sub[r.k]+' (вместо: '+r.n.toLowerCase()+')':r.n)+'</div><div class="b">'+qty+' · '+fmt(r.cost)+' ₽'+(S.price[r.k]>0?' · ваша цена':PRICE_GUIDE.items[r.k]?' · Лента':' · цена не сверена')+(r.home>0?' · дома '+ingredientAmount(r.k,r.home):'')+'</div></button><button class="cb '+(on?'on':'')+'" data-act="chk" data-v="'+r.k+'" role="checkbox" aria-checked="'+on+'" aria-label="Куплено: '+esc(r.n)+'"><i>'+IC.check+'</i></button></div>';
       if(open){const al=analogs(r.k);
         const used=usageOf(r.k);
@@ -2579,6 +2618,7 @@ function sheetHtml(){
       x.items.forEach((z,j)=>{h+='<button class="mpi '+(done(z)?'on':'')+'" data-act="mpchk" data-v="'+z.key+'" role="checkbox" aria-checked="'+done(z)+'"><span class="cbx"></span><span>'+(z.t?'<b>'+esc(z.t)+'</b><br>':(z.dish&&!(j>0&&x.items[j-1].dish===z.dish&&x.items[j-1].d===z.d)?'<b>'+esc(z.dish)+'</b> · '+DS[z.d]+'<br>':''))+(z.tx?esc(z.tx):'')+(z.subs?'<span class="sub">'+z.subs.map(q=>'<span>'+esc(q)+'</span>').join('')+'</span>':'')+'</span></button>';});
       h+='</div>';});
     h+='<div class="act-row"><button class="btn red" data-act="openday" data-v="0">Готовить воскресный ужин</button></div>';
+    if(mp.evening.length)h+='<div class="sec">Добавить в день ужина</div><ul>'+mp.evening.map(item=>'<li>'+esc(item)+'</li>').join('')+'</ul>';
     if(mp.fresh.length){
       h+='<div class="sec">Готовить в день ужина</div>';
       h+=mp.fresh.map(r=>'<button class="use" data-act="detail" data-v="'+r.id+'"><b>'+DS[r.d]+' · '+esc(r.title)+'</b><span>У плиты ≈ '+r.active+' мин'+(r.total?' · до подачи ≈ '+r.total+' мин':'')+'</span></button>').join('');
@@ -2627,10 +2667,9 @@ function sheetHtml(){
     const i=sheet.id,r=REC[i],isB=r.t==='Завтрак',days=isB?[1,2,3,4,5]:[0,1,2,3,4];
     let h=head(r.t+' · '+r.c,r.n)+'<div class="bd">';
     if(RECIPE_PHOTOS[r.n])h+='<div class="detail-photo">'+previewPhoto(i,r.n)+'</div>';
-    h+='<div class="sec">Продукты на весь рецепт</div><table class="ing">'+r.i.map(([k,g])=>'<tr><td>'+esc(ing(k).n)+'</td><td>'+ingredientAmount(k,q5(g,r))+'</td></tr>').join('')+'</table><p class="small mut">Крупы и сухую чечевицу взвешивайте до варки. Для яиц учитывается вес без скорлупы, для консервов — без жидкости.</p>';
+    h+='<div class="sec">Продукты на весь рецепт</div><table class="ing">'+r.i.map(([k,g])=>'<tr><td>'+esc(ing(k).n)+'</td><td>'+recipeAmount(k,batchAmount(k,g,r))+'</td></tr>').join('')+'</table><p class="small mut">Крупы и сухую чечевицу взвешивайте до варки. Яйца указаны в штуках, масса консервов — после слива, если в рецепте не используется заливка.</p>';
     h+='<div class="kv"><div><b>'+Math.round(r.k)+'</b>ккал</div><div><b>'+Math.round(r.P)+'</b>белки, г</div><div><b>'+Math.round(r.F)+'</b>жиры, г</div><div><b>'+Math.round(r.C)+'</b>углев., г</div></div>';
-    h+='<p class="small mut" style="line-height:1.45">Пищевая ценность выше — на базовую порцию. Закладка: '+(peopleCount()*(isB?1:2))+' порций'+(isB?' на завтрак':' на ужин и обед')+'. '+(r.bt?'Заготовка в воскресенье ≈ '+r.pr+' мин, затем в морозилку. Вечером из морозилки в духовку: '+r.ov[0]+' °C, '+r.ov[1]+' мин.':(r.pr?'Заготовка '+r.pr+' мин. ':'')+'Вечером '+r.ev+' мин.')+'</p>';
-    if(r.i.some(([key,g])=>key==='egg'&&q5(g,r)%EGG_GRAMS!==0))h+='<p class="small mut">Если нужна часть яйца, взбейте его и отмерьте указанную долю. Для варёного яйца используйте нужную долю после очистки.</p>';
+    h+='<p class="small mut" style="line-height:1.45">Пищевая ценность выше — ориентир для базовой порции. Закладка: '+(peopleCount()*(isB?1:2))+' порций'+(isB?' на завтрак':' на ужин и обед')+'. '+(r.bt?'Заготовка в воскресенье ≈ '+r.pr+' мин, затем в морозилку. Вечером из морозилки в духовку: '+r.ov[0]+' °C, '+r.ov[1]+' мин.':(r.pr?'Заготовка '+r.pr+' мин. ':'')+'Вечером '+r.ev+' мин.')+'</p>';
     if(r.total)h+='<p class="small mut">У плиты ≈ '+r.ev+' мин · до подачи ≈ '+r.total+' мин. Большую партию готовьте в несколько заходов.</p>';
     const people=profiles();
     h+='<p class="small mut">Доля готового блюда на один приём: '+people.map(p=>p.name+' '+x1(portionShare(p,r))+'%').join(' · ')+(isB?'.':'. Вторую половину разделите так же на обед.')+'</p>';
@@ -2640,7 +2679,7 @@ function sheetHtml(){
       h+='<p class="small mut">БЖУ мяса по справочнику для указанного сырого отруба. <a href="https://fdc.nal.usda.gov/food-details/'+fdc+'/nutrients" target="_blank" rel="noopener">USDA FoodData Central</a>.</p>';
     }
     const dry=r.t==='Гарнир'&&r.i.find(([k])=>SIDE_DRY[k]);
-    if(dry)h+='<p class="small mut">Сухая крупа или чечевица на один приём: '+people.map(p=>p.name+' '+x1(dry[1]/r.p*portionFactor(p,r))+' г').join(' · ')+'. Всего на партию '+x1(q5(dry[1],r))+' г.</p>';
+    if(dry)h+='<p class="small mut">Сухая крупа или чечевица на один приём: '+people.map(p=>p.name+' '+'≈ '+Math.round(dry[1]/r.p*portionFactor(p,r)/5)*5+' г').join(' · ')+'. Всего на партию '+recipeAmount(dry[0],batchAmount(dry[0],dry[1],r))+'.</p>';
     if(r.t==='Гарнир'){
       const saved=S.yields?.[i]||{};
       h+='<div class="rbox"><b>Мой замер гарнира</b><p class="small mut">Взвесьте всю приготовленную партию без посуды.</p>'
@@ -2652,13 +2691,15 @@ function sheetHtml(){
     if(micro.length)h+='<div class="rbox"><b>Продукты-источники</b><br>'+micro.map(g=>g.name+' · '+esc(ING[sources.flatMap(w=>sourceFoods(g,w))[0]].n)).join('<br>')+'</div>';
     {const ww=weeksWith(r.n);h+='<div class="rbox"><div class="sec" style="margin:0 0 6px">Оценка</div>'+starsHtml(i)+'<div class="small mut" style="margin-top:8px;line-height:1.4">'+(ww.length?'Готовили на '+ww.length+' '+(ww.length===1?'неделе':'неделях')+', последний раз '+wkTxt(ww[ww.length-1])+'. ':'В плане ещё не было. ')+'Оценка сохраняется в вашем плане.</div><button class="nev '+(banned(i)?'on':'')+'" data-act="ban" data-v="'+i+'">'+(banned(i)?'Исключено из плана. Вернуть':'Больше не предлагать')+'</button></div>';}
     const actions=r.st?.length?'<div class="sheet-actions">'+(r.bt
-      ?'<button class="btn red" data-act="cook" data-mode="fresh" data-v="'+i+'">Готовлю сразу</button><button class="btn alt" data-act="cook" data-mode="frozen" data-v="'+i+'">Готовлю из морозилки</button>'
+      ?'<button class="btn red" data-act="cook" data-mode="fresh" data-v="'+i+'">Готовлю с нуля</button>'
+        +(S.cook[0]?.m===i?'<button class="btn alt" data-act="cook" data-mode="prepared" data-v="'+i+'">Заготовка из холодильника</button>':'')
+        +'<button class="btn alt" data-act="cook" data-mode="frozen" data-v="'+i+'">Готовлю из морозилки</button>'
       :'<button class="btn red" data-act="cook" data-v="'+i+'">'+IC.flame+'Готовить по шагам</button>')+favBtn(i)+'</div>':'';
     const ol=a=>'<ol style="margin:0;padding-left:20px;font-size:14px;line-height:1.5">'+a.map(x=>'<li style="margin-bottom:6px">'+esc(fq(x,r))+'</li>').join('')+'</ol>';
     if(r.bt){
       h+='<div class="sec">Сборка заготовки</div>'+ol(r.bs.filter(([c])=>c!=='p').map(([,s])=>s));
       h+='<div class="sec">Если готовите в другой день: фасовка</div>'+ol(r.bs.filter(([c])=>c==='p').map(([,s])=>s));
-      h+='<div class="sec">Готовлю сразу</div>'+ol(recipeSteps(r,'fresh'));
+      h+='<div class="sec">Готовлю с нуля</div>'+ol(recipeSteps(r,'fresh'));
       h+='<div class="sec">Готовлю из морозилки</div>'+ol(recipeSteps(r,'frozen'));
     }
     else if(r.st&&r.st.length)h+='<div class="sec">'+(r.c==='Рыба'||r.c==='Морепродукты'?'Вечером: свежая в день ужина':'Как готовить')+'</div>'+ol(r.st)+'<p class="small mut">Базовая последовательность. Время и температуру подстраивайте под свою плиту.</p>';
