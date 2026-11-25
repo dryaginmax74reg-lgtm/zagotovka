@@ -282,7 +282,39 @@ html[data-dir="b"]::view-transition-old(root){animation-name:vtOutR}html[data-di
 </style>
 
 <style>
-.detail-photo{width:100%;max-width:400px;aspect-ratio:1;margin:0 auto 16px;border-radius:20px;overflow:hidden}
+.recipe-sheet{
+  --recipe-paper:#fffaf2;--recipe-panel:#f7f0e5;--recipe-ink:#29271f;--recipe-muted:#61584d;
+  --recipe-line:#e5dac9;--recipe-accent:#99492e;--recipe-tint:#f0ded0;--recipe-button:#99492e;
+  --bg:var(--recipe-paper);--ink:var(--recipe-ink);--mut:var(--recipe-muted);--line:var(--recipe-line);--soft:var(--recipe-panel);
+  color:var(--ink);background:var(--bg);max-width:560px
+}
+.recipe-sheet[data-accent="olive"]{--recipe-accent:#4e6039;--recipe-tint:#e7eadb;--recipe-button:#4e6039}
+.recipe-sheet[data-accent="ochre"]{--recipe-accent:#805419;--recipe-tint:#f1e5cf;--recipe-button:#805419}
+[data-theme="dark"] .recipe-sheet{
+  --recipe-paper:#25231e;--recipe-panel:#302d25;--recipe-ink:#f8eddb;--recipe-muted:#d2c2aa;
+  --recipe-line:#4c4437;--recipe-accent:#efbc99;--recipe-tint:#44372b
+}
+[data-theme="dark"] .recipe-sheet[data-accent="olive"]{--recipe-accent:#c6d5ac;--recipe-tint:#35402f}
+[data-theme="dark"] .recipe-sheet[data-accent="ochre"]{--recipe-accent:#edca8f;--recipe-tint:#403522}
+.recipe-sheet .hd{padding:12px 22px 16px;align-items:center}
+.recipe-sheet .hd .small{color:var(--recipe-accent);font-size:12px}
+.recipe-sheet .hd h2{font-family:Georgia,serif;font-size:clamp(26px,5.5vw,38px)!important;line-height:1.05;letter-spacing:-.025em}
+.recipe-sheet .hd .rb{flex:none;background:var(--soft);color:var(--ink)}
+.recipe-sheet .bd{padding-inline:22px}
+.recipe-sheet .sec{font-family:Georgia,serif;font-size:24px;line-height:1.12;margin:22px 0 10px}
+.detail-photo{position:relative;width:100%;aspect-ratio:6/5;margin:0 auto 12px;border-radius:18px;overflow:hidden;background:var(--soft)}
+.detail-photo .preview-photo{position:absolute;top:50%;height:auto;aspect-ratio:1;transform:translateY(-50%);border-radius:0}
+.recipe-facts{display:flex;flex-wrap:wrap;gap:6px 16px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--mut)}
+.recipe-facts b{color:var(--ink)}
+.recipe-ingredients{background:var(--soft);border-radius:16px;padding:3px 14px}
+.recipe-ingredients .ing tr:last-child td{border-bottom:none}
+.recipe-ingredients .ing td:last-child{padding-left:12px;font-weight:750;color:var(--ink);font-variant-numeric:tabular-nums}
+.recipe-sheet .recipe-steps{list-style:none;counter-reset:recipe-step;margin:0;padding:0}
+.recipe-steps li{counter-increment:recipe-step;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.5}
+.recipe-steps li::before{content:counter(recipe-step);display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--recipe-tint);color:var(--recipe-accent);font-size:12px;font-weight:750}
+.recipe-notes{margin-top:20px;padding:12px 14px;border:1px solid var(--line);border-radius:14px}
+.recipe-notes summary{font-weight:700;cursor:pointer;color:var(--recipe-accent)}
+.recipe-sheet .sheet-actions .red{background:var(--recipe-button);color:white}
 .preview-photo{display:block;width:100%;height:100%;border-radius:inherit;background-repeat:no-repeat}
 .stage button.pt{overflow:hidden;border-radius:24%}
 .row .th .pt,.gp .pt,.dc .pl .pt{border-radius:22%}
@@ -2495,7 +2527,7 @@ function roleInfo(role){
 }
 function sheetHtml(){
   if(!sheet)return'';
-  const head=(sub,title)=>'<div class="shade" data-act="close"></div><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><div class="grab"></div><div class="hd" id="shd"><div style="min-width:0"><div class="small mut" style="font-weight:600">'+esc(sub)+'</div><h2 style="font-size:19px;margin-top:3px">'+esc(title)+'</h2></div><button class="rb" data-act="close" aria-label="Закрыть">'+IC.close+'</button></div>';
+  const head=(sub,title,accent)=>'<div class="shade" data-act="close"></div><div class="sheet'+(accent?' recipe-sheet" data-accent="'+accent:'')+'" id="sheet" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><div class="grab"></div><div class="hd" id="shd"><div style="min-width:0"><div class="small mut" style="font-weight:600">'+esc(sub)+'</div><h2 style="font-size:19px;margin-top:3px">'+esc(title)+'</h2></div><button class="rb" data-act="close" aria-label="Закрыть">'+IC.close+'</button></div>';
   if(sheet.kind==='household'){
     return head('Заготовка','Наш кабинет')+'<div class="bd">'+syncCard()
       +'<div class="sec">Уведомления таймера</div><button class="btn alt" data-act="cookalerts">'+(S.cookAlerts&&globalThis.Notification?.permission==='granted'?'Выключить уведомления':'Включить уведомления')+'</button><p class="small mut">Сигнал сработает, пока приложение открыто. Если телефон приостановит приложение, таймер проверится при возврате.</p>'
@@ -2665,11 +2697,28 @@ function sheetHtml(){
   }
   if(sheet.kind==='detail'){
     const i=sheet.id,r=REC[i],isB=r.t==='Завтрак',days=isB?[1,2,3,4,5]:[0,1,2,3,4];
-    let h=head(r.t+' · '+r.c,r.n)+'<div class="bd">';
+    const accent=isB?'ochre':['Салат','Гарнир'].includes(r.t)?'olive':'terra';
+    const time=r.bt?r.ov?.[1]:r.total||r.ev;
+    const timing=time?(r.bt?' · в духовке ':' · ')+time+' мин':'';
+    let h=head(r.t+timing,r.n,accent)+'<div class="bd">';
     if(RECIPE_PHOTOS[r.n])h+='<div class="detail-photo">'+previewPhoto(i,r.n)+'</div>';
-    h+='<div class="sec">Продукты на весь рецепт</div><table class="ing">'+r.i.map(([k,g])=>'<tr><td>'+esc(ing(k).n)+'</td><td>'+recipeAmount(k,batchAmount(k,g,r))+'</td></tr>').join('')+'</table><p class="small mut">Крупы и сухую чечевицу взвешивайте до варки. Яйца указаны в штуках, масса консервов — после слива, если в рецепте не используется заливка.</p>';
-    h+='<div class="kv"><div><b>'+Math.round(r.k)+'</b>ккал</div><div><b>'+Math.round(r.P)+'</b>белки, г</div><div><b>'+Math.round(r.F)+'</b>жиры, г</div><div><b>'+Math.round(r.C)+'</b>углев., г</div></div>';
-    h+='<p class="small mut" style="line-height:1.45">Пищевая ценность выше — ориентир для базовой порции. Закладка: '+(peopleCount()*(isB?1:2))+' порций'+(isB?' на завтрак':' на ужин и обед')+'. '+(r.bt?'Заготовка в воскресенье ≈ '+r.pr+' мин, затем в морозилку. Вечером из морозилки в духовку: '+r.ov[0]+' °C, '+r.ov[1]+' мин.':(r.pr?'Заготовка '+r.pr+' мин. ':'')+'Вечером '+r.ev+' мин.')+'</p>';
+    h+='<div class="recipe-facts"><span><b>'+Math.round(r.k)+'</b> ккал</span><span><b>'+Math.round(r.P)+' г</b> белка</span><span><b>'+Math.round(r.F)+' г</b> жиров</span><span><b>'+Math.round(r.C)+' г</b> углеводов</span><span>на базовую порцию</span></div>';
+    h+='<h3 class="sec">Ингредиенты</h3><div class="recipe-ingredients"><table class="ing">'+r.i.map(([k,g])=>'<tr><td>'+esc(ing(k).n)+'</td><td>'+recipeAmount(k,batchAmount(k,g,r))+'</td></tr>').join('')+'</table></div><p class="small mut">Крупы и сухую чечевицу взвешивайте до варки. Яйца указаны в штуках, масса консервов — после слива, если в рецепте не используется заливка.</p>';
+    const actions=r.st?.length?'<div class="sheet-actions">'+(r.bt
+      ?'<button class="btn red" data-act="cook" data-mode="fresh" data-v="'+i+'">Готовлю с нуля</button>'
+        +(S.cook[0]?.m===i?'<button class="btn alt" data-act="cook" data-mode="prepared" data-v="'+i+'">Заготовка из холодильника</button>':'')
+        +'<button class="btn alt" data-act="cook" data-mode="frozen" data-v="'+i+'">Готовлю из морозилки</button>'
+      :'<button class="btn red" data-act="cook" data-v="'+i+'">'+IC.flame+'Готовить по шагам</button>')+favBtn(i)+'</div>':'';
+    const ol=a=>'<ol class="recipe-steps" role="list">'+a.map(x=>'<li>'+esc(fq(x,r))+'</li>').join('')+'</ol>';
+    if(r.bt){
+      h+='<div class="sec">Сборка заготовки</div>'+ol(r.bs.filter(([c])=>c!=='p').map(([,s])=>s));
+      h+='<div class="sec">Если готовите в другой день: фасовка</div>'+ol(r.bs.filter(([c])=>c==='p').map(([,s])=>s));
+      h+='<div class="sec">Готовлю с нуля</div>'+ol(recipeSteps(r,'fresh'));
+      h+='<div class="sec">Готовлю из морозилки</div>'+ol(recipeSteps(r,'frozen'));
+    }
+    else if(r.st&&r.st.length)h+='<div class="sec">'+(r.c==='Рыба'||r.c==='Морепродукты'?'Вечером: свежая в день ужина':'Как готовить')+'</div>'+ol(r.st)+'<p class="small mut">Базовая последовательность. Время и температуру подстраивайте под свою плиту.</p>';
+    h+='<details class="recipe-notes"><summary>Порции, питание и оценка</summary>';
+    h+='<p class="small mut" style="line-height:1.45">Закладка: '+(peopleCount()*(isB?1:2))+' порций'+(isB?' на завтрак':' на ужин и обед')+'. '+(r.bt?'Заготовка в воскресенье ≈ '+r.pr+' мин, затем в морозилку. Вечером из морозилки в духовку: '+r.ov[0]+' °C, '+r.ov[1]+' мин.':(r.pr?'Заготовка '+r.pr+' мин. ':'')+'Вечером '+r.ev+' мин.')+'</p>';
     if(r.total)h+='<p class="small mut">У плиты ≈ '+r.ev+' мин · до подачи ≈ '+r.total+' мин. Большую партию готовьте в несколько заходов.</p>';
     const people=profiles();
     h+='<p class="small mut">Доля готового блюда на один приём: '+people.map(p=>p.name+' '+x1(portionShare(p,r))+'%').join(' · ')+(isB?'.':'. Вторую половину разделите так же на обед.')+'</p>';
@@ -2690,19 +2739,7 @@ function sheetHtml(){
     const micro=MICRO_SOURCES.filter(g=>sources.some(w=>sourceFoods(g,w).length));
     if(micro.length)h+='<div class="rbox"><b>Продукты-источники</b><br>'+micro.map(g=>g.name+' · '+esc(ING[sources.flatMap(w=>sourceFoods(g,w))[0]].n)).join('<br>')+'</div>';
     {const ww=weeksWith(r.n);h+='<div class="rbox"><div class="sec" style="margin:0 0 6px">Оценка</div>'+starsHtml(i)+'<div class="small mut" style="margin-top:8px;line-height:1.4">'+(ww.length?'Готовили на '+ww.length+' '+(ww.length===1?'неделе':'неделях')+', последний раз '+wkTxt(ww[ww.length-1])+'. ':'В плане ещё не было. ')+'Оценка сохраняется в вашем плане.</div><button class="nev '+(banned(i)?'on':'')+'" data-act="ban" data-v="'+i+'">'+(banned(i)?'Исключено из плана. Вернуть':'Больше не предлагать')+'</button></div>';}
-    const actions=r.st?.length?'<div class="sheet-actions">'+(r.bt
-      ?'<button class="btn red" data-act="cook" data-mode="fresh" data-v="'+i+'">Готовлю с нуля</button>'
-        +(S.cook[0]?.m===i?'<button class="btn alt" data-act="cook" data-mode="prepared" data-v="'+i+'">Заготовка из холодильника</button>':'')
-        +'<button class="btn alt" data-act="cook" data-mode="frozen" data-v="'+i+'">Готовлю из морозилки</button>'
-      :'<button class="btn red" data-act="cook" data-v="'+i+'">'+IC.flame+'Готовить по шагам</button>')+favBtn(i)+'</div>':'';
-    const ol=a=>'<ol style="margin:0;padding-left:20px;font-size:14px;line-height:1.5">'+a.map(x=>'<li style="margin-bottom:6px">'+esc(fq(x,r))+'</li>').join('')+'</ol>';
-    if(r.bt){
-      h+='<div class="sec">Сборка заготовки</div>'+ol(r.bs.filter(([c])=>c!=='p').map(([,s])=>s));
-      h+='<div class="sec">Если готовите в другой день: фасовка</div>'+ol(r.bs.filter(([c])=>c==='p').map(([,s])=>s));
-      h+='<div class="sec">Готовлю с нуля</div>'+ol(recipeSteps(r,'fresh'));
-      h+='<div class="sec">Готовлю из морозилки</div>'+ol(recipeSteps(r,'frozen'));
-    }
-    else if(r.st&&r.st.length)h+='<div class="sec">'+(r.c==='Рыба'||r.c==='Морепродукты'?'Вечером: свежая в день ужина':'Как готовить')+'</div>'+ol(r.st)+'<p class="small mut">Базовая последовательность. Время и температуру подстраивайте под свою плиту.</p>';
+    h+='</details>';
     h+='<div class="sec">Поставить в план</div><div class="dsel">'+days.map(d=>'<button data-act="place" data-v="'+d+'">'+DS[d]+'</button>').join('')+'</div></div>'+actions+'</div>';
     return h;
   }
@@ -3312,7 +3349,14 @@ window.addEventListener('storage',event=>{
   if(event.key===COOK_TIMER_KEY){storeCookTimer(readCookTimer(),false);render();}
 });
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick();});
-render();tick();initSync();if(S.sy)gsync();paintLayer();
+render();tick();initSync();if(S.sy)gsync();
+const sample=new URLSearchParams(location.search).get('recipe');
+const sampleName=new Map([['tikka','Курица тикка в йогурте'],['salad','Греческий'],['syrniki','Сырники']]).get(sample);
+if(sampleName){
+  const id=REC.findIndex(recipe=>recipe.n.startsWith(sampleName));
+  if(id>=0)sheet={kind:'detail',id};
+}
+paintLayer();
 })();
 
 </script>
