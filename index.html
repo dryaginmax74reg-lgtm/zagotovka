@@ -2728,7 +2728,6 @@ function sheetHtml(){
       +['m',...(pair?['d']:[])].map(section).join('')
       +'<details'+(sheet.settings?' open':'')+'><summary>Исключить продукты</summary>'
       +Object.entries(FOOD_FILTERS).map(([k,[name]])=>'<label class="si"><input type="checkbox" data-start-exclude="'+k+'"'+((sheet.filters||S.excluded)?.[k]?' checked':'')+'> '+name+'</label>').join('')+'</details>'
-      +(pair&&!cloud?'<p class="small mut">Меню на двоих сохранится на этом устройстве. Если у вас уже есть общий план, подключитесь по приглашению.</p>':'')
       +'<div class="act-row">'+'<button class="btn red" data-act="startsave"'+(sheet.busy?' disabled':'')+'>'+(sheet.busy?'Создаю…':cloud?'Создать общий план':'Открыть меню')+'</button>'
       +(pair?'<button class="btn alt" data-act="joinlink"'+(sheet.busy?' disabled':'')+'>Подключиться к плану</button>':'')
       +'<button class="btn alt" data-act="startback">Назад</button></div></div></div>';
