@@ -1986,14 +1986,17 @@ function ring(p,col){const C=2*Math.PI*21;return '<svg class="ring" viewBox="0 0
 const cnt=(id,v,suf)=>'<span data-count="'+Math.round(v)+'" data-id="'+id+'">'+fmt(prevNum[id]!==undefined?prevNum[id]:0)+'</span>'+(suf||'');
 
 /* ---------- экраны ---------- */
-function previewPhoto(i, label){
+function previewPhoto(i, label, fullSize=false){
   const photo=RECIPE_PHOTOS[REC[i]?.n];
   if(!photo) return PAINT_ART.art(i,REC);
   const [file,cell,columns=2]=photo;
   const x=(cell%columns)*100/(columns-1);
   const y=Math.floor(cell/columns)*100/(columns-1);
   const size=columns*100;
-  return '<span class="preview-photo" '+(label?'role="img" aria-label="'+esc(label)+'"':'aria-hidden="true"')+' style="background-image:url(assets/recipe-sprite-'+String(file).padStart(2,'0')+'.png);background-size:'+size+'% '+size+'%;background-position:'+x+'% '+y+'%"></span>';
+  const sprite='assets/recipe-sprite-'+String(file).padStart(2,'0');
+  const thumb='url('+sprite+'-thumb.webp)';
+  const image=fullSize ? 'url('+sprite+'.png),'+thumb : thumb;
+  return '<span class="preview-photo" '+(label?'role="img" aria-label="'+esc(label)+'"':'aria-hidden="true"')+' style="background-image:'+image+';background-size:'+size+'% '+size+'%;background-position:'+x+'% '+y+'%"></span>';
 }
 function previewPlate(i){
   return '<span class="pt">'+previewPhoto(i)+'</span>';
@@ -2613,7 +2616,7 @@ function recipeThumb(r,i){
  const [, cell, columns=2]=photo;
  const x=(cell%columns)*100/(columns-1), y=Math.floor(cell/columns)*100/(columns-1);
  const size=columns*100;
- return '<div class="im photo" role="img" aria-label="'+esc(r.n)+'" style="background-image:url(assets/recipe-sprite-'+String(photo[0]).padStart(2,'0')+'.png);background-size:'+size+'% '+size+'%!important;background-position:'+x+'% '+y+'%'+'"></div>';
+ return '<div class="im photo" role="img" aria-label="'+esc(r.n)+'" style="background-image:url(assets/recipe-sprite-'+String(photo[0]).padStart(2,'0')+'-thumb.webp);background-size:'+size+'% '+size+'%!important;background-position:'+x+'% '+y+'%'+'"></div>';
 }
 function viewBook(){
   const L=S.lib,types=['Основное','Гарнир','Салат','Завтрак'];
@@ -2800,7 +2803,7 @@ function sheetHtml(){
     const time=r.bt?r.ov?.[1]:r.total||r.ev;
     const timing=time?(r.bt?' · в духовке ':' · ')+time+' мин':'';
     let h=head(r.t+timing,r.n,accent)+'<div class="bd">';
-    if(RECIPE_PHOTOS[r.n])h+='<div class="detail-photo">'+previewPhoto(i,r.n)+'</div>';
+    if(RECIPE_PHOTOS[r.n])h+='<div class="detail-photo">'+previewPhoto(i,r.n,true)+'</div>';
     h+='<div class="recipe-facts"><span><b>'+Math.round(r.k)+'</b> ккал</span><span><b>'+Math.round(r.P)+' г</b> белка</span><span><b>'+Math.round(r.F)+' г</b> жиров</span><span><b>'+Math.round(r.C)+' г</b> углеводов</span><small>На базовую порцию</small></div>';
     const portionPeople=profiles(),dryGrains=r.t==='Гарнир'?r.i.filter(([key])=>DRY_SIDE_KEYS.has(key)):[];
     const cookedWeight=S.yields?.[i]?.weight,hasDistinctPortions=portionPeople.length>1||dryGrains.length||cookedWeight||r.t==='Основное';
