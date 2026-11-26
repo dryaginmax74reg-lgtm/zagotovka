@@ -279,6 +279,45 @@ html[data-dir="b"]::view-transition-old(root){animation-name:vtOutR}html[data-di
 .noanim .row,.noanim .tile,.noanim .dc,.noanim .opt{animation:none}
 @media (prefers-reduced-motion:reduce){*,::before,::after{animation-duration:1ms!important;animation-delay:0ms!important;transition-duration:1ms!important}::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
 .nutrition-settings .si{flex-direction:column;align-items:stretch;gap:6px}.nutrition-settings input,.nutrition-settings select{max-width:100%;min-height:38px}.nutrition-settings summary{cursor:pointer}
+
+/* Setup and menu balance */
+.start-choices{gap:10px}
+.start-choices .btn{min-height:60px;border-radius:20px;padding:14px 16px;font:600 13px var(--disp);justify-content:space-between;text-align:left}
+.start-choices .btn:nth-child(3){background:var(--sea);color:var(--paint-ink);border-color:transparent}
+.start-choices .btn svg{width:18px;height:18px;flex:none}
+.start-profile{border:0;border-radius:24px;padding:14px;background:var(--soft)}
+.start-profile legend{border-radius:999px;padding:8px 12px}
+.start-profile input,.start-profile select,.start-form input[type=text]{border-radius:14px;font-size:16px}
+.start-profile .start-estimate{border-radius:16px;padding:12px}
+.start-mode{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;border:0;padding:4px;margin:0;background:var(--card);border-radius:17px}
+.start-mode-label{font-size:13px;font-weight:700;margin:0 0 6px}
+.start-mode label{position:relative;display:block}
+.start-mode input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.start-mode span{display:grid;place-items:center;min-height:44px;padding:6px;text-align:center;border-radius:13px}
+.start-mode input:checked+span{background:var(--orange);color:var(--paint-ink)}
+.start-mode input:focus-visible+span{outline:3px solid var(--sea);outline-offset:-2px}
+.start-exclusions{padding:12px 14px;background:var(--soft);border-radius:18px}
+.balance-body>.nutri-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.balance-body>.nutri-grid .nutri-tile{border-radius:20px;padding:14px 12px;min-height:90px}
+.balance-body>.nutri-grid .nutri-tile b{font-size:clamp(18px,5.5vw,28px)}
+.balance-body>.nutri-grid .nutri-tile span,.balance-body>.nutri-grid .nutri-tile small{font-size:12px}
+.balance-body>.balance-fold{--section-color:var(--sea);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:0;overflow:hidden}
+.balance-body>.balance-fold>summary{padding:12px 14px;background:var(--section-color);color:var(--paint-ink)}
+.balance-body>.balance-fold[open]>:not(summary){margin-inline:10px}
+.balance-body>.balance-fold[open]{padding-bottom:10px}
+.balance-body>.balance-fold[open]>summary{margin-bottom:10px}
+.balance-body>.balance-days-fold{--section-color:var(--leaf)}
+.balance-body>.balance-micros-fold{--section-color:var(--sea)}
+.balance-body>.balance-quality-fold{--section-color:var(--coral)}
+.balance-body>.balance-goals-fold{--section-color:var(--lemon)}
+.balance-day{background:var(--day-color);border-radius:16px;padding:10px}
+.balance-day>strong{margin:0 0 8px;padding:0;font:600 12px var(--disp);background:none}
+.balance-day .nutri-tile{background:var(--card);border-radius:11px;padding:8px 2px}
+.balance-micro{background:var(--soft);border:0;border-radius:13px;padding:10px}
+.balance-micro:nth-child(even){background:color-mix(in srgb,var(--sea) 24%,var(--card))}
+.balance-micro:nth-child(odd){background:color-mix(in srgb,var(--leaf) 24%,var(--card))}
+.balance-micro small{font-size:11px;color:var(--mut)}
+.balance-swap{min-height:44px;height:auto;padding-block:8px;background:var(--leaf);color:var(--paint-ink);border-color:transparent}
 </style>
 
 <style>
@@ -2745,7 +2784,7 @@ function sheetHtml(){
     });
     const micros=ranked.map(({entry,amount:value,known,total})=>{
       const goal=microGoal(entry,profile);
-      return '<div class="balance-micro"><b>'+entry.name+'</b><span>'+(known?(known<total?'≈ ':'')+amount(value,entry.unit):'Нет данных')+(goal?' / '+(entry.kind==='limit'?'до ':'')+amount(goal,entry.unit):'')+'</span></div>';
+      return '<div class="balance-micro"><b>'+entry.name+'</b><span>'+(known?(known<total?'≈ ':'')+amount(value,entry.unit):'Нет данных')+'</span>'+(goal?'<small>Ориентир · '+amount(goal,entry.unit)+'</small>':'')+'</div>';
     }).join('');
     const added=extras.length?'<h3>Добавлено на Пн–Чт</h3>'+extras.map(([key,grams])=>'<button class="use" data-act="microremove" data-v="'+key+'"><b>'+esc(ing(key).n)+' · '+ingredientAmount(key,grams)+'</b><span>Убрать</span></button>').join(''):'';
     const suggestions=options.length?'<h3>Что добавить</h3>'+options.map(({key,grams,contributions})=>'<button class="use" data-act="microadd" data-v="'+key+'"><b>'+esc(ing(key).n)+' · '+ingredientAmount(key,grams)+'</b><span>'+contributions.slice(0,2).map(c=>c.entry.name+' +'+amount(c.value,c.entry.unit)).join(' · ')+'</span></button>').join(''):'';
@@ -2754,10 +2793,10 @@ function sheetHtml(){
     const proposed=sheet.suggested?(proposal?'<div class="rbox"><b>'+DN[proposal.day]+' · '+esc(REC[proposal.prev].n)+' → '+esc(REC[proposal.id].n)+'</b><p>'+proposal.details+'</p><button class="btn" data-act="acceptside">Применить замену</button></div>':'<p class="small mut">Подходящей замены не найдено.</p>'):'';
     return head('В среднем за Пн–Чт','Баланс меню')+'<div class="bd balance-body">'+select+macroSummary(person)
       +added+suggestions
-      +'<details class="balance-fold"><summary>По дням</summary><div class="balance-days">'+daily+'</div></details>'
-      +'<details class="balance-fold"><summary>Витамины и минералы</summary><div class="balance-micro-grid">'+micros+'</div>'+'<p class="small mut">≈ — данные есть для части продуктов.</p><small class="mut">Источники состава: USDA, CoFID, BLS 4.0 (Max Rubner-Institut, CC BY 4.0), MEXT, Frida.</small></details>'
-      +'<details class="balance-fold"><summary>Соль, жиры и сахара</summary>'+qualitySummary(person)+'</details>'
-      +'<details class="balance-fold"><summary>Цели питания</summary>'+nutritionSettings(person)+'</details>'
+      +'<details class="balance-fold balance-days-fold" open><summary>По дням</summary><div class="balance-days">'+daily+'</div></details>'
+      +'<details class="balance-fold balance-micros-fold"><summary>Витамины и минералы</summary><div class="balance-micro-grid">'+micros+'</div>'+'<p class="small mut">≈ — данные есть для части продуктов.</p><small class="mut">Источники состава: USDA, CoFID, BLS 4.0 (Max Rubner-Institut, CC BY 4.0), MEXT, Frida.</small></details>'
+      +'<details class="balance-fold balance-quality-fold"><summary>Соль, жиры и сахара</summary>'+qualitySummary(person)+'</details>'
+      +'<details class="balance-fold balance-goals-fold"><summary>Цели питания</summary>'+nutritionSettings(person)+'</details>'
       +'<button class="btn alt balance-swap" data-act="suggestside">Подобрать другой гарнир</button>'+proposed+'</div></div>';
   }
   if(sheet.kind==='pantry'){
@@ -2775,7 +2814,7 @@ function sheetHtml(){
     return head('Общий план','Подключиться к плану')+'<div class="bd"><label for="join-link">Код общего плана или приглашение</label><input id="join-link" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:100%"><label for="join-person">Кто подключается по коду</label><select id="join-person"><option value="m">Максим</option><option value="d">Даша</option></select><p id="join-error" class="small" role="alert"></p><div class="act-row"><button class="btn red" data-act="readjoin"'+(sheet.busy?' disabled':'')+'>'+(sheet.busy?'Проверяю…':'Войти')+'</button><button class="btn alt" data-act="startback">Назад</button></div></div></div>';
   }
   if(sheet.kind==='who'){
-    return head('Первый запуск','Как будете готовить?')+'<div class="bd"><div class="start-choices"><button class="btn red" data-act="startmode" data-v="solo">Готовлю один</button><button class="btn alt" data-act="startmode" data-v="pair">Готовим вместе</button><button class="btn alt" data-act="joinlink">Войти в общий план</button></div></div></div>';
+    return head('Первый запуск','Как будете готовить?')+'<div class="bd"><div class="start-choices"><button class="btn red" data-act="startmode" data-v="solo">Готовлю один '+IC.right+'</button><button class="btn alt" data-act="startmode" data-v="pair">Готовим вместе '+IC.right+'</button><button class="btn alt" data-act="joinlink">Войти в общий план '+IC.right+'</button></div></div></div>';
   }
   if(sheet.kind==='onboarding'){
     const pair=sheet.mode==='pair',cloud=pair&&!!S.hub;
@@ -2786,7 +2825,9 @@ function sheetHtml(){
       const input=(field,label,min,max,step,value)=>'<label>'+label+'<input name="'+field+'" type="number" min="'+min+'" max="'+max+'" step="'+step+'" value="'+esc(value??'')+'" inputmode="decimal"></label>';
       const select=(field,label,items,value)=>'<label>'+label+'<select name="'+field+'">'+items.map(([id,title])=>'<option value="'+id+'"'+(String(value??'')===id?' selected':'')+'>'+title+'</option>').join('')+'</select></label>';
       return '<fieldset class="start-profile" data-start-person="'+k+'" data-mode="'+mode+'"><legend>'+(index?'Второй участник':'Ваши цели')+'</legend>'
-        +select('mode','Калории и БЖУ',[['auto','Рассчитать'],['manual','Вручную']],mode)
+        +'<p class="start-mode-label" id="start-mode-'+k+'">Калории и БЖУ</p><div class="start-mode" role="group" aria-labelledby="start-mode-'+k+'">'
+        +[['auto','Рассчитать'],['manual','Вручную']].map(([id,title])=>'<label><input type="radio" name="mode-'+k+'" value="'+id+'"'+(mode===id?' checked':'')+'><span>'+title+'</span></label>').join('')
+        +'</div>'
         +'<div class="start-auto">'+select('sex','Пол',[['','Выберите'],['m','Мужской'],['f','Женский']],v.sex)
         +fields.map(([key,label,min,max,step])=>input(key,label,min,max,step,v[key])).join('')
         +select('activity','Активность',[['','Выберите'],['1.2','Преимущественно сидя'],['1.375','Лёгкая'],['1.55','Умеренная'],['1.725','Высокая']],v.activity)
@@ -2800,7 +2841,7 @@ function sheetHtml(){
       +'<label for="start-name">Ваше имя</label><input id="start-name" type="text" maxlength="40" autocomplete="given-name" value="'+esc(sheet.names?.m||'')+'" style="width:100%">'
       +(pair?'<label for="start-partner">Имя второго человека</label><input id="start-partner" type="text" maxlength="40" value="'+esc(sheet.names?.d||'')+'" style="width:100%">':'')
       +['m',...(pair?['d']:[])].map(section).join('')
-      +'<details'+(sheet.settings?' open':'')+'><summary>Исключить продукты</summary>'
+      +'<details class="start-exclusions"'+(sheet.settings?' open':'')+'><summary>Исключить продукты</summary>'
       +Object.entries(FOOD_FILTERS).map(([k,[name]])=>'<label class="si"><input type="checkbox" data-start-exclude="'+k+'"'+((sheet.filters||S.excluded)?.[k]?' checked':'')+'> '+name+'</label>').join('')+'</details>'
       +(pair&&!cloud?'<p class="small mut">Меню на двоих сохранится на этом устройстве. Если у вас уже есть общий план, подключитесь по приглашению.</p>':'')
       +'<div class="act-row">'+'<button class="btn red" data-act="startsave"'+(sheet.busy?' disabled':'')+'>'+(sheet.busy?'Создаю…':cloud?'Создать общий план':'Открыть меню')+'</button>'
@@ -3447,7 +3488,8 @@ function connectHouse(u,c,adopt,room=false){
   save();sheet={kind:'household'};paintLayer();gsync();
 }
 function startProfileValues(field){
-  return Object.fromEntries([...field.querySelectorAll('input,select')].map(el=>[el.name,el.value]));
+  const values=Object.fromEntries([...field.querySelectorAll('input:not([type="radio"]),select')].map(el=>[el.name,el.value]));
+  return {...values,mode:field.querySelector('.start-mode input:checked').value};
 }
 function updateStartProfile(field){
   const values=startProfileValues(field);
