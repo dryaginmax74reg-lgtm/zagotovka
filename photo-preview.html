@@ -3215,6 +3215,42 @@ function varietyCost(cook,breakfasts){
   }
   return cost;
 }
+function diversifySides(plan,sides,score){
+  const isVegetable=id=>REC[id].c==='Овощной';
+  if(plan.cook.some(day=>isVegetable(day.s)))return plan;
+  const vegetables=sides.filter(isVegetable);
+  if(!vegetables.length)return plan;
+  const original=S;
+  const maxNutritionTradeoff=3;
+  const maxScoreTradeoff=20;
+  const calorieError=(day,person)=>Math.abs(dayTotals(day,person).k/person.target-1);
+  let best=plan,bestScore=score(plan)+maxScoreTradeoff;
+  try{
+    S={...original,...plan};
+    const people=profiles();
+    const calorieLimits=FULL_DAYS.map(day=>people.map(person=>Math.max(.07,calorieError(day,person))));
+    const costLimit=Math.max(BUDGET,planCost());
+    const prepLimit=Math.max(180,sundayPrep());
+    const eveningLimits=plan.cook.map((_,day)=>Math.max(30,eveningMin(day)));
+    const nutritionLimit=menuNutritionPenalty()+maxNutritionTradeoff;
+    for(let day=0;day<plan.cook.length;day++){
+      if(original.lock?.['c'+day])continue;
+      for(const id of vegetables){
+        const cook=plan.cook.map((meal,index)=>index===day?{...meal,s:id}:meal);
+        const candidate={...plan,cook};
+        S={...original,...candidate};
+        if(eveningMin(day)>eveningLimits[day]||sundayPrep()>prepLimit||planCost()>costLimit)continue;
+        const candidatePeople=profiles();
+        if(FULL_DAYS.some((d,i)=>candidatePeople.some((person,j)=>calorieError(d,person)>calorieLimits[i][j]+1e-9)))continue;
+        if(menuNutritionPenalty()>nutritionLimit)continue;
+        const candidateScore=score(candidate);
+        if(candidateScore<bestScore){best=candidate;bestScore=candidateScore;}
+      }
+    }
+    return best;
+  }finally{S=original;}
+}
+
 function generate(){
   const mains=poolFor('Основное'),sides=poolFor('Гарнир'),sals=poolFor('Салат'),brs=poolFor('Завтрак');
   if([mains,sides,sals,brs].some(pool=>!pool.length))return null;
@@ -3259,6 +3295,7 @@ function generate(){
         const value=score(candidate);if(value<loss){loss=value;best=candidate;}
       }
     }
+    best=diversifySides(best,sides,score);
   }
   return best;
 }
