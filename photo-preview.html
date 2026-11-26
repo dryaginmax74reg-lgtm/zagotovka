@@ -336,6 +336,8 @@ html[data-dir="b"]::view-transition-old(root){animation-name:vtOutR}html[data-di
 .recipe-sheet .recipe-ingredients{border-radius:7px;border:1px solid var(--line);background:var(--recipe-panel)}
 .recipe-sheet .recipe-steps li::before{border-radius:5px}
 .recipe-sheet .recipe-notes{border-radius:7px}
+.recipe-fresh .recipe-steps{margin-top:8px}
+.recipe-fresh .btn.alt{margin-top:12px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--ink)}
 .recipe-sheet .sheet-actions{padding-block:10px 12px;gap:6px}
 .recipe-sheet .sheet-actions .red{background:var(--recipe-orange);color:var(--recipe-action-ink);font-weight:700}
 .recipe-sheet .sheet-actions .alt{background:transparent;border:1px solid var(--line);color:var(--ink)}
@@ -2727,16 +2729,17 @@ function sheetHtml(){
     h+='<div class="recipe-facts"><span><b>'+Math.round(r.k)+'</b> ккал</span><span><b>'+Math.round(r.P)+' г</b> белка</span><span><b>'+Math.round(r.F)+' г</b> жиров</span><span><b>'+Math.round(r.C)+' г</b> углеводов</span><small>На базовую порцию</small></div>';
     h+='<h3 class="sec">Ингредиенты</h3><div class="recipe-ingredients"><table class="ing">'+r.i.map(([k,g])=>'<tr><td>'+esc(ing(k).n)+'</td><td>'+recipeAmount(k,batchAmount(k,g,r))+'</td></tr>').join('')+'</table></div>';
     const actions=r.st?.length?'<div class="sheet-actions">'+(r.bt
-      ?'<button class="btn red" data-act="cook" data-mode="fresh" data-v="'+i+'">Готовлю с нуля</button>'
+      ?'<button class="btn red" data-act="cook" data-mode="frozen" data-v="'+i+'">'+IC.flame+'Готовлю из морозилки</button>'
         +(S.cook[0]?.m===i?'<button class="btn alt" data-act="cook" data-mode="prepared" data-v="'+i+'">Заготовка из холодильника</button>':'')
-        +'<button class="btn alt" data-act="cook" data-mode="frozen" data-v="'+i+'">Готовлю из морозилки</button>'
       :'<button class="btn red" data-act="cook" data-v="'+i+'">'+IC.flame+'Готовить по шагам</button>')+favBtn(i)+'</div>':'';
     const ol=a=>'<ol class="recipe-steps" role="list">'+a.map(x=>'<li>'+esc(fq(x,r))+'</li>').join('')+'</ol>';
     if(r.bt){
+      h+='<div class="sec">Готовлю из морозилки</div>'+ol(recipeSteps(r,'frozen'));
       h+='<div class="sec">Сборка заготовки</div>'+ol(r.bs.filter(([c])=>c!=='p').map(([,s])=>s));
       h+='<div class="sec">Если готовите в другой день: фасовка</div>'+ol(r.bs.filter(([c])=>c==='p').map(([,s])=>s));
-      h+='<div class="sec">Готовлю с нуля</div>'+ol(recipeSteps(r,'fresh'));
-      h+='<div class="sec">Готовлю из морозилки</div>'+ol(recipeSteps(r,'frozen'));
+      h+='<details class="recipe-notes recipe-fresh"><summary>Готовлю сразу</summary>'
+        +ol(recipeSteps(r,'fresh'))
+        +'<button class="btn alt" data-act="cook" data-mode="fresh" data-v="'+i+'">Готовить с нуля по шагам</button></details>';
     }
     else if(r.st&&r.st.length)h+='<div class="sec">'+(r.c==='Рыба'||r.c==='Морепродукты'?'Вечером: свежая в день ужина':'Как готовить')+'</div>'+ol(r.st);
     h+='<details class="recipe-notes"><summary>Порции, питание и оценка</summary>';
