@@ -2736,7 +2736,7 @@ function sheetHtml(){
     const rows=calculatedMicros(FULL_DAYS.flatMap(dayRecipes),person,FULL_DAYS.length,extras);
     const keyMicros=new Set(['d','b12','b9','ca','fe','kalium','i']);
     const displayedRows=rows.filter(row=>keyMicros.has(row.entry.key));
-    const options=profile?microOptions(displayedRows,profile,extras).slice(0,2):[];
+    const options=profile?microOptions(rows.filter(row=>keyMicros.has(row.entry.key)||row.entry.key==='na'),profile,extras).slice(0,2):[];
     const amount=(n,unit)=>esc(microAmount(n))+' '+unit;
     const select=people.length>1?'<div class="act-row balance-people">'+people.map(p=>'<button class="btn '+(p===person?'red':'alt')+'" data-act="microperson" data-v="'+p.key+'" aria-pressed="'+(p===person)+'">'+p.name+'</button>').join('')+'</div>':'';
     const ranked=displayedRows.sort((a,b)=>{
