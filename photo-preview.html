@@ -648,6 +648,7 @@ const PRODUCE=new Set('kal koh fen tmc onion carrot cab nap beet zuc spi aru rom
 const WHOLE_GRAIN=new Set(['buck','brr','bul','oat','qui']);
 const PULSES=new Set(['len','chk','kid']);
 const SIDE_DRY={buck:140,rice:140,brr:140,cus:140,bul:140,qui:140,len:140};
+const DRY_SIDE_KEYS=new Set([...Object.keys(SIDE_DRY),'barl','mill','pasta']);
 Object.assign(ING,{
   beef:{n:'Говядина, нежирный сирлойн',k:131,P:22.1,F:4.1,C:0,pr:1600,c:'Мясо и рыба',h:0,w:'Охлаждённое мясо',a:'Нежирный стейк из верхней части тазобедренного отруба'},
   pork:{n:'Свиная вырезка',k:120,P:20.65,F:3.53,C:0,pr:700,c:'Мясо и рыба',h:0,w:'Охлаждённое мясо',a:'Свиная вырезка без плёнок'}
@@ -1530,7 +1531,7 @@ function profiles(){
     }
     return groups;
   });
-  const largestDry=Math.max(0,...S.cook.map(({s})=>REC[s].i.reduce((n,[k,g])=>n+(SIDE_DRY[k]?g/REC[s].p:0),0)));
+  const largestDry=Math.max(0,...S.cook.map(({s})=>REC[s].i.reduce((n,[k,g])=>n+(DRY_SIDE_KEYS.has(k)?g/REC[s].p:0),0)));
   // Culinary defaults. Prefer changing the menu to scaling it further.
   const bounds={main:[.65,1.45],side:[.6,Math.max(.6,Math.min(1.6,60/(largestDry||37.5)))],salad:[.75,1.6],breakfast:[.65,1.6]};
   const people=Array.from({length:peopleCount()},(_,i)=>{
@@ -2802,12 +2803,12 @@ function sheetHtml(){
     let h=head(r.t+timing,r.n,accent)+'<div class="bd">';
     if(RECIPE_PHOTOS[r.n])h+='<div class="detail-photo">'+previewPhoto(i,r.n)+'</div>';
     h+='<div class="recipe-facts"><span><b>'+Math.round(r.k)+'</b> ккал</span><span><b>'+Math.round(r.P)+' г</b> белка</span><span><b>'+Math.round(r.F)+' г</b> жиров</span><span><b>'+Math.round(r.C)+' г</b> углеводов</span><small>На базовую порцию</small></div>';
-    const portionPeople=profiles(),dryGrains=r.t==='Гарнир'?r.i.filter(([key])=>SIDE_DRY[key]):[];
+    const portionPeople=profiles(),dryGrains=r.t==='Гарнир'?r.i.filter(([key])=>DRY_SIDE_KEYS.has(key)):[];
     const cookedWeight=S.yields?.[i]?.weight,hasDistinctPortions=portionPeople.length>1||dryGrains.length||cookedWeight||r.t==='Основное';
     if(hasDistinctPortions){
-      h+='<h3 class="sec">На тарелку</h3><div class="recipe-ingredients">'+portionPeople.map(p=>{
+      h+='<h3 class="sec">Порции</h3><div class="recipe-ingredients">'+portionPeople.map(p=>{
         const share=portionShare(p,r,portionPeople)/100;
-        const amounts=cookedWeight?['≈ '+fmt(cookedWeight*share)+' г готового блюда']:dryGrains.map(([key,g])=>esc(ing(key).n)+' · ≈ '+fmt(batchAmount(key,g,r)*share)+' г сухой крупы');
+        const amounts=cookedWeight?['≈ '+fmt(cookedWeight*share)+' г готового блюда']:dryGrains.map(([key,g])=>esc(ing(key).n)+' · ≈ '+fmt(batchAmount(key,g,r)*share)+' г в сухом виде');
         if(r.t==='Основное'&&!amounts.length){const [key,g]=r.i[0];amounts.push(esc(ing(key).n)+' · ≈ '+fmt(batchAmount(key,g,r)*share)+' г до готовки');}
         return '<div class="balance-line"><b>'+p.name+'</b><span>'+(amounts.join('<br>')||fmt(share*100)+'% партии')+'</span></div>';
       }).join('')+'</div>';
@@ -3407,7 +3408,7 @@ async function startMenu(){
   form.filters=Object.fromEntries([...document.querySelectorAll('[data-start-exclude]:checked')].map(el=>[el.dataset.startExclude,1]));
   if(!m||(pair&&!d)||invalid){showToast(!m||(pair&&!d)?'Введите '+(pair?'оба имени':'имя'):invalid,false);paintLayer();return;}
   const names=pair?{m,d}:{m};
-  const draft={...S,me:'m',people:pair?2:1,names,norms,nutritionProfile,excluded:form.filters};
+  const draft={...S,me:S.me||'m',people:pair?2:1,names,norms,nutritionProfile,excluded:form.filters};
   const filtersChanged=JSON.stringify(S.excluded)!==JSON.stringify(draft.excluded);
   if(!S.me||filtersChanged||S.people!==draft.people){
     const previous=S;let plan;
@@ -3519,7 +3520,7 @@ const previewTab=previewParams.get('section');
 if(TABS.includes(previewTab))S.tab=previewTab;
 render();tick();initSync();if(S.sy)gsync();
 if(previewParams.get('panel')==='balance')sheet={kind:'nutrition',person:S.me};
-if(previewParams.get('panel')==='setup')sheet={kind:'onboarding',mode:'solo',names:{...S.names}};
+if(previewParams.get('panel')==='setup')sheet={kind:'onboarding',mode:S.me&&S.people===2?'pair':'solo',names:{...S.names}};
 const sample=previewParams.get('recipe');
 const sampleName=new Map([['tikka','Курица тикка в йогурте'],['salad','Греческий'],['syrniki','Сырники']]).get(sample);
 if(sampleName){
