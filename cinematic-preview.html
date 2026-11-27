@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101b13">
+  <title>Заготовка · живая кухня</title>
+</head>
+<body>
+  <p style="font:16px system-ui;padding:24px">Открываем живую кухню…</p>
+  <script>
+  (async()=>{
+    try{
+      const [app,concept]=await Promise.all([
+        fetch('photo-preview.html',{cache:'no-store'}),
+        fetch('cinematic-preview.js?v=1',{cache:'no-store'})
+      ]);
+      if(!app.ok||!concept.ok)throw new Error('Не удалось загрузить приложение');
+      let html=await app.text();
+      const code=await concept.text();
+      html=html
+        .replace('Заготовка · пробная версия','Заготовка · живая кухня')
+        .replace('zagotovka.photo-preview.v1','zagotovka.cinematic-preview.v1')
+        .replace("day:null,slot:'Ужин',tab:'week'","day:null,slot:'Ужин',tab:'day'")
+        .replace('</head>','<link rel="stylesheet" href="cinematic-preview.css?v=1"></head>')
+        .replace('importBeta();',code+'\nimportBeta();');
+      document.open();document.write(html);document.close();
+    }catch(error){
+      document.body.innerHTML='<main style="font:16px system-ui;max-width:520px;margin:80px auto;padding:24px"><h1>Не удалось открыть прототип</h1><p>'+String(error.message||error)+'</p><button onclick="location.reload()">Повторить</button></main>';
+    }
+  })();
+  </script>
+</body>
+</html>
