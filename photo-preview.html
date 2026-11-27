@@ -1123,6 +1123,43 @@ NEW_WEEK_RECIPES.push(
       'Смешайте натуральный йогурт ({yog}) с горчицей ({mst}) и ложкой жидкости со сковороды. Снимите сковороду с огня, вмешайте соус и подайте с медальонами.'
     ]}
 );
+Object.assign(ING,{
+  porcini:{n:'Белые грибы сушёные',k:286,P:23,F:4,C:40,pr:12000,c:'Бакалея',h:0},
+  capers:{n:'Каперсы · вес без рассола',k:23,P:2.4,F:0.9,C:4.9,pr:2500,c:'Бакалея',h:0},
+  sundried:{n:'Вяленые томаты в масле · вес без заливки',k:213,P:5,F:14,C:23,pr:2400,c:'Бакалея',h:0}
+});
+NEW_WEEK_RECIPES.push(
+  {name:'Перловка с белыми грибами и тимьяном',type:'Гарнир',category:'Крупа',active:10,total:50,
+    ingredients:[['barl',140],['porcini',15],['onion',100],['thyme',1],['oo',16]],
+    steps:['Перловку ({barl}) промойте и сварите по инструкции на упаковке. Белые грибы ({porcini}) замочите по инструкции на пачке.',
+      'Лук ({onion}) нарежьте кубиками и обжарьте в масле ({oo}) 5 минут. Грибы выньте из воды, промойте, нарежьте и добавьте к луку. Влейте немного свежей воды и тушите до полной готовности грибов.',
+      'Вмешайте перловку и тимьян ({thyme}), прогрейте 2 минуты.']},
+  {name:'Индейка с белыми грибами в йогуртовом соусе',type:'Основное',category:'Индейка',active:18,total:35,
+    ingredients:[['tkt',600],['porcini',20],['onion',120],['yog',180],['oo',20]],
+    steps:['Белые грибы ({porcini}) замочите по инструкции на упаковке. Выньте из воды, промойте и нарежьте. Нарежьте лук ({onion}) полукольцами, а индейку ({tkt}) кусочками по 2–3 см.',
+      'Обжарьте индейку партиями на половине масла ({oo}), переложите на тарелку. В оставшемся масле обжарьте лук, добавьте грибы и немного свежей воды, тушите до полной готовности грибов.',
+      'Верните индейку и доведите мясо до 74 °C в центре крупного кусочка. Снимите с огня и вмешайте йогурт ({yog}).']},
+  {name:'Треска с каперсами, лимоном и томатами',type:'Основное',category:'Рыба',active:12,total:28,
+    ingredients:[['cod',600],['tmc',400],['capers',25],['lem',40],['gar',5],['oo',20]],
+    steps:['Чеснок ({gar}) мелко порубите и прогрейте в оливковом масле ({oo}). Влейте томаты ({tmc}), разомните крупные кусочки и тушите 8 минут.',
+      'Обсушите филе трески ({cod}), уложите в соус и готовьте под крышкой до 63 °C в самой толстой части.',
+      'Слейте рассол с каперсов ({capers}), добавьте их в соус вместе с лимонным соком ({lem}).']},
+  {name:'Картофельный салат с каперсами и зелёным луком',type:'Салат',category:'Овощной',active:12,total:30,
+    ingredients:[['pot',480],['capers',25],['scallion',35],['mst',15],['lem',30],['oo',18]],
+    steps:['Картофель ({pot}) вымойте, нарежьте крупными кубиками и отварите до мягкости. Слейте воду и дайте картофелю немного остыть.',
+      'Каперсы ({capers}) откиньте на сито, зелёный лук ({scallion}) мелко нарежьте. Смешайте горчицу ({mst}), лимонный сок ({lem}) и масло ({oo}).',
+      'Соедините картофель, каперсы и лук. Порцию на завтра храните в холодильнике, заправку держите отдельно.']},
+  {name:'Булгур с вялеными томатами и белой фасолью',type:'Гарнир',category:'Крупа',active:9,total:22,
+    ingredients:[['bul',140],['wbean',200],['sundried',45],['prs',15],['lem',30]],
+    steps:['Сварите булгур ({bul}) по инструкции на упаковке. Белую фасоль ({wbean}) промойте и откиньте на сито.',
+      'Слейте лишнее масло с томатов ({sundried}), нарежьте их полосками. Смешайте булгур с фасолью и томатами, прогрейте 2 минуты.',
+      'Добавьте измельчённую петрушку ({prs}) и лимонный сок ({lem}).']},
+  {name:'Куриные рулетики с моцареллой и вялеными томатами',type:'Основное',category:'Курица',active:17,total:35,
+    ingredients:[['chb',600],['moz',120],['sundried',60],['spi',100],['oo',16]],
+    steps:['Разогрейте духовку до 200 °C. Разрежьте куриное филе ({chb}) вдоль на тонкие пласты. Моцареллу ({moz}) и вяленые томаты ({sundried}) без заливки нарежьте.',
+      'Шпинат ({spi}) прогрейте до мягкости, отожмите лишнюю влагу. Разложите начинку по пластам, сверните рулетики и выложите швом вниз в форму, смазанную маслом ({oo}).',
+      'Запекайте до 74 °C в центре самых крупных рулетиков.']}
+);
 for(const {name,type,category,active,total,ingredients,steps} of NEW_WEEK_RECIPES){
   NEW_RECIPES.push([name,type,category,type==='Завтрак'?2:4,active,ingredients,
     type==='Основное'?[...steps,MEAT_LEFTOVERS]:steps]);
@@ -3236,7 +3273,7 @@ function varietyCost(cook,breakfasts){
   }
   return cost;
 }
-function diversifySides(plan,sides,score){
+function diversifySides(plan,sides,mains,salads,score){
   const isVegetable=id=>REC[id].c==='Овощной';
   if(plan.cook.some(day=>isVegetable(day.s)))return plan;
   const vegetables=sides.filter(isVegetable);
@@ -3254,18 +3291,37 @@ function diversifySides(plan,sides,score){
     const prepLimit=Math.max(180,sundayPrep());
     const eveningLimits=plan.cook.map((_,day)=>Math.max(30,eveningMin(day)));
     const nutritionLimit=menuNutritionPenalty()+maxNutritionTradeoff;
+    const consider=(day,main,side,salad)=>{
+      const cook=plan.cook.map((meal,index)=>index===day?{...meal,m:main,s:side,l:salad}:meal);
+      const candidate={...plan,cook};
+      S={...original,...candidate};
+      if(eveningMin(day)>eveningLimits[day]||sundayPrep()>prepLimit||planCost()>costLimit)return;
+      const candidatePeople=profiles();
+      if(FULL_DAYS.some((d,i)=>candidatePeople.some((person,j)=>calorieError(d,person)>calorieLimits[i][j]+1e-9)))return;
+      if(menuNutritionPenalty()>nutritionLimit)return;
+      const candidateScore=score(candidate);
+      if(candidateScore<bestScore){best=candidate;bestScore=candidateScore;}
+    };
     for(let day=0;day<plan.cook.length;day++){
       if(original.lock?.['c'+day])continue;
-      for(const id of vegetables){
-        const cook=plan.cook.map((meal,index)=>index===day?{...meal,s:id}:meal);
-        const candidate={...plan,cook};
-        S={...original,...candidate};
-        if(eveningMin(day)>eveningLimits[day]||sundayPrep()>prepLimit||planCost()>costLimit)continue;
-        const candidatePeople=profiles();
-        if(FULL_DAYS.some((d,i)=>candidatePeople.some((person,j)=>calorieError(d,person)>calorieLimits[i][j]+1e-9)))continue;
-        if(menuNutritionPenalty()>nutritionLimit)continue;
-        const candidateScore=score(candidate);
-        if(candidateScore<bestScore){best=candidate;bestScore=candidateScore;}
+      const current=plan.cook[day];
+      for(const side of vegetables){
+        consider(day,current.m,side,current.l);
+        if(REC[side].k>=100)continue;
+        const target=REC[current.m].k+REC[current.s].k-REC[side].k;
+        const alternatives=mains.filter(id=>id!==current.m
+          && !plan.cook.some(meal=>meal.m===id)
+          && REC[id].ev+REC[side].ev+REC[current.l].ev<=eveningLimits[day]);
+        const distance=id=>Math.abs(REC[id].k-target)+4*Math.abs(REC[id].P-REC[current.m].P);
+        alternatives.sort((a,b)=>distance(a)-distance(b));
+        for(const main of alternatives.slice(0,3))consider(day,main,side,current.l);
+        const saladTarget=REC[current.l].k+REC[current.s].k-REC[side].k;
+        const carbTarget=REC[current.l].C+REC[current.s].C-REC[side].C;
+        const saladOptions=salads.filter(id=>!plan.cook.some(meal=>meal.l===id)
+          && REC[current.m].ev+REC[side].ev+REC[id].ev<=eveningLimits[day]);
+        const saladDistance=id=>Math.abs(REC[id].k-saladTarget)+4*Math.abs(REC[id].C-carbTarget);
+        saladOptions.sort((a,b)=>saladDistance(a)-saladDistance(b));
+        for(const salad of saladOptions.slice(0,3))consider(day,current.m,side,salad);
       }
     }
     return best;
@@ -3316,7 +3372,7 @@ function generate(){
         const value=score(candidate);if(value<loss){loss=value;best=candidate;}
       }
     }
-    best=diversifySides(best,sides,score);
+    best=diversifySides(best,sides,mains,sals,score);
   }
   return best;
 }
