@@ -13,7 +13,7 @@
     try{
       const [response,conceptResponse]=await Promise.all([
         fetch('photo-preview.html',{cache:'no-store'}),
-        fetch('commercial-preview.js?v=2',{cache:'no-store'})
+        fetch('commercial-preview.js?v=3',{cache:'no-store'})
       ]);
       if(!response.ok||!conceptResponse.ok)throw new Error('Не удалось загрузить приложение');
       let html=await response.text();
@@ -22,7 +22,7 @@
         .replace('Заготовка · пробная версия','Заготовка · коммерческая концепция')
         .replace('zagotovka.photo-preview.v1','zagotovka.commercial-preview.v1')
         .replace("day:null,slot:'Ужин',tab:'week'","day:null,slot:'Ужин',tab:'day'")
-        .replace('</head>','<link rel="stylesheet" href="commercial-preview.css?v=2"></head>')
+        .replace('</head>','<link rel="stylesheet" href="commercial-preview.css?v=3"></head>')
         .replace('importBeta();',concept+'\nimportBeta();');
       document.open();document.write(html);document.close();
     }catch(error){
