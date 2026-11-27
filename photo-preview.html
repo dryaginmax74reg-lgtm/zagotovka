@@ -3279,10 +3279,8 @@ function diversifySides(plan,sides,mains,salads,score){
   const vegetables=sides.filter(isVegetable);
   if(!vegetables.length)return plan;
   const original=S;
-  const maxNutritionTradeoff=3;
-  const maxScoreTradeoff=20;
   const calorieError=(day,person)=>Math.abs(dayTotals(day,person).k/person.target-1);
-  let best=plan,bestScore=score(plan)+maxScoreTradeoff;
+  let best=plan,bestScore=score(plan);
   try{
     S={...original,...plan};
     const people=profiles();
@@ -3290,7 +3288,7 @@ function diversifySides(plan,sides,mains,salads,score){
     const costLimit=Math.max(BUDGET,planCost());
     const prepLimit=Math.max(180,sundayPrep());
     const eveningLimits=plan.cook.map((_,day)=>Math.max(30,eveningMin(day)));
-    const nutritionLimit=menuNutritionPenalty()+maxNutritionTradeoff;
+    const nutritionLimit=menuNutritionPenalty();
     const consider=(day,main,side,salad)=>{
       const cook=plan.cook.map((meal,index)=>index===day?{...meal,m:main,s:side,l:salad}:meal);
       const candidate={...plan,cook};
