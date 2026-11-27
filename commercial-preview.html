@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#F6F7F2">
+  <title>Заготовка · коммерческая концепция</title>
+</head>
+<body>
+  <p style="font:16px system-ui;padding:24px">Открываем пробную версию…</p>
+  <script>
+  (async()=>{
+    try{
+      const [response,conceptResponse]=await Promise.all([
+        fetch('photo-preview.html',{cache:'no-store'}),
+        fetch('commercial-preview.js?v=2',{cache:'no-store'})
+      ]);
+      if(!response.ok||!conceptResponse.ok)throw new Error('Не удалось загрузить приложение');
+      let html=await response.text();
+      const concept=await conceptResponse.text();
+      html=html
+        .replace('Заготовка · пробная версия','Заготовка · коммерческая концепция')
+        .replace('zagotovka.photo-preview.v1','zagotovka.commercial-preview.v1')
+        .replace("day:null,slot:'Ужин',tab:'week'","day:null,slot:'Ужин',tab:'day'")
+        .replace('</head>','<link rel="stylesheet" href="commercial-preview.css?v=2"></head>')
+        .replace('importBeta();',concept+'\nimportBeta();');
+      document.open();document.write(html);document.close();
+    }catch(error){
+      document.body.innerHTML='<main style="font:16px system-ui;max-width:520px;margin:80px auto;padding:24px"><h1>Не удалось открыть пробную версию</h1><p>'+String(error.message||error)+'</p><button onclick="location.reload()">Повторить</button></main>';
+    }
+  })();
+  </script>
+</body>
+</html>
