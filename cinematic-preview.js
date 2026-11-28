@@ -55,6 +55,14 @@ sheetHtml=function(){
   return livingBaseSheet();
 };
 
+const livingStructuredSheet=sheetHtml;
+sheetHtml=function(){
+  const html=livingStructuredSheet();
+  if(sheet?.kind==='who')return html.replace('class="onboard-canvas"','class="onboard-canvas bd"');
+  if(sheet?.kind==='master')return html.replace('class="prep-world"','class="prep-world bd"');
+  return html;
+};
+
 document.addEventListener('pointermove',event=>{
   const scene=event.target.closest?.('[data-living-scene]');if(!scene||event.pointerType==='touch')return;
   scene.style.setProperty('--px',Math.round(event.clientX/innerWidth*100)+'%');scene.style.setProperty('--py',Math.round(event.clientY/innerHeight*100)+'%');
