@@ -13,7 +13,7 @@
     try{
       const [app,concept]=await Promise.all([
         fetch('photo-preview.html',{cache:'no-store'}),
-        fetch('cinematic-preview.js?v=2',{cache:'no-store'})
+        fetch('cinematic-preview.js?v=3',{cache:'no-store'})
       ]);
       if(!app.ok||!concept.ok)throw new Error('Не удалось загрузить приложение');
       let html=await app.text();
@@ -22,7 +22,7 @@
         .replace('Заготовка · пробная версия','Заготовка · живая кухня')
         .replace('zagotovka.photo-preview.v1','zagotovka.cinematic-preview.v1')
         .replace("day:null,slot:'Ужин',tab:'week'","day:null,slot:'Ужин',tab:'day'")
-        .replace('</head>','<link rel="stylesheet" href="cinematic-preview.css?v=2"></head>')
+        .replace('</head>','<link rel="stylesheet" href="cinematic-preview.css?v=3"></head>')
         .replace('importBeta();',code+'\nimportBeta();');
       document.open();document.write(html);document.close();
     }catch(error){
